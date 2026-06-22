@@ -1,0 +1,192 @@
+@startuml SRI_2026_Database
+!theme plain
+left to right direction
+
+skinparam linetype ortho
+skinparam roundcorner 8
+skinparam shadowing false
+skinparam padding 5
+skinparam nodesep 50
+skinparam ranksep 60
+
+skinparam entity {
+    BackgroundColor #FFFFFF
+    BorderColor     #475569
+    FontColor       #1E293B
+    FontSize        12
+    AttributeFontSize 11
+    AttributeFontColor #334155
+}
+skinparam ArrowColor      #94A3B8
+skinparam ArrowFontColor  #64748B
+skinparam ArrowFontSize   10
+skinparam ArrowThickness  1.2
+skinparam note {
+    BorderColor     #F59E0B
+    BackgroundColor #FFFBEB
+    FontColor       #78350F
+    FontSize        10
+}
+
+title
+  <b>SRI 2026 — Schéma de base de données</b>
+  <size:10><color:#64748B>Semaine de la Recherche et de l'Innovation · UCAD Dakar</color></size>
+end title
+
+' ── Référentiel ─────────────────────────────────
+entity "**structures**" as S #EFF6FF|DBEAFE {
+    <&key> id                   : BIGINT PK AI
+    ==
+    nom                         : VARCHAR(255)
+    acronyme                    : VARCHAR(255) nullable
+    <color:#94A3B8>cree_le / modifie_le / supprime_le</color>
+}
+
+' ── Utilisateurs ────────────────────────────────
+entity "**utilisateurs**" as U #F0FDF4|DCFCE7 {
+    <&key> id                   : BIGINT PK AI
+    ==
+    nom                         : VARCHAR(255)
+    courriel                    : VARCHAR(255) UNIQUE
+    telephone                   : VARCHAR(255) nullable
+    courriel_verifie_le         : TIMESTAMP nullable
+    mot_de_passe                : VARCHAR(255)
+    jeton_memorisation          : VARCHAR(100) nullable
+    ==
+    role                        : ENUM(superadmin,\n                         direction_recherche,\n                         point_focal,\n                         porteur_projet,\n                         comite_scientifique)
+    est_actif                   : TINYINT(1) DEFAULT 1
+    id_structure                : BIGINT FK nullable
+    <color:#94A3B8>cree_le / modifie_le</color>
+}
+
+' ── Pivot Observateur ───────────────────────────
+entity "**utilisateur_structures**" as US <<pivot>> #FEF9C3|FEF08A {
+    <&key> id_utilisateur       : BIGINT PK FK
+    <&key> id_structure         : BIGINT PK FK
+    <color:#94A3B8>cree_le / modifie_le</color>
+}
+
+' ── Affectations de projets ──────────────────────
+entity "**project_assignments**" as PA #FFF7ED|FFEDD5 {
+    <&key> id                   : BIGINT PK AI
+    ==
+    id_porteur                  : BIGINT FK
+    id_structure                : BIGINT FK
+    titre                       : VARCHAR(255)
+    statut                      : ENUM(pending, submitted)
+    <color:#94A3B8>cree_le / modifie_le</color>
+}
+
+' ── Projets ──────────────────────────────────────
+entity "**projects**" as P #FDF4FF|F3E8FF {
+    <&key> id                   : BIGINT PK AI
+    ==
+    id_affectation              : BIGINT FK
+    id_porteur                  : BIGINT FK
+    id_structure                : BIGINT FK
+    ==
+    <b>§1 Responsable</b>
+    responsable_nom             : VARCHAR(255)
+    courriel_contact            : VARCHAR(255)
+    telephone_contact           : VARCHAR(255) nullable
+    ==
+    <b>§2 Identification</b>
+    domaine_scientifique        : VARCHAR(255)
+    types_projet                : JSON
+    ==
+    <b>§3 Description</b>
+    resume                      : TEXT
+    problematique               : TEXT
+    solution                    : TEXT
+    ==
+    <b>§4 Résultats & Valorisation</b>
+    resultats                   : TEXT nullable
+    niveau_maturite             : VARCHAR nullable
+    types_protection            : JSON nullable
+    protection_autres           : VARCHAR nullable
+    types_valorisation          : JSON nullable
+    valorisation_autres         : VARCHAR nullable
+    ==
+    <b>§5 Impact</b>
+    types_impact                : JSON nullable
+    ==
+    <b>§6 Présentation</b>
+    formats_presentation        : JSON nullable
+    presentation_autres         : VARCHAR nullable
+    besoins_logistiques         : TEXT nullable
+    ==
+    statut                      : ENUM(draft, submitted)
+    selectionne                 : TINYINT(1) DEFAULT 0
+    selectionne_le              : TIMESTAMP nullable
+    selectionne_par             : BIGINT FK nullable
+    courriel_envoye_le          : TIMESTAMP nullable
+    <color:#94A3B8>cree_le / modifie_le</color>
+}
+
+' ── Système Laravel ──────────────────────────────
+entity "**sessions**" as SES #F8FAFC|F1F5F9 {
+    <&key> id                   : VARCHAR PK
+    ==
+    id_utilisateur              : BIGINT FK nullable
+    adresse_ip                  : VARCHAR(45) nullable
+    agent_utilisateur           : TEXT nullable
+    contenu                     : LONGTEXT
+    derniere_activite           : INT
+}
+
+entity "**jetons_reinitialisation**" as JR #F8FAFC|F1F5F9 {
+    <&key> courriel             : VARCHAR PK
+    ==
+    jeton                       : VARCHAR(255)
+    <color:#94A3B8>cree_le</color>
+}
+
+' ══════════════════════════════════════════════════
+'  RELATIONS
+' ══════════════════════════════════════════════════
+
+U  }o--||  S   : "id_structure\n(structure principale)"
+
+U  ||--o{  US  : "id_utilisateur"
+S  ||--o{  US  : "id_structure"
+
+U  ||--o{  PA  : "id_porteur"
+S  ||--o{  PA  : "id_structure"
+
+PA ||--o|  P   : "id_affectation"
+U  ||--o{  P   : "id_porteur"
+S  ||--o{  P   : "id_structure"
+U  ||--o{  P   : "selectionne_par"
+
+U  ||--o{  SES : "id_utilisateur"
+
+' ══════════════════════════════════════════════════
+'  NOTES
+' ══════════════════════════════════════════════════
+
+note top of S
+  Max <b>5 affectations</b> par structure
+  <b>SoftDeletes</b> activé
+end note
+
+note top of US
+  Pivot <b>Observateur</b> uniquement
+  (un observateur peut surveiller
+  plusieurs structures)
+end note
+
+note right of PA
+  statut <b>pending</b> → non soumis
+  statut <b>submitted</b> → soumis
+end note
+
+note bottom of P
+  statut <b>draft</b> → brouillon
+  statut <b>submitted</b> → soumis définitivement
+  ──
+  Champs JSON : types_projet, types_protection,
+  types_valorisation, types_impact,
+  formats_presentation
+end note
+
+@enduml
