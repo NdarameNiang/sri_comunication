@@ -27,7 +27,7 @@ class RegistrationController extends Controller
             'nom'              => 'required|string|max:255',
             'prenom'           => 'required|string|max:255',
             'email'            => 'nullable|email|max:255',
-            'telephone'        => 'nullable|string|max:20',
+            'telephone'        => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'institution'      => 'nullable|string|max:255',
             'fonction'         => 'nullable|string|max:255',
             'type_participant' => 'nullable|string|max:100',

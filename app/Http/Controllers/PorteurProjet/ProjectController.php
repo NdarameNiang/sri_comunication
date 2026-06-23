@@ -224,7 +224,7 @@ class ProjectController extends Controller
             'collaborateurs.*.nom'              => 'required_with:collaborateurs.*.prenom,collaborateurs.*.email|nullable|string|max:255',
             'collaborateurs.*.prenom'           => 'nullable|string|max:255',
             'collaborateurs.*.email'            => 'nullable|email|max:255',
-            'collaborateurs.*.telephone'        => 'nullable|string|max:20',
+            'collaborateurs.*.telephone'        => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'collaborateurs.*.institution'      => 'nullable|string|max:255',
             'collaborateurs.*.role'             => 'nullable|string|max:100',
         ], [

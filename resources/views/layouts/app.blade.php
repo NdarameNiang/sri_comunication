@@ -91,9 +91,13 @@
                     @include('components.icon', ['name' => 'home'])
                     <span>Tableau de bord</span>
                 </a>
+                <a href="{{ route('superadmin.roles.index') }}" class="sidebar-link {{ request()->routeIs('superadmin.roles.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'shield'])
+                    <span>Rôles & Permissions</span>
+                </a>
                 <a href="{{ route('superadmin.users.index') }}" class="sidebar-link {{ request()->routeIs('superadmin.users.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'users'])
-                    <span>Rôles & Utilisateurs</span>
+                    <span>Utilisateurs</span>
                 </a>
                 <div class="border-t border-white/10 my-3"></div>
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Paramétrage</p>

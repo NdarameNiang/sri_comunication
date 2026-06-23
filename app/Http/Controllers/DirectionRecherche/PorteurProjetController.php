@@ -33,13 +33,16 @@ class PorteurProjetController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => 'required|email|unique:users',
-            'phone'        => 'nullable|string|max:20',
-            'password'     => 'required|min:8|confirmed',
-            'structure_id' => 'required|exists:structures,id',
-            'titles'       => 'required|array|min:1|max:5',
-            'titles.*'     => 'required|string|max:500',
+            'name'             => 'required|string|max:255',
+            'email'            => 'required|email|unique:users',
+            'email_personnel'  => 'nullable|email|max:255',
+            'phone'            => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
+            'password'         => 'required|min:8|confirmed',
+            'structure_id'     => 'required|exists:structures,id',
+            'titles'           => 'required|array|min:1|max:5',
+            'titles.*'         => 'required|string|max:500',
+        ], [
+            'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
         ]);
 
         $structure = Structure::findOrFail($data['structure_id']);
@@ -57,13 +60,14 @@ class PorteurProjetController extends Controller
         }
 
         $user = User::create([
-            'name'         => $data['name'],
-            'email'        => $data['email'],
-            'phone'        => $data['phone'] ?? null,
-            'password'     => bcrypt($data['password']),
-            'role'         => 'porteur_projet',
-            'structure_id' => $data['structure_id'],
-            'is_active'    => true,
+            'name'            => $data['name'],
+            'email'           => $data['email'],
+            'email_personnel' => $data['email_personnel'] ?? null,
+            'phone'           => $data['phone'] ?? null,
+            'password'        => bcrypt($data['password']),
+            'role'            => 'porteur_projet',
+            'structure_id'    => $data['structure_id'],
+            'is_active'       => true,
         ]);
 
         foreach ($titles as $title) {
@@ -95,12 +99,15 @@ class PorteurProjetController extends Controller
     public function update(Request $request, User $porteur)
     {
         $data = $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => ['required', 'email', Rule::unique('users')->ignore($porteur->id)],
-            'phone'        => 'nullable|string|max:20',
-            'password'     => 'nullable|min:8|confirmed',
-            'structure_id' => 'required|exists:structures,id',
-            'is_active'    => 'boolean',
+            'name'            => 'required|string|max:255',
+            'email'           => ['required', 'email', Rule::unique('users')->ignore($porteur->id)],
+            'email_personnel' => 'nullable|email|max:255',
+            'phone'           => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
+            'password'        => 'nullable|min:8|confirmed',
+            'structure_id'    => 'required|exists:structures,id',
+            'is_active'       => 'boolean',
+        ], [
+            'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
         ]);
 
         if (empty($data['password'])) {

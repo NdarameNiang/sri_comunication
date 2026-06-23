@@ -31,7 +31,7 @@ class PointFocalController extends Controller
         $data = $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|email|unique:users',
-            'phone'         => 'nullable|string|max:20',
+            'phone'         => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'password'      => 'required|min:8',
             'structure_ids' => 'required|array|min:1',
             'structure_ids.*'=> 'exists:structures,id',
@@ -64,7 +64,7 @@ class PointFocalController extends Controller
         $data = $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => ['required', 'email', Rule::unique('users')->ignore($pointFocal->id)],
-            'phone'         => 'nullable|string|max:20',
+            'phone'         => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'password'      => 'nullable|min:8',
             'structure_ids' => 'required|array|min:1',
             'structure_ids.*'=> 'exists:structures,id',

@@ -33,12 +33,15 @@ class PorteurController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => 'required|email|unique:users',
-            'phone'        => 'nullable|string|max:20',
-            'structure_id' => 'required|exists:structures,id',
-            'titles'       => 'required|array|min:1|max:5',
-            'titles.*'     => 'required|string|max:500',
+            'name'            => 'required|string|max:255',
+            'email'           => 'required|email|unique:users',
+            'email_personnel' => 'nullable|email|max:255',
+            'phone'           => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
+            'structure_id'    => 'required|exists:structures,id',
+            'titles'          => 'required|array|min:1|max:5',
+            'titles.*'        => 'required|string|max:500',
+        ], [
+            'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
         ]);
 
         $structure = Structure::findOrFail($data['structure_id']);
@@ -51,12 +54,13 @@ class PorteurController extends Controller
 
         $plainPassword = Str::random(10);
         $user = User::create([
-            'name'         => $data['name'],
-            'email'        => $data['email'],
-            'phone'        => $data['phone'] ?? null,
-            'role'         => 'porteur_projet',
-            'structure_id' => $data['structure_id'],
-            'password'     => Hash::make($plainPassword),
+            'name'            => $data['name'],
+            'email'           => $data['email'],
+            'email_personnel' => $data['email_personnel'] ?? null,
+            'phone'           => $data['phone'] ?? null,
+            'role'            => 'porteur_projet',
+            'structure_id'    => $data['structure_id'],
+            'password'        => Hash::make($plainPassword),
         ]);
 
         foreach ($titles as $title) {
@@ -82,10 +86,13 @@ class PorteurController extends Controller
     public function update(Request $request, User $porteur)
     {
         $data = $request->validate([
-            'name'         => 'required|string|max:255',
-            'email'        => 'required|email|unique:users,email,' . $porteur->id,
-            'phone'        => 'nullable|string|max:20',
-            'structure_id' => 'required|exists:structures,id',
+            'name'            => 'required|string|max:255',
+            'email'           => 'required|email|unique:users,email,' . $porteur->id,
+            'email_personnel' => 'nullable|email|max:255',
+            'phone'           => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
+            'structure_id'    => 'required|exists:structures,id',
+        ], [
+            'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
         ]);
 
         $oldStructureId = $porteur->structure_id;

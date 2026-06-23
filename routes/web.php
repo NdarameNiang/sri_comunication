@@ -53,6 +53,7 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/dashboard', [SuperAdminDashboard::class, 'index'])->name('dashboard');
             Route::resource('users', UserController::class);
             Route::patch('users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
+            Route::get('/roles-permissions', [UserController::class, 'rolesPermissions'])->name('roles.index');
         });
 
     // ── Admin (superadmin + direction) ─────────────────────────────────────

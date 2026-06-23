@@ -37,13 +37,23 @@
                             @error('name') <p class="form-error">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="form-label">Téléphone</label>
-                            <input type="text" name="phone" value="{{ old('phone') }}" class="form-input" placeholder="+221 7X XXX XX XX">
+                            <label class="form-label">Téléphone <span class="text-xs text-gray-400">(7X XXX XX XX)</span></label>
+                            <input type="text" name="phone" value="{{ old('phone') }}" class="form-input @error('phone') border-red-400 @enderror" placeholder="77 000 00 00" maxlength="9">
+                            @error('phone') <p class="form-error">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="form-label">Email (identifiant de connexion) <span class="text-red-500">*</span></label>
-                            <input type="email" name="email" value="{{ old('email') }}" class="form-input @error('email') border-red-400 @enderror" required>
+                            <label class="form-label">Email institutionnel <span class="text-red-500">*</span>
+                                <span class="text-xs text-gray-400 font-normal">(utilisé pour la connexion)</span>
+                            </label>
+                            <input type="email" name="email" value="{{ old('email') }}" class="form-input @error('email') border-red-400 @enderror" required placeholder="prenom.nom@ucad.edu.sn">
                             @error('email') <p class="form-error">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="form-label">Email personnel
+                                <span class="text-xs text-gray-400 font-normal">(optionnel – email de secours)</span>
+                            </label>
+                            <input type="email" name="email_personnel" value="{{ old('email_personnel') }}" class="form-input @error('email_personnel') border-red-400 @enderror" placeholder="prenom.nom@gmail.com">
+                            @error('email_personnel') <p class="form-error">{{ $message }}</p> @enderror
                         </div>
                         <div>
                             <label class="form-label">Mot de passe <span class="text-red-500">*</span></label>

@@ -24,9 +24,12 @@ class ComiteScientifiqueController extends Controller
     {
         $data = $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users',
-            'phone'    => 'nullable|string|max:20',
+            'email'    => ['required', 'email', 'unique:users', 'regex:/@ucad\.edu\.sn$/i'],
+            'phone'    => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'password' => 'required|min:8',
+        ], [
+            'email.regex' => 'L\'email institutionnel doit être une adresse @ucad.edu.sn.',
+            'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
         ]);
 
         User::create([
@@ -51,10 +54,13 @@ class ComiteScientifiqueController extends Controller
     {
         $data = $request->validate([
             'name'      => 'required|string|max:255',
-            'email'     => ['required', 'email', Rule::unique('users')->ignore($membre->id)],
-            'phone'     => 'nullable|string|max:20',
+            'email'     => ['required', 'email', Rule::unique('users')->ignore($membre->id), 'regex:/@ucad\.edu\.sn$/i'],
+            'phone'     => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'password'  => 'nullable|min:8',
             'is_active' => 'boolean',
+        ], [
+            'email.regex' => 'L\'email institutionnel doit être une adresse @ucad.edu.sn.',
+            'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
         ]);
 
         if (!empty($data['password'])) {
