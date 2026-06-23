@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Modifier ' . ($role->label ?: $role->name))
+@section('title', 'Modifier – ' . ($role->label ?: $role->name))
 @section('page-title', 'Modifier le rôle')
 @section('page-subtitle', $role->label ?: $role->name)
 
@@ -29,12 +29,14 @@
                 </div>
 
                 <div>
-                    <label class="form-label text-gray-400">Nom technique <span class="text-xs font-normal">(non modifiable)</span></label>
-                    <input type="text" value="{{ $role->name }}" class="form-input bg-gray-50 text-gray-400 font-mono" disabled>
+                    <label class="form-label text-gray-400 text-xs uppercase tracking-wide">Nom technique — non modifiable</label>
+                    <div class="form-input bg-gray-50 text-gray-400 font-mono text-sm select-none">{{ $role->name }}</div>
                 </div>
 
-                @php $selectedPermissions = $role->permissions->pluck('name')->toArray(); @endphp
-                @include('superadmin.roles._permissions_grid', ['selectedPermissions' => old('permissions', $selectedPermissions)])
+                <div class="border-t border-gray-100 pt-5">
+                    @php $selectedPermissions = $role->permissions->pluck('name')->toArray(); @endphp
+                    @include('superadmin.roles._permissions_grid', ['selectedPermissions' => old('permissions', $selectedPermissions)])
+                </div>
 
                 <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">
                     <a href="{{ route('superadmin.roles.index') }}" class="btn-secondary">Annuler</a>

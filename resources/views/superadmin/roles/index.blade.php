@@ -1,95 +1,76 @@
 @extends('layouts.app')
-@section('title', 'Gestion des Rôles')
+@section('title', 'Rôles & Permissions')
 @section('page-title', 'Rôles & Permissions')
-@section('page-subtitle', 'Gérez les rôles et leurs droits d\'accès')
+@section('page-subtitle', 'Gérez les rôles et les droits associés')
 
 @section('content')
-<div class="space-y-6">
+@php
+$systemRoles = ['superadmin','direction_recherche','comite_scientifique','secretaire','point_focal','porteur_projet'];
 
-    {{-- En-tête actions --}}
-    <div class="flex items-center justify-between gap-4 flex-wrap">
-        <div class="flex items-center gap-3">
-            <a href="{{ route('superadmin.roles.overview') }}" class="btn-secondary text-sm">
-                Matrice des droits
-            </a>
-            <a href="{{ route('superadmin.permissions.index') }}" class="btn-secondary text-sm">
-                Gérer les permissions
-            </a>
-        </div>
-        <a href="{{ route('superadmin.roles.create') }}" class="btn-primary text-sm flex items-center gap-2">
+$palette = [
+    'superadmin'          => ['dot' => 'bg-purple-500', 'pill' => 'bg-purple-50 text-purple-700 border-purple-200',  'row' => 'border-purple-100'],
+    'direction_recherche' => ['dot' => 'bg-blue-500',   'pill' => 'bg-blue-50 text-blue-700 border-blue-200',        'row' => 'border-blue-100'],
+    'comite_scientifique' => ['dot' => 'bg-emerald-500','pill' => 'bg-emerald-50 text-emerald-700 border-emerald-200','row' => 'border-emerald-100'],
+    'secretaire'          => ['dot' => 'bg-amber-500',  'pill' => 'bg-amber-50 text-amber-700 border-amber-200',     'row' => 'border-amber-100'],
+    'point_focal'         => ['dot' => 'bg-sky-500',    'pill' => 'bg-sky-50 text-sky-700 border-sky-200',           'row' => 'border-sky-100'],
+    'porteur_projet'      => ['dot' => 'bg-rose-500',   'pill' => 'bg-rose-50 text-rose-700 border-rose-200',        'row' => 'border-rose-100'],
+];
+$default = ['dot' => 'bg-gray-400', 'pill' => 'bg-gray-50 text-gray-600 border-gray-200', 'row' => 'border-gray-100'];
+@endphp
+
+<div class="space-y-5">
+
+    {{-- Barre d'actions --}}
+    <div class="flex items-center justify-end">
+        <a href="{{ route('superadmin.roles.create') }}" class="btn-primary flex items-center gap-2 text-sm">
             @include('components.icon', ['name' => 'plus'])
             Nouveau rôle
         </a>
     </div>
 
-    {{-- Grille des rôles --}}
-    @php
-    $systemRoles = ['superadmin','direction_recherche','comite_scientifique','secretaire','point_focal','porteur_projet'];
-    $colors = [
-        'superadmin'          => ['bg' => 'bg-purple-100', 'text' => 'text-purple-700', 'border' => 'border-purple-200', 'badge' => 'bg-purple-600'],
-        'direction_recherche' => ['bg' => 'bg-blue-100',   'text' => 'text-blue-700',   'border' => 'border-blue-200',   'badge' => 'bg-blue-600'],
-        'comite_scientifique' => ['bg' => 'bg-emerald-100','text' => 'text-emerald-700','border' => 'border-emerald-200','badge' => 'bg-emerald-600'],
-        'secretaire'          => ['bg' => 'bg-amber-100',  'text' => 'text-amber-700',  'border' => 'border-amber-200',  'badge' => 'bg-amber-600'],
-        'point_focal'         => ['bg' => 'bg-sky-100',    'text' => 'text-sky-700',    'border' => 'border-sky-200',    'badge' => 'bg-sky-600'],
-        'porteur_projet'      => ['bg' => 'bg-rose-100',   'text' => 'text-rose-700',   'border' => 'border-rose-200',   'badge' => 'bg-rose-600'],
-    ];
-    @endphp
-
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+    {{-- Liste des rôles --}}
+    <div class="space-y-3">
         @foreach($roles as $role)
         @php
-            $c = $colors[$role->name] ?? ['bg'=>'bg-gray-100','text'=>'text-gray-700','border'=>'border-gray-200','badge'=>'bg-gray-600'];
-            $isSystem = in_array($role->name, $systemRoles);
+            $c       = $palette[$role->name] ?? $default;
+            $system  = in_array($role->name, $systemRoles);
+            $perms   = $role->permissions->sortBy('group');
+            $byGroup = $perms->groupBy('group');
         @endphp
-        <div class="bg-white rounded-2xl border {{ $c['border'] }} shadow-sm overflow-hidden flex flex-col">
-            {{-- Header --}}
-            <div class="{{ $c['bg'] }} px-5 py-4 flex items-start justify-between gap-3">
-                <div>
-                    <div class="flex items-center gap-2 mb-1">
-                        <span class="inline-block w-2 h-2 rounded-full {{ $c['badge'] }}"></span>
-                        <h3 class="text-sm font-bold {{ $c['text'] }}">{{ $role->label ?: $role->name }}</h3>
+
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+
+            {{-- En-tête du rôle --}}
+            <div class="flex items-center justify-between gap-4 px-5 py-4 border-b {{ $c['row'] }}">
+
+                <div class="flex items-center gap-3 min-w-0">
+                    <span class="w-3 h-3 rounded-full {{ $c['dot'] }} shrink-0"></span>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="text-sm font-bold text-gray-900">{{ $role->label ?: $role->name }}</h3>
+                            @if($system)
+                            <span class="text-[10px] font-medium bg-gray-100 text-gray-400 px-1.5 py-0.5 rounded border border-gray-200 uppercase tracking-wide">système</span>
+                            @endif
+                        </div>
+                        <p class="text-xs text-gray-400 font-mono mt-0.5">{{ $role->name }}</p>
                     </div>
-                    <p class="text-xs text-gray-400 font-mono">{{ $role->name }}</p>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <span class="{{ $c['bg'] }} {{ $c['text'] }} text-xs font-semibold px-2.5 py-1 rounded-full border {{ $c['border'] }}">
-                        {{ $role->users_count }} user{{ $role->users_count !== 1 ? 's' : '' }}
+
+                <div class="flex items-center gap-3 shrink-0">
+                    <span class="text-xs text-gray-400">
+                        {{ $role->users_count }} utilisateur{{ $role->users_count > 1 ? 's' : '' }}
                     </span>
-                    @if($isSystem)
-                    <span class="text-xs bg-gray-100 text-gray-400 px-2 py-1 rounded-full border border-gray-200">système</span>
-                    @endif
-                </div>
-            </div>
-
-            {{-- Permissions --}}
-            <div class="px-5 py-4 flex-1">
-                @if($role->permissions->count() > 0)
-                <div class="flex flex-wrap gap-1.5">
-                    @foreach($role->permissions->take(6) as $perm)
-                    <span class="text-xs px-2 py-0.5 rounded-md bg-gray-100 text-gray-600 font-mono">{{ $perm->name }}</span>
-                    @endforeach
-                    @if($role->permissions->count() > 6)
-                    <span class="text-xs px-2 py-0.5 rounded-md bg-gray-100 text-gray-400">+{{ $role->permissions->count() - 6 }}</span>
-                    @endif
-                </div>
-                @else
-                <p class="text-xs text-gray-400 italic">Aucune permission assignée</p>
-                @endif
-            </div>
-
-            {{-- Actions --}}
-            <div class="px-5 py-3 border-t border-gray-100 bg-gray-50/50 flex items-center justify-between gap-2">
-                <span class="text-xs text-gray-400">{{ $role->permissions->count() }} permission{{ $role->permissions->count() !== 1 ? 's' : '' }}</span>
-                <div class="flex items-center gap-2">
                     <a href="{{ route('superadmin.roles.edit', $role) }}"
-                       class="text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1">
+                       class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
                         @include('components.icon', ['name' => 'pencil'])
                         Modifier
                     </a>
-                    @if(!$isSystem)
-                    <form method="POST" action="{{ route('superadmin.roles.destroy', $role) }}" onsubmit="return confirm('Supprimer ce rôle ?')">
+                    @if(!$system)
+                    <form method="POST" action="{{ route('superadmin.roles.destroy', $role) }}"
+                          onsubmit="return confirm('Supprimer le rôle « {{ $role->label ?: $role->name }} » ?')">
                         @csrf @method('DELETE')
-                        <button type="submit" class="text-xs font-medium text-red-500 hover:text-red-700 flex items-center gap-1">
+                        <button type="submit"
+                                class="inline-flex items-center gap-1.5 text-xs font-medium text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg transition-colors">
                             @include('components.icon', ['name' => 'trash'])
                             Supprimer
                         </button>
@@ -97,6 +78,29 @@
                     @endif
                 </div>
             </div>
+
+            {{-- Permissions par groupe --}}
+            @if($perms->count() > 0)
+            <div class="px-5 py-3.5 flex flex-wrap gap-x-6 gap-y-3">
+                @foreach($byGroup as $group => $groupPerms)
+                <div class="flex items-start gap-2">
+                    <span class="text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap mt-0.5 min-w-[5rem]">{{ $group }}</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        @foreach($groupPerms as $perm)
+                        <span class="text-xs px-2.5 py-1 rounded-lg border font-medium {{ $c['pill'] }}">
+                            {{ $perm->label ?: $perm->name }}
+                        </span>
+                        @endforeach
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @else
+            <div class="px-5 py-3 text-xs text-gray-400 italic">
+                Aucune permission assignée à ce rôle.
+            </div>
+            @endif
+
         </div>
         @endforeach
     </div>
