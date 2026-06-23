@@ -24,16 +24,24 @@ use App\Http\Controllers\Secretaire\RegistrationController as SecretaireRegistra
 use App\Http\Controllers\Secretaire\QuestionnaireController as SecretaireQuestionnaireController;
 use App\Http\Controllers\Public\RegistrationController as PublicRegistrationController;
 use App\Http\Controllers\Public\QuestionnaireController as PublicQuestionnaireController;
+use App\Http\Controllers\Public\LandingController as PublicLandingController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Routes publiques (sans auth) ────────────────────────────────────────────
-Route::get('/', fn() => redirect()->route('login'));
+Route::get('/', function () {
+    $event = \App\Models\EventConfig::where('is_active', true)->first();
+    if ($event) {
+        return redirect()->route('public.landing', $event->event_slug);
+    }
+    return redirect()->route('login');
+});
 Route::get('/login',  [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout',[LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
 // Formulaires publics (inscription + questionnaire)
 Route::prefix('event/{eventSlug}')->group(function () {
+    Route::get('/',                [PublicLandingController::class, 'show'])->name('public.landing');
     Route::get('/inscription',     [PublicRegistrationController::class, 'show'])->name('public.registration.show');
     Route::post('/inscription',    [PublicRegistrationController::class, 'store'])->name('public.registration.store');
     Route::get('/questionnaire',   [PublicQuestionnaireController::class, 'show'])->name('public.questionnaire.show');

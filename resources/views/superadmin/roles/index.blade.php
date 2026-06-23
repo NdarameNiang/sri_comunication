@@ -57,9 +57,13 @@ $default = ['dot' => 'bg-gray-400', 'pill' => 'bg-gray-50 text-gray-600 border-g
                 </div>
 
                 <div class="flex items-center gap-3 shrink-0">
-                    <span class="text-xs text-gray-400">
-                        {{ $role->users_count }} utilisateur{{ $role->users_count > 1 ? 's' : '' }}
+                    @if($role->real_user_count > 0)
+                    <span class="text-xs text-gray-500 font-medium">
+                        {{ $role->real_user_count }} utilisateur{{ $role->real_user_count > 1 ? 's' : '' }}
                     </span>
+                    @else
+                    <span class="text-xs text-gray-300">Aucun utilisateur</span>
+                    @endif
                     <a href="{{ route('superadmin.roles.edit', $role) }}"
                        class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
                         @include('components.icon', ['name' => 'pencil'])

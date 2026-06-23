@@ -245,48 +245,79 @@
     {{-- ===== CONTENU PRINCIPAL ===== --}}
     <div class="flex-1 flex flex-col min-h-screen lg:pl-64">
 
-        {{-- Header --}}
-        <header class="sticky top-0 z-30 bg-white border-b border-gray-200 px-4 lg:px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                    {{-- Bouton menu mobile --}}
-                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    </button>
+        {{-- ═══ HEADER PHOTO UCAD ════════════════════════════════════════════════ --}}
+        <header class="sticky top-0 z-30 shadow-sm">
 
-                    {{-- Breadcrumb / Titre --}}
-                    <div>
-                        <h2 class="text-base font-semibold text-gray-900">@yield('page-title', 'Tableau de bord')</h2>
-                        @hasSection('page-subtitle')
-                            <p class="text-xs text-gray-500">@yield('page-subtitle')</p>
-                        @endif
-                    </div>
-                </div>
+            {{-- Bandeau photo UCAD --}}
+            <div class="relative overflow-hidden" style="height: 52px;">
+                <img src="{{ asset('images/ucad_bg.2.jpg') }}"
+                     alt=""
+                     class="absolute inset-0 w-full h-full object-cover object-center scale-105"
+                     onerror="this.style.display='none'">
+                {{-- Overlay --}}
+                <div class="absolute inset-0"
+                     style="background: linear-gradient(90deg, rgba(10,16,40,0.88) 0%, rgba(15,25,60,0.72) 50%, rgba(10,16,40,0.85) 100%);"></div>
 
-                <div class="flex items-center gap-3">
-                    {{-- Badge rôle --}}
-                    @php
-                        $roleColors = [
-                            'superadmin'          => 'badge-purple',
-                            'direction_recherche' => 'badge-blue',
-                            'point_focal'         => 'badge-yellow',
-                            'porteur_projet'      => 'badge-green',
-                            'comite_scientifique' => 'badge-red',
-                            'secretaire'          => 'badge-gray',
-                        ];
-                    @endphp
-                    <span class="{{ $roleColors[auth()->user()->role] ?? 'badge-gray' }}">
-                        {{ \App\Models\User::roleLabel(auth()->user()->role) }}
-                    </span>
+                {{-- Contenu bandeau --}}
+                <div class="relative z-10 h-full flex items-center justify-between px-4 lg:px-6">
 
-                    {{-- Nom utilisateur --}}
-                    <div class="hidden sm:flex items-center gap-2 text-sm text-gray-600">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                            <span class="text-blue-700 font-semibold text-xs">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                    <div class="flex items-center gap-3">
+                        {{-- Burger mobile --}}
+                        <button onclick="toggleSidebar()" class="lg:hidden p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                        </button>
+
+                        {{-- Logo UCAD --}}
+                        <img src="{{ asset('images/logo_ucad.png') }}"
+                             alt="UCAD"
+                             class="h-8 w-auto object-contain drop-shadow brightness-0 invert opacity-90"
+                             onerror="this.style.display='none'">
+
+                        {{-- Séparateur --}}
+                        <div class="hidden sm:block h-5 w-px bg-white/20"></div>
+
+                        {{-- Titre page --}}
+                        <div class="hidden sm:block">
+                            <p class="text-white font-semibold text-sm leading-none">@yield('page-title', 'Tableau de bord')</p>
+                            @hasSection('page-subtitle')
+                            <p class="text-white/50 text-xs mt-0.5">@yield('page-subtitle')</p>
+                            @endif
                         </div>
-                        <span class="font-medium">{{ auth()->user()->name }}</span>
+                    </div>
+
+                    <div class="flex items-center gap-2.5">
+                        {{-- Badge rôle --}}
+                        @php
+                            $roleColors = [
+                                'superadmin'          => 'bg-purple-500/30 text-purple-200 border-purple-400/40',
+                                'direction_recherche' => 'bg-blue-500/30 text-blue-200 border-blue-400/40',
+                                'point_focal'         => 'bg-amber-500/30 text-amber-200 border-amber-400/40',
+                                'porteur_projet'      => 'bg-emerald-500/30 text-emerald-200 border-emerald-400/40',
+                                'comite_scientifique' => 'bg-rose-500/30 text-rose-200 border-rose-400/40',
+                                'secretaire'          => 'bg-slate-500/30 text-slate-200 border-slate-400/40',
+                            ];
+                        @endphp
+                        <span class="hidden sm:inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border {{ $roleColors[auth()->user()->role] ?? 'bg-white/10 text-white/60 border-white/20' }}">
+                            {{ \App\Models\User::roleLabel(auth()->user()->role) }}
+                        </span>
+
+                        {{-- Avatar + nom --}}
+                        <div class="flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-white/15 border border-white/25 flex items-center justify-center">
+                                <span class="text-white font-semibold text-xs">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
+                            </div>
+                            <span class="hidden md:block text-white/80 text-sm font-medium">{{ auth()->user()->name }}</span>
+                        </div>
                     </div>
                 </div>
+            </div>
+
+            {{-- Sous-barre blanche : titre page sur mobile --}}
+            <div class="sm:hidden bg-white border-b border-gray-200 px-4 py-2.5">
+                <p class="text-sm font-semibold text-gray-900">@yield('page-title', 'Tableau de bord')</p>
+                @hasSection('page-subtitle')
+                <p class="text-xs text-gray-500">@yield('page-subtitle')</p>
+                @endif
             </div>
         </header>
 

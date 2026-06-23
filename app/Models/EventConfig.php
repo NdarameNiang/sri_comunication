@@ -9,7 +9,8 @@ class EventConfig extends Model
     protected $fillable = [
         'event_name', 'event_slug', 'event_description', 'organizer',
         'event_start_date', 'event_end_date',
-        'submission_open_at', 'submission_close_at', 'is_active',
+        'submission_open_at', 'submission_close_at',
+        'is_active', 'show_questionnaire',
     ];
 
     protected function casts(): array
@@ -20,6 +21,7 @@ class EventConfig extends Model
             'submission_open_at'  => 'datetime',
             'submission_close_at' => 'datetime',
             'is_active'           => 'boolean',
+            'show_questionnaire'  => 'boolean',
         ];
     }
 

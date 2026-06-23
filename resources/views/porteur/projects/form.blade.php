@@ -55,10 +55,19 @@
                         @error('responsable_nom') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Email de contact <span class="text-red-500">*</span></label>
+                        <label class="form-label">Email institutionnel <span class="text-red-500">*</span></label>
                         <input type="email" name="contact_email" value="{{ old('contact_email', $project?->contact_email ?? auth()->user()->email) }}"
                                class="form-input" {{ $readonly ? 'disabled' : '' }} required>
+                        <p class="text-xs text-gray-400 mt-1">Adresse @ucad.edu.sn de connexion</p>
                         @error('contact_email') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="form-label">Email professionnel</label>
+                        <input type="email" name="email_professionnel" value="{{ old('email_professionnel', $project?->email_professionnel) }}"
+                               placeholder="ex : labo@institution.sn"
+                               class="form-input" {{ $readonly ? 'disabled' : '' }}>
+                        <p class="text-xs text-gray-400 mt-1">Autre adresse de contact si différente</p>
+                        @error('email_professionnel') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="form-label">Téléphone de contact</label>

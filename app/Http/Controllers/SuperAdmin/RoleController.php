@@ -13,7 +13,15 @@ class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::with('permissions')->withCount('users')->get();
+        $roles = Role::with('permissions')->get();
+
+        // Compte réel par colonne users.role (source de vérité)
+        $counts = User::selectRaw('`role`, COUNT(*) as total')
+            ->groupBy('role')
+            ->pluck('total', 'role');
+
+        $roles->each(fn($r) => $r->real_user_count = $counts[$r->name] ?? 0);
+
         return view('superadmin.roles.index', compact('roles'));
     }
 
@@ -74,8 +82,9 @@ class RoleController extends Controller
             return back()->with('error', 'Les rôles système ne peuvent pas être supprimés.');
         }
 
-        if ($role->users()->count() > 0) {
-            return back()->with('error', "Impossible de supprimer : {$role->users()->count()} utilisateur(s) ont ce rôle.");
+        $realCount = User::where('role', $role->name)->count();
+        if ($realCount > 0) {
+            return back()->with('error', "Impossible de supprimer : {$realCount} utilisateur(s) ont ce rôle.");
         }
 
         $role->delete();

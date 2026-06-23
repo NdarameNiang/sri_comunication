@@ -1,82 +1,113 @@
 @extends('layouts.app')
 @section('title', 'Espace Secrétaire')
-@section('page-title', 'Espace Secrétaire')
+@section('page-title', \App\Models\User::roleLabel(auth()->user()->role))
 @section('page-subtitle', $event?->event_name ?? 'Aucun événement actif')
 
 @section('content')
 <div class="space-y-6">
 
     @if(!$event)
-        <div class="alert-error">Aucun événement actif. Demandez à l'administrateur de configurer un événement.</div>
+        <div class="alert-error">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <span>Aucun événement actif. Demandez à l'administrateur de configurer un événement.</span>
+        </div>
     @else
-    {{-- Bannière --}}
-    <div class="rounded-xl p-6 text-white" style="background: linear-gradient(135deg, #1e293b, #334155)">
-        <h1 class="text-xl font-bold">{{ $event->event_name }}</h1>
-        <p class="text-white/70 text-sm mt-1">{{ $event->event_description }}</p>
-        @if($event->event_start_date)
-            <p class="text-white/50 text-xs mt-2">{{ $event->event_start_date->format('d/m/Y') }} – {{ $event->event_end_date?->format('d/m/Y') }}</p>
-        @endif
+
+    {{-- ── Bannière événement ─────────────────────────────────────── --}}
+    <div class="dash-banner">
+        <div class="absolute right-0 top-0 w-64 h-full opacity-10 overflow-hidden pointer-events-none">
+            <svg viewBox="0 0 200 200" class="absolute -right-10 -top-10 w-72 h-72 text-white" fill="currentColor">
+                <circle cx="150" cy="50" r="80"/><circle cx="50" cy="150" r="60"/>
+            </svg>
+        </div>
+        <div class="relative">
+            <p class="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-1">Événement actif</p>
+            <h2 class="text-2xl font-extrabold text-white leading-tight">{{ $event->event_name }}</h2>
+            @if($event->event_description)
+                <p class="text-white/70 text-sm mt-1.5 max-w-xl">{{ $event->event_description }}</p>
+            @endif
+            @if($event->event_start_date)
+                <p class="text-white/50 text-xs mt-2 flex items-center gap-1.5">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5"/></svg>
+                    {{ $event->event_start_date->format('d/m/Y') }} – {{ $event->event_end_date?->format('d/m/Y') }}
+                </p>
+            @endif
+        </div>
     </div>
 
-    {{-- Stats --}}
+    {{-- ── Stat cards ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
-            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Inscriptions</p>
-            <p class="text-3xl font-bold text-gray-900">{{ $stats['inscriptions'] }}</p>
+        @foreach([
+            ['label' => 'Inscriptions',          'val' => $stats['inscriptions'],  'bg' => 'bg-blue-100',   'fg' => 'text-blue-600',   'icon' => 'M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z'],
+            ['label' => 'Présences confirmées',  'val' => $stats['presences'],     'bg' => 'bg-emerald-100','fg' => 'text-emerald-600', 'icon' => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
+            ['label' => 'Questionnaires reçus',  'val' => $stats['questionnaires'],'bg' => 'bg-purple-100', 'fg' => 'text-purple-600',  'icon' => 'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z'],
+        ] as $s)
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-icon {{ $s['bg'] }} shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ $s['fg'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $s['icon'] }}"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-3xl font-extrabold text-gray-900">{{ $s['val'] }}</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ $s['label'] }}</p>
+            </div>
         </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
-            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Présences confirmées</p>
-            <p class="text-3xl font-bold text-green-600">{{ $stats['presences'] }}</p>
+        @endforeach
+    </div>
+
+    {{-- ── Liens & QR Codes publics ───────────────────────────────── --}}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="section-title text-base">Liens & QR Codes publics</h3>
         </div>
-        <div class="bg-white rounded-xl border border-gray-200 p-5">
-            <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">Questionnaires reçus</p>
-            <p class="text-3xl font-bold text-blue-600">{{ $stats['questionnaires'] }}</p>
+        <div class="card-body grid grid-cols-1 sm:grid-cols-2 gap-4">
+            @foreach([
+                ['label' => "Formulaire d'inscription", 'route' => 'public.registration.show', 'icon' => 'M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 019.374 21c-2.331 0-4.512-.645-6.374-1.766z', 'color' => 'bg-blue-600'],
+                ['label' => "Questionnaire d'appréciation", 'route' => 'public.questionnaire.show', 'icon' => 'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z', 'color' => 'bg-purple-600'],
+            ] as $link)
+            <div class="rounded-xl border border-gray-200 p-4 flex items-start gap-4">
+                <div class="w-10 h-10 {{ $link['color'] }} rounded-xl flex items-center justify-center shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="{{ $link['icon'] }}"/>
+                    </svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-semibold text-sm text-gray-900 mb-1">{{ $link['label'] }}</p>
+                    <p class="text-xs text-gray-400 truncate mb-2">{{ route($link['route'], $event->event_slug) }}</p>
+                    <a href="{{ route($link['route'], $event->event_slug) }}" target="_blank" class="btn-secondary text-xs py-1.5">
+                        Ouvrir →
+                    </a>
+                </div>
+            </div>
+            @endforeach
         </div>
     </div>
 
-    {{-- QR codes publics --}}
-    <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <h2 class="text-base font-semibold text-gray-900 mb-4">Liens & QR Codes publics</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="border border-gray-200 rounded-lg p-4">
-                <p class="font-medium text-sm text-gray-700 mb-2">Formulaire d'inscription</p>
-                <p class="text-xs text-gray-500 break-all mb-3">{{ route('public.registration.show', $event->event_slug) }}</p>
-                <a href="{{ route('public.registration.show', $event->event_slug) }}" target="_blank"
-                   class="btn-secondary text-xs">Ouvrir le formulaire</a>
-            </div>
-            <div class="border border-gray-200 rounded-lg p-4">
-                <p class="font-medium text-sm text-gray-700 mb-2">Questionnaire d'appréciation</p>
-                <p class="text-xs text-gray-500 break-all mb-3">{{ route('public.questionnaire.show', $event->event_slug) }}</p>
-                <a href="{{ route('public.questionnaire.show', $event->event_slug) }}" target="_blank"
-                   class="btn-secondary text-xs">Ouvrir le questionnaire</a>
-            </div>
-        </div>
-    </div>
-
-    {{-- Dernières inscriptions --}}
+    {{-- ── Dernières inscriptions ──────────────────────────────────── --}}
     @if($recentRegistrations->count() > 0)
-    <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-base font-semibold text-gray-900">Dernières inscriptions</h2>
-            <a href="{{ route('secretaire.inscriptions.index') }}" class="text-sm text-blue-600 hover:underline">Voir tout</a>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="section-title text-base">Dernières inscriptions</h3>
+            <a href="{{ route('secretaire.inscriptions.index') }}" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Voir tout →</a>
         </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
+        <div class="table-container rounded-none border-0">
+            <table class="table">
                 <thead>
-                    <tr class="border-b border-gray-100">
-                        <th class="text-left py-2 px-3 text-xs text-gray-500 font-medium">Nom</th>
-                        <th class="text-left py-2 px-3 text-xs text-gray-500 font-medium">Institution</th>
-                        <th class="text-left py-2 px-3 text-xs text-gray-500 font-medium">Type</th>
-                        <th class="text-left py-2 px-3 text-xs text-gray-500 font-medium">Présence</th>
+                    <tr>
+                        <th>Nom complet</th>
+                        <th>Institution</th>
+                        <th>Type</th>
+                        <th class="text-center">Présence</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($recentRegistrations as $reg)
-                    <tr class="border-b border-gray-50 hover:bg-gray-50">
-                        <td class="py-2 px-3 font-medium">{{ $reg->fullName() }}</td>
-                        <td class="py-2 px-3 text-gray-600">{{ $reg->institution ?? '–' }}</td>
-                        <td class="py-2 px-3 text-gray-600">{{ $reg->type_participant ?? '–' }}</td>
-                        <td class="py-2 px-3">
+                    <tr>
+                        <td class="font-semibold text-gray-900">{{ $reg->fullName() }}</td>
+                        <td class="text-gray-600">{{ $reg->institution ?? '–' }}</td>
+                        <td class="text-gray-600">{{ $reg->type_participant ?? '–' }}</td>
+                        <td class="text-center">
                             @if($reg->presence_confirmee)
                                 <span class="badge-green">Présent</span>
                             @else
@@ -91,5 +122,6 @@
     </div>
     @endif
     @endif
+
 </div>
 @endsection

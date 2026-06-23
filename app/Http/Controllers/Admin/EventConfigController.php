@@ -58,7 +58,7 @@ class EventConfigController extends Controller
 
     private function validate(Request $request): array
     {
-        return $request->validate([
+        $data = $request->validate([
             'event_name'          => 'required|string|max:255',
             'event_slug'          => 'required|string|max:100|alpha_dash',
             'event_description'   => 'nullable|string',
@@ -67,6 +67,11 @@ class EventConfigController extends Controller
             'event_end_date'      => 'nullable|date|after_or_equal:event_start_date',
             'submission_open_at'  => 'nullable|date',
             'submission_close_at' => 'nullable|date|after_or_equal:submission_open_at',
+            'show_questionnaire'  => 'nullable|boolean',
         ]);
+
+        $data['show_questionnaire'] = $request->boolean('show_questionnaire');
+
+        return $data;
     }
 }

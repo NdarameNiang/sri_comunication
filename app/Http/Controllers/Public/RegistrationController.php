@@ -26,12 +26,17 @@ class RegistrationController extends Controller
         $data = $request->validate([
             'nom'              => 'required|string|max:255',
             'prenom'           => 'required|string|max:255',
-            'email'            => 'nullable|email|max:255',
+            'email'              => 'nullable|email|max:255|same:email_confirmation',
+            'email_confirmation' => 'nullable|email|max:255',
             'telephone'        => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'institution'      => 'nullable|string|max:255',
             'fonction'         => 'nullable|string|max:255',
             'type_participant' => 'nullable|string|max:100',
+        ], [
+            'email.same' => 'Les deux adresses email ne correspondent pas.',
         ]);
+
+        unset($data['email_confirmation']);
 
         $token = Str::uuid()->toString();
         $data['event_config_id']  = $event->id;

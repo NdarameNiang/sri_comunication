@@ -19,8 +19,10 @@ class LoginController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => 'required|email',
+            'email'    => ['required', 'email', 'regex:/^[^@]+@ucad\.edu\.sn$/'],
             'password' => 'required',
+        ], [
+            'email.regex' => 'Seules les adresses @ucad.edu.sn sont autorisées.',
         ]);
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {

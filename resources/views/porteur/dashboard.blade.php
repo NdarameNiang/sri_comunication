@@ -1,53 +1,64 @@
 @extends('layouts.app')
 @section('title', 'Mon espace projet')
-@section('page-title', 'Mon espace projet')
+@section('page-title', \App\Models\User::roleLabel(auth()->user()->role))
 @section('page-subtitle', 'SRI 2026 – Appel à communication')
 
 @section('content')
 <div class="space-y-6">
 
-    {{-- Bienvenue --}}
-    <div class="rounded-xl p-6" style="background: linear-gradient(135deg, #1e293b, #334155);color:#f1f5f9;">
-        <div class="flex items-start justify-between">
+    {{-- ── Bannière bienvenue ─────────────────────────────────────── --}}
+    <div class="dash-banner">
+        {{-- motif décoratif --}}
+        <div class="absolute right-0 top-0 w-64 h-full opacity-10 overflow-hidden pointer-events-none">
+            <svg viewBox="0 0 200 200" class="absolute -right-10 -top-10 w-72 h-72 text-white" fill="currentColor">
+                <circle cx="150" cy="50" r="80"/><circle cx="50" cy="150" r="60"/>
+            </svg>
+        </div>
+        <div class="relative flex items-start justify-between gap-4">
             <div>
-                <h2 class="text-xl font-bold mb-1">Bienvenue, {{ auth()->user()->name }}</h2>
-                <p class="text-sm" style="color:#94a3b8;">
-                    Structure : <strong style="color:#f1f5f9;">{{ auth()->user()->structure?->acronym }} – {{ auth()->user()->structure?->name }}</strong>
+                <p class="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-1">Bienvenue</p>
+                <h2 class="text-2xl font-extrabold text-white leading-tight">{{ auth()->user()->name }}</h2>
+                <p class="text-blue-200 text-sm mt-1">
+                    {{ auth()->user()->structure?->acronym }} · {{ auth()->user()->structure?->name }}
                 </p>
-                <p class="text-xs mt-1" style="color:#64748b;">Remplissez le formulaire de chaque projet assigné et soumettez-le avant la date limite.</p>
+                <p class="text-white/50 text-xs mt-2">Remplissez et soumettez vos projets assignés avant la date limite.</p>
             </div>
-            <div class="hidden sm:flex w-16 h-16 bg-white/10 rounded-xl items-center justify-center shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <div class="hidden sm:flex w-14 h-14 bg-white/15 rounded-2xl items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                 </svg>
             </div>
         </div>
-
     </div>
 
-    {{-- Mini stats --}}
+    {{-- ── Stat cards ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
         @foreach([
-            ['label' => 'Total assignés', 'val' => $tabCounts['tous'],      'bar' => 'bg-blue-500'],
-            ['label' => 'Non entamés',    'val' => $tabCounts['pending'],   'bar' => 'bg-red-400'],
-            ['label' => 'En cours',       'val' => $tabCounts['draft'],     'bar' => 'bg-amber-400'],
-            ['label' => 'Soumis',         'val' => $tabCounts['submitted'], 'bar' => 'bg-emerald-500'],
+            ['label' => 'Total assignés', 'val' => $tabCounts['tous'],      'bg' => 'bg-blue-100',   'fg' => 'text-blue-600',    'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+            ['label' => 'Non entamés',    'val' => $tabCounts['pending'],   'bg' => 'bg-red-100',    'fg' => 'text-red-500',     'icon' => 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z'],
+            ['label' => 'En cours',       'val' => $tabCounts['draft'],     'bg' => 'bg-amber-100',  'fg' => 'text-amber-600',   'icon' => 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125'],
+            ['label' => 'Soumis',         'val' => $tabCounts['submitted'], 'bg' => 'bg-emerald-100','fg' => 'text-emerald-600',  'icon' => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
         ] as $s)
-        <div class="card p-5">
-            <p class="text-2xl font-bold text-gray-900">{{ $s['val'] }}</p>
-            <p class="text-xs text-gray-500 mt-1">{{ $s['label'] }}</p>
-            <div class="mt-3 h-1 rounded-full {{ $s['bar'] }} opacity-30"></div>
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-icon {{ $s['bg'] }} shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ $s['fg'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $s['icon'] }}"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-2xl font-extrabold text-gray-900">{{ $s['val'] }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">{{ $s['label'] }}</p>
+            </div>
         </div>
         @endforeach
     </div>
 
-    {{-- Tableau par onglets --}}
+    {{-- ── Tableau par onglets ─────────────────────────────────────── --}}
     <div class="card">
         <div class="card-header">
             <h3 class="section-title text-base">Mes projets assignés</h3>
         </div>
 
-        {{-- Onglets --}}
         @php
         $tabs = [
             'tous'      => 'Tous',
@@ -71,16 +82,15 @@
             @endforeach
         </div>
 
-        {{-- Tableau --}}
         @if($displayed->isEmpty())
-        <div class="px-6 py-14 text-center">
-            <div class="w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="px-6 py-16 text-center">
+            <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
             </div>
             @if($tab === 'tous')
-                <p class="text-gray-500 text-sm">Aucun projet ne vous a encore été assigné.</p>
+                <p class="text-gray-600 font-medium text-sm">Aucun projet ne vous a encore été assigné.</p>
                 <p class="text-gray-400 text-xs mt-1">Contactez la Direction de la Recherche.</p>
             @else
                 <p class="text-gray-500 text-sm">Aucun projet dans cette catégorie.</p>
@@ -107,30 +117,21 @@
                         $notStarted  = ! $project;
                     @endphp
                     <tr>
-                        {{-- Numéro --}}
                         <td>
-                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold
                                 {{ $isSubmitted ? 'bg-emerald-100 text-emerald-700' : ($isDraft ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500') }}">
                                 {{ $i + 1 }}
                             </div>
                         </td>
-
-                        {{-- Titre --}}
                         <td class="max-w-xs">
-                            <p class="font-medium text-gray-900 text-sm leading-snug" title="{{ $assignment->title }}">
+                            <p class="font-semibold text-gray-900 text-sm leading-snug" title="{{ $assignment->title }}">
                                 {{ Str::limit($assignment->title, 70) }}
                             </p>
                             @if($project)
                             <p class="text-xs text-gray-400 mt-0.5">{{ $project->scientific_domain }}</p>
                             @endif
                         </td>
-
-                        {{-- Structure --}}
-                        <td>
-                            <span class="badge-blue">{{ $assignment->structure->acronym }}</span>
-                        </td>
-
-                        {{-- Statut --}}
+                        <td><span class="badge-blue">{{ $assignment->structure->acronym }}</span></td>
                         <td class="text-center">
                             @if($isSubmitted)
                                 <span class="badge-green">✓ Soumis</span>
@@ -140,19 +141,15 @@
                                 <span class="badge-gray">Non entamé</span>
                             @endif
                         </td>
-
-                        {{-- Actions --}}
                         <td>
                             @if($isSubmitted)
-                                <a href="{{ route('porteur.projects.show', $project) }}"
-                                   class="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1">
+                                <a href="{{ route('porteur.projects.show', $project) }}" class="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1">
                                     @include('components.icon', ['name' => 'eye'])
                                     Consulter
                                 </a>
                             @elseif($isDraft)
                                 <div class="flex items-center gap-2">
-                                    <a href="{{ route('porteur.projects.edit', $project) }}"
-                                       class="btn-primary text-xs px-3 py-1.5 inline-flex items-center gap-1">
+                                    <a href="{{ route('porteur.projects.edit', $project) }}" class="btn-primary text-xs px-3 py-1.5 inline-flex items-center gap-1">
                                         @include('components.icon', ['name' => 'pencil'])
                                         Continuer
                                     </a>
@@ -161,16 +158,14 @@
                                           data-confirm-title="Soumettre le projet"
                                           data-confirm-type="warning">
                                         @csrf
-                                        <button type="submit"
-                                                class="btn-success text-xs px-3 py-1.5 inline-flex items-center gap-1">
+                                        <button type="submit" class="btn-success text-xs px-3 py-1.5 inline-flex items-center gap-1">
                                             @include('components.icon', ['name' => 'check'])
                                             Soumettre
                                         </button>
                                     </form>
                                 </div>
                             @else
-                                <a href="{{ route('porteur.projects.create', $assignment) }}"
-                                   class="btn-primary text-xs px-3 py-1.5 inline-flex items-center gap-1">
+                                <a href="{{ route('porteur.projects.create', $assignment) }}" class="btn-primary text-xs px-3 py-1.5 inline-flex items-center gap-1">
                                     @include('components.icon', ['name' => 'plus'])
                                     Remplir
                                 </a>
@@ -185,13 +180,13 @@
     </div>
 
     {{-- Instructions --}}
-    <div class="card bg-blue-50 border-blue-100">
-        <div class="card-body">
-            <h4 class="font-semibold text-blue-900 mb-3 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                Instructions
-            </h4>
-            <ul class="text-sm text-blue-800 space-y-1.5 list-disc list-inside">
+    <div class="alert-info">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <div>
+            <p class="font-semibold text-blue-900 mb-1.5">Instructions</p>
+            <ul class="text-sm text-blue-800 space-y-1 list-disc list-inside">
                 <li>Remplissez complètement le formulaire de chaque projet assigné.</li>
                 <li>Vous pouvez sauvegarder en brouillon et revenir plus tard.</li>
                 <li>Une fois soumis, le formulaire ne peut plus être modifié.</li>

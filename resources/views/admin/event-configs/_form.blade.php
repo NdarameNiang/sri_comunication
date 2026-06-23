@@ -50,6 +50,26 @@
     </div>
 </div>
 
+{{-- Options publiques --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Options de la page publique</p>
+    <label class="flex items-center gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+        <div class="relative inline-flex items-center">
+            <input type="hidden" name="show_questionnaire" value="0">
+            <input type="checkbox" name="show_questionnaire" value="1"
+                   id="show_questionnaire"
+                   {{ old('show_questionnaire', $eventConfig->show_questionnaire ?? false) ? 'checked' : '' }}
+                   class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-checked:bg-blue-600 rounded-full transition-colors"></div>
+            <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+        </div>
+        <div>
+            <p class="text-sm font-semibold text-gray-800">Afficher le bouton questionnaire</p>
+            <p class="text-xs text-gray-400 mt-0.5">Rend le bouton questionnaire visible sur la page d'accueil publique</p>
+        </div>
+    </label>
+</div>
+
 {{-- Période de soumission --}}
 <div>
     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Période de soumission des projets</p>

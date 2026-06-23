@@ -8,7 +8,7 @@ class Project extends Model
 {
     protected $fillable = [
         'assignment_id', 'porteur_id', 'structure_id',
-        'responsable_nom', 'contact_email', 'contact_phone',
+        'responsable_nom', 'contact_email', 'email_professionnel', 'contact_phone',
         'scientific_domain', 'project_types',
         'summary', 'problematic', 'solution',
         'results', 'maturity_level',

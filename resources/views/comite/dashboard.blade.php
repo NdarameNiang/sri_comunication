@@ -1,25 +1,30 @@
 @extends('layouts.app')
 @section('title', 'Sélection des projets')
-@section('page-title', 'Comité Scientifique – Sélection')
+@section('page-title', \App\Models\User::roleLabel(auth()->user()->role))
 @section('page-subtitle', 'Évaluation et sélection des projets soumis')
 
 @section('content')
 <div class="space-y-6">
 
-    {{-- Stats --}}
+    {{-- ── Stat cards ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-3 gap-4">
-        <div class="card p-5 border-l-4 border-blue-500">
-            <p class="text-2xl font-bold text-gray-900">{{ $stats['total'] }}</p>
-            <p class="text-xs text-gray-500 mt-1">Projets soumis</p>
+        @foreach([
+            ['label' => 'Projets soumis',      'val' => $stats['total'],    'bg' => 'bg-blue-100',   'fg' => 'text-blue-600',   'icon' => 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z'],
+            ['label' => 'Sélectionnés',        'val' => $stats['selected'], 'bg' => 'bg-emerald-100','fg' => 'text-emerald-600', 'icon' => 'M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z'],
+            ['label' => 'Emails envoyés',      'val' => $stats['sent'],     'bg' => 'bg-amber-100',  'fg' => 'text-amber-600',  'icon' => 'M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75'],
+        ] as $s)
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-icon {{ $s['bg'] }} shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ $s['fg'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $s['icon'] }}"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-3xl font-extrabold text-gray-900">{{ $s['val'] }}</p>
+                <p class="text-sm text-gray-500 mt-0.5">{{ $s['label'] }}</p>
+            </div>
         </div>
-        <div class="card p-5 border-l-4 border-emerald-500">
-            <p class="text-2xl font-bold text-emerald-700">{{ $stats['selected'] }}</p>
-            <p class="text-xs text-gray-500 mt-1">Projets sélectionnés</p>
-        </div>
-        <div class="card p-5 border-l-4 border-amber-500">
-            <p class="text-2xl font-bold text-amber-700">{{ $stats['sent'] }}</p>
-            <p class="text-xs text-gray-500 mt-1">Emails envoyés</p>
-        </div>
+        @endforeach
     </div>
 
     {{-- Action envoi d'emails --}}

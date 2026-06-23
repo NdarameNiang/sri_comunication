@@ -6,98 +6,122 @@
 
 @section('content')
 
-{{-- Intro --}}
-<div class="text-center mb-6">
-    <p class="text-gray-500 text-sm max-w-lg mx-auto">
-        Remplissez ce formulaire pour vous inscrire à <strong>{{ $event->event_name }}</strong>.
-        Vous recevrez un QR code de confirmation à présenter lors de l'événement.
-    </p>
-</div>
-
-<div class="bg-white rounded-2xl border border-gray-200 shadow-md overflow-hidden">
+<div class="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
 
     {{-- En-tête formulaire --}}
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-        <h2 class="text-white font-semibold text-base">Vos informations</h2>
-        <p class="text-blue-200 text-xs mt-0.5">Tous les champs marqués * sont obligatoires</p>
+    <div class="px-6 py-5 border-b border-gray-100 flex items-center gap-3">
+        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 019.374 21c-2.331 0-4.512-.645-6.374-1.766z"/>
+            </svg>
+        </div>
+        <div>
+            <h2 class="font-bold text-gray-900 text-base leading-tight">Vos informations</h2>
+            <p class="text-xs text-gray-400 mt-0.5">Les champs marqués <span class="text-red-500 font-semibold">*</span> sont obligatoires</p>
+        </div>
     </div>
 
-    <form method="POST" action="{{ route('public.registration.store', $event->event_slug) }}" class="p-6 space-y-5">
+    <form method="POST" action="{{ route('public.registration.store', $event->event_slug) }}" class="p-6 space-y-6">
         @csrf
 
-        {{-- Identité --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                <label class="form-label">Prénom <span class="text-red-500">*</span></label>
-                <input type="text" name="prenom" value="{{ old('prenom') }}" required
-                       class="form-input @error('prenom') border-red-400 @enderror"
-                       placeholder="Votre prénom">
-                @error('prenom') <p class="form-error">{{ $message }}</p> @enderror
-            </div>
-            <div>
-                <label class="form-label">Nom <span class="text-red-500">*</span></label>
-                <input type="text" name="nom" value="{{ old('nom') }}" required
-                       class="form-input @error('nom') border-red-400 @enderror"
-                       placeholder="Votre nom de famille">
-                @error('nom') <p class="form-error">{{ $message }}</p> @enderror
-            </div>
-        </div>
-
-        {{-- Contact --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                <label class="form-label">Adresse email</label>
-                <input type="email" name="email" value="{{ old('email') }}"
-                       class="form-input @error('email') border-red-400 @enderror"
-                       placeholder="votre@email.com">
-                @error('email') <p class="form-error">{{ $message }}</p> @enderror
-            </div>
-            <div>
-                <label class="form-label">Téléphone <span class="text-xs text-gray-400">(7X XXX XX XX)</span></label>
-                <input type="text" name="telephone" value="{{ old('telephone') }}"
-                       class="form-input @error('telephone') border-red-400 @enderror"
-                       placeholder="77 000 00 00" maxlength="9">
-                @error('telephone') <p class="form-error">{{ $message }}</p> @enderror
+        {{-- Section : Identité --}}
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Identité</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Prénom <span class="text-red-500">*</span></label>
+                    <input type="text" name="prenom" value="{{ old('prenom') }}" required
+                           class="form-input @error('prenom') border-red-400 bg-red-50 @enderror"
+                           placeholder="Votre prénom">
+                    @error('prenom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="form-label">Nom <span class="text-red-500">*</span></label>
+                    <input type="text" name="nom" value="{{ old('nom') }}" required
+                           class="form-input @error('nom') border-red-400 bg-red-50 @enderror"
+                           placeholder="Votre nom de famille">
+                    @error('nom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
             </div>
         </div>
 
-        {{-- Professionnel --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-                <label class="form-label">Institution / Établissement</label>
-                <input type="text" name="institution" value="{{ old('institution') }}"
-                       class="form-input" placeholder="UCAD, ISED, autre...">
-            </div>
-            <div>
-                <label class="form-label">Fonction / Titre</label>
-                <input type="text" name="fonction" value="{{ old('fonction') }}"
-                       class="form-input" placeholder="Enseignant-chercheur, Étudiant...">
+        {{-- Section : Contact --}}
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Contact</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Adresse email</label>
+                    <input type="email" name="email" value="{{ old('email') }}"
+                           class="form-input @error('email') border-red-400 bg-red-50 @enderror"
+                           placeholder="votre@email.com" autocomplete="email">
+                    @error('email') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="form-label">Confirmer l'email</label>
+                    <input type="email" name="email_confirmation" value="{{ old('email_confirmation') }}"
+                           class="form-input @error('email_confirmation') border-red-400 bg-red-50 @enderror"
+                           placeholder="votre@email.com" autocomplete="off">
+                    @error('email_confirmation') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="form-label">
+                        Téléphone
+                        <span class="text-gray-400 font-normal ml-1">(7X XXX XX XX)</span>
+                    </label>
+                    <input type="text" name="telephone" value="{{ old('telephone') }}"
+                           class="form-input @error('telephone') border-red-400 bg-red-50 @enderror"
+                           placeholder="77 000 00 00" maxlength="9" inputmode="numeric">
+                    @error('telephone') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
             </div>
         </div>
 
-        {{-- Type participant --}}
+        {{-- Section : Professionnel --}}
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Affiliation professionnelle</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Institution / Établissement</label>
+                    <input type="text" name="institution" value="{{ old('institution') }}"
+                           class="form-input" placeholder="UCAD, ISED, autre…">
+                </div>
+                <div>
+                    <label class="form-label">Fonction / Titre</label>
+                    <input type="text" name="fonction" value="{{ old('fonction') }}"
+                           class="form-input" placeholder="Enseignant-chercheur, Étudiant…">
+                </div>
+            </div>
+        </div>
+
+        {{-- Section : Type participant --}}
         <div>
             <label class="form-label">Type de participant</label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
+            <select name="type_participant" class="form-select @error('type_participant') border-red-400 bg-red-50 @enderror">
+                <option value="">— Sélectionner votre profil —</option>
                 @foreach($participantTypes as $opt)
-                <label class="flex items-center gap-2 p-3 rounded-xl border {{ old('type_participant') === $opt->value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                    <input type="radio" name="type_participant" value="{{ $opt->value }}"
-                           {{ old('type_participant') === $opt->value ? 'checked' : '' }}
-                           class="w-4 h-4 text-blue-600">
-                    <span class="text-sm font-medium text-gray-700">{{ $opt->label }}</span>
-                </label>
+                <option value="{{ $opt->value }}" {{ old('type_participant') === $opt->value ? 'selected' : '' }}>
+                    {{ $opt->label }}
+                </option>
                 @endforeach
-            </div>
+            </select>
+            @error('type_participant') <p class="form-error">{{ $message }}</p> @enderror
         </div>
 
-        <div class="pt-2">
+        {{-- Bouton --}}
+        <div class="pt-2 border-t border-gray-100">
             <button type="submit"
-                    style="background: linear-gradient(135deg, #1e40af 0%, #3730a3 100%);"
-                    class="w-full text-white font-semibold py-3.5 px-6 rounded-xl hover:opacity-90 transition-opacity text-base shadow-md">
-                Confirmer mon inscription →
+                    class="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-white font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 hover:opacity-95 active:scale-[.99]"
+                    style="background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Confirmer mon inscription
             </button>
-            <p class="text-xs text-gray-400 text-center mt-2">Vous recevrez un QR code de confirmation</p>
+            <p class="text-xs text-gray-400 text-center mt-2.5">
+                Un QR code de confirmation vous sera délivré immédiatement
+            </p>
         </div>
     </form>
 </div>
+
 @endsection

@@ -1,23 +1,29 @@
 @extends('layouts.app')
 @section('title', 'Tableau de bord – Observateur')
-@section('page-title', 'Tableau de bord – Observateur')
+@section('page-title', \App\Models\User::roleLabel(auth()->user()->role))
 @section('page-subtitle', 'Suivi des projets des structures que vous observez')
 
 @section('content')
 <div class="space-y-6">
 
-    {{-- Stats --}}
+    {{-- ── Stat cards ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach([
-            ['label' => 'Total affectations', 'value' => $stats['total'],       'bar' => 'bg-blue-500'],
-            ['label' => 'Non entamés',         'value' => $stats['not_started'], 'bar' => 'bg-red-400'],
-            ['label' => 'En cours',            'value' => $stats['draft'],       'bar' => 'bg-amber-400'],
-            ['label' => 'Soumis',              'value' => $stats['submitted'],   'bar' => 'bg-emerald-500'],
+            ['label' => 'Total affectations', 'value' => $stats['total'],       'bg' => 'bg-blue-100',   'fg' => 'text-blue-600',   'icon' => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
+            ['label' => 'Non entamés',         'value' => $stats['not_started'], 'bg' => 'bg-red-100',    'fg' => 'text-red-500',    'icon' => 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z'],
+            ['label' => 'En cours',            'value' => $stats['draft'],       'bg' => 'bg-amber-100',  'fg' => 'text-amber-600',  'icon' => 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125'],
+            ['label' => 'Soumis',              'value' => $stats['submitted'],   'bg' => 'bg-emerald-100','fg' => 'text-emerald-600', 'icon' => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
         ] as $c)
-        <div class="card p-5">
-            <p class="text-2xl font-bold text-gray-900">{{ $c['value'] }}</p>
-            <p class="text-xs text-gray-500 mt-1">{{ $c['label'] }}</p>
-            <div class="mt-3 h-1 rounded-full {{ $c['bar'] }} opacity-30"></div>
+        <div class="stat-card flex items-center gap-4">
+            <div class="stat-icon {{ $c['bg'] }} shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ $c['fg'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $c['icon'] }}"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-2xl font-extrabold text-gray-900">{{ $c['value'] }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">{{ $c['label'] }}</p>
+            </div>
         </div>
         @endforeach
     </div>

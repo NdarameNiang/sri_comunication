@@ -198,6 +198,7 @@ class ProjectController extends Controller
         return $request->validate([
             'responsable_nom'                   => 'required|string|max:255',
             'contact_email'                     => 'required|email|max:255',
+            'email_professionnel'               => 'nullable|email|max:255',
             'contact_phone'                     => 'nullable|string|max:20',
             'scientific_domain'                 => 'required|string|max:255',
             'project_types'                     => 'required|array|min:1',

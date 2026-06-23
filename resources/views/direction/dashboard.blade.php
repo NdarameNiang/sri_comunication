@@ -1,27 +1,30 @@
 @extends('layouts.app')
 @section('title', 'Tableau de bord')
-@section('page-title', 'Organisateur')
+@section('page-title', \App\Models\User::roleLabel(auth()->user()->role))
 @section('page-subtitle', 'Pilotage de l\'appel à communication SRI 2026')
 
 @section('content')
 <div class="space-y-6">
 
-    {{-- ── Stats ──────────────────────────────────────────────────── --}}
+    {{-- ── Stat cards ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        @php
-        $cards = [
-            ['label' => 'Porteurs de projet',  'value' => $stats['porteurs'],     'bar' => 'bg-emerald-500'],
-            ['label' => 'Observateurs',        'value' => $stats['point_focaux'], 'bar' => 'bg-amber-500'],
-            ['label' => 'Comité Scientifique',  'value' => $stats['comite'],       'bar' => 'bg-purple-500'],
-            ['label' => 'Projets assignés',     'value' => $stats['assignments'],  'bar' => 'bg-blue-500'],
-            ['label' => 'Projets soumis',       'value' => $stats['submitted'],    'bar' => 'bg-cyan-500'],
-        ];
-        @endphp
-        @foreach($cards as $c)
-        <div class="card p-5">
-            <p class="text-2xl font-bold text-gray-900">{{ $c['value'] }}</p>
-            <p class="text-xs text-gray-500 mt-1">{{ $c['label'] }}</p>
-            <div class="mt-3 h-1 rounded-full {{ $c['bar'] }} opacity-30"></div>
+        @foreach([
+            ['label' => 'Porteurs de projet',  'value' => $stats['porteurs'],     'bg' => 'bg-emerald-100', 'fg' => 'text-emerald-600', 'icon' => 'M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z'],
+            ['label' => 'Observateurs',        'value' => $stats['point_focaux'], 'bg' => 'bg-amber-100',   'fg' => 'text-amber-600',   'icon' => 'M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z M15 12a3 3 0 11-6 0 3 3 0 016 0z'],
+            ['label' => 'Comité Scientifique', 'value' => $stats['comite'],       'bg' => 'bg-purple-100',  'fg' => 'text-purple-600',  'icon' => 'M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5'],
+            ['label' => 'Projets assignés',    'value' => $stats['assignments'],  'bg' => 'bg-blue-100',    'fg' => 'text-blue-600',    'icon' => 'M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z'],
+            ['label' => 'Projets soumis',      'value' => $stats['submitted'],    'bg' => 'bg-cyan-100',    'fg' => 'text-cyan-600',    'icon' => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
+        ] as $c)
+        <div class="stat-card flex items-center gap-3">
+            <div class="stat-icon {{ $c['bg'] }} shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ $c['fg'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="{{ $c['icon'] }}"/>
+                </svg>
+            </div>
+            <div>
+                <p class="text-2xl font-extrabold text-gray-900">{{ $c['value'] }}</p>
+                <p class="text-xs text-gray-500 mt-0.5">{{ $c['label'] }}</p>
+            </div>
         </div>
         @endforeach
     </div>
@@ -29,20 +32,20 @@
     {{-- ── Actions rapides ─────────────────────────────────────────── --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         @foreach([
-            ['route' => 'direction.porteurs.create',    'label' => 'Nouveau porteur',    'sub' => 'Créer un compte porteur',  'color' => 'emerald'],
-            ['route' => 'direction.point-focaux.create','label' => 'Nouvel Observateur', 'sub' => 'Affecter un observateur', 'color' => 'amber'],
-            ['route' => 'direction.comite.create',      'label' => 'Membre comité',       'sub' => 'Ajouter un évaluateur',   'color' => 'purple'],
+            ['route' => 'direction.porteurs.create',    'label' => 'Nouveau porteur',    'sub' => 'Créer un compte porteur', 'bg' => 'bg-emerald-100', 'fg' => 'text-emerald-600', 'hbg' => 'hover:bg-emerald-200'],
+            ['route' => 'direction.point-focaux.create','label' => 'Nouvel Observateur', 'sub' => 'Affecter un observateur', 'bg' => 'bg-amber-100',   'fg' => 'text-amber-600',   'hbg' => 'hover:bg-amber-200'],
+            ['route' => 'direction.comite.create',      'label' => 'Membre comité',       'sub' => 'Ajouter un évaluateur',  'bg' => 'bg-purple-100',  'fg' => 'text-purple-600',  'hbg' => 'hover:bg-purple-200'],
         ] as $action)
         <a href="{{ route($action['route']) }}"
-           class="card p-5 hover:shadow-md transition-shadow group flex items-center gap-4">
-            <div class="w-12 h-12 bg-{{ $action['color'] }}-100 rounded-xl flex items-center justify-center group-hover:bg-{{ $action['color'] }}-200 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-{{ $action['color'] }}-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+           class="card p-5 hover:shadow-md transition-all group flex items-center gap-4">
+            <div class="w-12 h-12 {{ $action['bg'] }} {{ $action['hbg'] }} rounded-xl flex items-center justify-center transition-colors shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 {{ $action['fg'] }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
                 </svg>
             </div>
             <div>
                 <p class="font-semibold text-gray-900 text-sm">{{ $action['label'] }}</p>
-                <p class="text-xs text-gray-500">{{ $action['sub'] }}</p>
+                <p class="text-xs text-gray-400 mt-0.5">{{ $action['sub'] }}</p>
             </div>
         </a>
         @endforeach
