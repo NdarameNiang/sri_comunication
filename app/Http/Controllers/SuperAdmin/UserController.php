@@ -124,11 +124,6 @@ class UserController extends Controller
 
     public function rolesPermissions()
     {
-        $stats = User::selectRaw('role, COUNT(*) as total, SUM(is_active) as actifs')
-            ->groupBy('role')
-            ->pluck('total', 'role')
-            ->toArray();
-
-        return view('superadmin.roles-permissions', compact('stats'));
+        return redirect()->route('superadmin.roles.index');
     }
 }

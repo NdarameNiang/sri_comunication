@@ -15,6 +15,8 @@ use App\Http\Controllers\PorteurProjet\ProjectController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
 use App\Http\Controllers\Profile\PasswordController;
 use App\Http\Controllers\SuperAdmin\UserController;
+use App\Http\Controllers\SuperAdmin\RoleController;
+use App\Http\Controllers\SuperAdmin\PermissionController;
 use App\Http\Controllers\Admin\FormOptionController;
 use App\Http\Controllers\Admin\EventConfigController as AdminEventConfigController;
 use App\Http\Controllers\Secretaire\DashboardController as SecretaireDashboard;
@@ -53,7 +55,11 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/dashboard', [SuperAdminDashboard::class, 'index'])->name('dashboard');
             Route::resource('users', UserController::class);
             Route::patch('users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
-            Route::get('/roles-permissions', [UserController::class, 'rolesPermissions'])->name('roles.index');
+            Route::get('/roles-permissions', [UserController::class, 'rolesPermissions'])->name('roles.overview');
+            // CRUD Rôles
+            Route::resource('roles', RoleController::class)->except(['show']);
+            // CRUD Permissions
+            Route::resource('permissions', PermissionController::class)->except(['show']);
         });
 
     // ── Admin (superadmin + direction) ─────────────────────────────────────
