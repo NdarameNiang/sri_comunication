@@ -144,7 +144,7 @@
                         {{-- Actions --}}
                         <td>
                             @if($isSubmitted)
-                                <a href="{{ route('porteur.projects.edit', $project) }}"
+                                <a href="{{ route('porteur.projects.show', $project) }}"
                                    class="btn-secondary text-xs px-3 py-1.5 inline-flex items-center gap-1">
                                     @include('components.icon', ['name' => 'eye'])
                                     Consulter

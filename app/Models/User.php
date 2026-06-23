@@ -57,6 +57,8 @@ class User extends Authenticatable
         return in_array($this->role, (array) $roles);
     }
 
+    public function isSecretaire(): bool { return $this->role === 'secretaire'; }
+
     public function getDashboardRoute(): string
     {
         return match($this->role) {
@@ -65,6 +67,7 @@ class User extends Authenticatable
             'porteur_projet'      => 'porteur.dashboard',
             'point_focal'         => 'point-focal.dashboard',
             'comite_scientifique' => 'comite.dashboard',
+            'secretaire'          => 'secretaire.dashboard',
             default               => 'login',
         };
     }
@@ -77,6 +80,7 @@ class User extends Authenticatable
             'point_focal'         => 'Observateur',
             'porteur_projet'      => 'Porteur de Projet',
             'comite_scientifique' => 'Comité Scientifique',
+            'secretaire'          => 'Secrétaire',
             default               => ucfirst($role),
         };
     }

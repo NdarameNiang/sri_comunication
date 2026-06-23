@@ -54,13 +54,14 @@
     <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-64 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0" style="background: #0f1629;">
 
         {{-- Logo --}}
+        @php $activeEvent = \App\Models\EventConfig::active(); @endphp
         <div class="flex items-center gap-3 px-4 py-4 border-b border-white/10">
             <img src="{{ asset('images/logo_ucad.png') }}"
                  alt="Logo UCAD"
                  class="h-10 w-auto object-contain shrink-0 drop-shadow"
                  onerror="this.style.display='none'">
             <div class="flex-1 min-w-0 border-l border-white/15 pl-3">
-                <p class="text-white font-bold text-sm leading-tight tracking-wide">SRI 2026</p>
+                <p class="text-white font-bold text-sm leading-tight tracking-wide">{{ $activeEvent?->event_name ?? 'SRI 2026' }}</p>
                 <p class="text-white/40 text-xs truncate">Appel à Communication</p>
             </div>
         </div>
@@ -92,18 +93,36 @@
                 </a>
                 <a href="{{ route('superadmin.users.index') }}" class="sidebar-link {{ request()->routeIs('superadmin.users.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'users'])
-                    <span>Utilisateurs</span>
+                    <span>Rôles & Utilisateurs</span>
+                </a>
+                <div class="border-t border-white/10 my-3"></div>
+                <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Paramétrage</p>
+                <a href="{{ route('admin.event-configs.index') }}" class="sidebar-link {{ request()->routeIs('admin.event-configs.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'calendar'])
+                    <span>Événements</span>
+                </a>
+                <a href="{{ route('admin.form-options.index') }}" class="sidebar-link {{ request()->routeIs('admin.form-options.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'cog'])
+                    <span>Options formulaires</span>
                 </a>
                 <div class="border-t border-white/10 my-3"></div>
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Gestion</p>
                 <a href="{{ route('direction.dashboard') }}" class="sidebar-link {{ request()->routeIs('direction.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'office'])
-                    <span>Organisateur</span>
+                    <span>Espace Organisateur</span>
+                </a>
+                <a href="{{ route('comite.dashboard') }}" class="sidebar-link {{ request()->routeIs('comite.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'star'])
+                    <span>Espace Comité</span>
+                </a>
+                <a href="{{ route('secretaire.dashboard') }}" class="sidebar-link {{ request()->routeIs('secretaire.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'document'])
+                    <span>Espace Secrétaire</span>
                 </a>
             @endif
 
             {{-- Organisateur --}}
-            @if(in_array($role, ['direction_recherche', 'superadmin']) && $role === 'direction_recherche')
+            @if($role === 'direction_recherche')
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Gestion</p>
                 <a href="{{ route('direction.dashboard') }}" class="sidebar-link {{ request()->routeIs('direction.dashboard') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'home'])
@@ -120,6 +139,16 @@
                 <a href="{{ route('direction.comite.index') }}" class="sidebar-link {{ request()->routeIs('direction.comite.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'star'])
                     <span>Comité Scientifique</span>
+                </a>
+                <div class="border-t border-white/10 my-3"></div>
+                <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Paramétrage</p>
+                <a href="{{ route('admin.event-configs.index') }}" class="sidebar-link {{ request()->routeIs('admin.event-configs.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'calendar'])
+                    <span>Événements</span>
+                </a>
+                <a href="{{ route('admin.form-options.index') }}" class="sidebar-link {{ request()->routeIs('admin.form-options.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'cog'])
+                    <span>Options formulaires</span>
                 </a>
             @endif
 
@@ -152,9 +181,30 @@
                     @include('components.icon', ['name' => 'home'])
                     <span>Tableau de bord</span>
                 </a>
-                <a href="{{ route('comite.dashboard') }}" class="sidebar-link">
-                    @include('components.icon', ['name' => 'check-circle'])
-                    <span>Sélection des projets</span>
+                <a href="{{ route('comite.porteurs.index') }}" class="sidebar-link {{ request()->routeIs('comite.porteurs.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'briefcase'])
+                    <span>Porteurs de projet</span>
+                </a>
+                <a href="{{ route('comite.submission-period.edit') }}" class="sidebar-link {{ request()->routeIs('comite.submission-period.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'calendar'])
+                    <span>Période de soumission</span>
+                </a>
+            @endif
+
+            {{-- Secrétaire --}}
+            @if($role === 'secretaire')
+                <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Gestion publique</p>
+                <a href="{{ route('secretaire.dashboard') }}" class="sidebar-link {{ request()->routeIs('secretaire.dashboard') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'home'])
+                    <span>Tableau de bord</span>
+                </a>
+                <a href="{{ route('secretaire.inscriptions.index') }}" class="sidebar-link {{ request()->routeIs('secretaire.inscriptions.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'users'])
+                    <span>Inscriptions</span>
+                </a>
+                <a href="{{ route('secretaire.questionnaires.index') }}" class="sidebar-link {{ request()->routeIs('secretaire.questionnaires.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'document'])
+                    <span>Questionnaires</span>
                 </a>
             @endif
 
@@ -218,6 +268,7 @@
                             'point_focal'         => 'badge-yellow',
                             'porteur_projet'      => 'badge-green',
                             'comite_scientifique' => 'badge-red',
+                            'secretaire'          => 'badge-gray',
                         ];
                     @endphp
                     <span class="{{ $roleColors[auth()->user()->role] ?? 'badge-gray' }}">

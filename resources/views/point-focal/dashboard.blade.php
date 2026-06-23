@@ -110,6 +110,7 @@
                         <th>Structure</th>
                         <th class="text-center">Statut</th>
                         <th>Domaine</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -167,6 +168,16 @@
                                 <span class="text-xs text-gray-600">{{ $project->scientific_domain }}</span>
                             @else
                                 <span class="text-gray-300 text-xs">—</span>
+                            @endif
+                        </td>
+
+                        {{-- Action --}}
+                        <td>
+                            @if($project)
+                            <a href="{{ route('point-focal.projects.show', $project) }}"
+                               class="text-xs text-blue-600 hover:text-blue-800 hover:underline">
+                                Voir contenu
+                            </a>
                             @endif
                         </td>
                     </tr>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\PointFocal;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use App\Models\ProjectAssignment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -60,5 +61,11 @@ class DashboardController extends Controller
             'assignments', 'stats', 'structures',
             'search', 'filterSt', 'filterStatus'
         ));
+    }
+
+    public function showProject(Project $project)
+    {
+        $project->load(['porteur', 'structure', 'assignment', 'collaborators']);
+        return view('point-focal.projects.show', compact('project'));
     }
 }

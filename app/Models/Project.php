@@ -34,6 +34,11 @@ class Project extends Model
         ];
     }
 
+    public function collaborators()
+    {
+        return $this->hasMany(ProjectCollaborator::class);
+    }
+
     public function assignment()
     {
         return $this->belongsTo(ProjectAssignment::class);

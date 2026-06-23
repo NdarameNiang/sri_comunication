@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ComiteScientifique\DashboardController as ComiteDashboard;
 use App\Http\Controllers\ComiteScientifique\SelectionController;
+use App\Http\Controllers\ComiteScientifique\PorteurController as ComitePorteurController;
+use App\Http\Controllers\ComiteScientifique\EventConfigController as ComiteEventController;
 use App\Http\Controllers\DirectionRecherche\ComiteScientifiqueController;
 use App\Http\Controllers\DirectionRecherche\DashboardController as DirectionDashboard;
 use App\Http\Controllers\DirectionRecherche\PointFocalController;
@@ -13,23 +15,38 @@ use App\Http\Controllers\PorteurProjet\ProjectController;
 use App\Http\Controllers\SuperAdmin\DashboardController as SuperAdminDashboard;
 use App\Http\Controllers\Profile\PasswordController;
 use App\Http\Controllers\SuperAdmin\UserController;
+use App\Http\Controllers\Admin\FormOptionController;
+use App\Http\Controllers\Admin\EventConfigController as AdminEventConfigController;
+use App\Http\Controllers\Secretaire\DashboardController as SecretaireDashboard;
+use App\Http\Controllers\Secretaire\RegistrationController as SecretaireRegistrationController;
+use App\Http\Controllers\Secretaire\QuestionnaireController as SecretaireQuestionnaireController;
+use App\Http\Controllers\Public\RegistrationController as PublicRegistrationController;
+use App\Http\Controllers\Public\QuestionnaireController as PublicQuestionnaireController;
 use Illuminate\Support\Facades\Route;
 
-// Public routes
+// ─── Routes publiques (sans auth) ────────────────────────────────────────────
 Route::get('/', fn() => redirect()->route('login'));
-Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
+Route::get('/login',  [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+Route::post('/logout',[LoginController::class, 'logout'])->name('logout')->middleware('auth');
 
-// Authenticated routes
+// Formulaires publics (inscription + questionnaire)
+Route::prefix('event/{eventSlug}')->group(function () {
+    Route::get('/inscription',     [PublicRegistrationController::class, 'show'])->name('public.registration.show');
+    Route::post('/inscription',    [PublicRegistrationController::class, 'store'])->name('public.registration.store');
+    Route::get('/questionnaire',   [PublicQuestionnaireController::class, 'show'])->name('public.questionnaire.show');
+    Route::post('/questionnaire',  [PublicQuestionnaireController::class, 'store'])->name('public.questionnaire.store');
+    Route::get('/confirmation/{token}', [PublicRegistrationController::class, 'confirmation'])->name('public.registration.confirmation');
+});
+
+// ─── Routes authentifiées ─────────────────────────────────────────────────────
 Route::middleware(['auth', 'active'])->group(function () {
 
-    // Profil – accessible à tous les rôles
+    // Profil – accessible à tous
     Route::get('/profile/password', [PasswordController::class, 'edit'])->name('profile.password');
     Route::put('/profile/password', [PasswordController::class, 'update'])->name('profile.password.update');
 
-
-    // Super Admin
+    // ── Super Admin ──────────────────────────────────────────────────────────
     Route::prefix('superadmin')->name('superadmin.')
         ->middleware('role:superadmin')
         ->group(function () {
@@ -38,29 +55,39 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::patch('users/{user}/toggle-active', [UserController::class, 'toggleActive'])->name('users.toggle-active');
         });
 
-    // Direction de la Recherche
+    // ── Admin (superadmin + direction) ─────────────────────────────────────
+    Route::prefix('admin')->name('admin.')
+        ->middleware('role:superadmin,direction_recherche')
+        ->group(function () {
+            // CRUD options formulaire
+            Route::resource('form-options', FormOptionController::class);
+            Route::patch('form-options/{formOption}/toggle', [FormOptionController::class, 'toggle'])->name('form-options.toggle');
+
+            // CRUD configuration événement
+            Route::resource('event-configs', AdminEventConfigController::class);
+            Route::patch('event-configs/{eventConfig}/activate', [AdminEventConfigController::class, 'activate'])->name('event-configs.activate');
+        });
+
+    // ── Direction de la Recherche ───────────────────────────────────────────
     Route::prefix('direction')->name('direction.')
         ->middleware('role:direction_recherche,superadmin')
         ->group(function () {
             Route::get('/dashboard', [DirectionDashboard::class, 'index'])->name('dashboard');
 
-            // Porteurs de projet
             Route::resource('porteurs', PorteurProjetController::class)->except(['show']);
             Route::get('porteurs/{porteur}/show', [PorteurProjetController::class, 'show'])->name('porteurs.show');
             Route::post('porteurs/{porteur}/send-credentials', [PorteurProjetController::class, 'sendCredentials'])->name('porteurs.send-credentials');
 
-            // Points Focaux
             Route::resource('point-focaux', PointFocalController::class)
                 ->parameters(['point-focaux' => 'pointFocal'])
                 ->except(['show']);
 
-            // Comité Scientifique (membres)
             Route::resource('comite', ComiteScientifiqueController::class)
                 ->parameters(['comite' => 'membre'])
                 ->except(['show']);
         });
 
-    // Porteur de Projet
+    // ── Porteur de Projet ───────────────────────────────────────────────────
     Route::prefix('porteur')->name('porteur.')
         ->middleware('role:porteur_projet,superadmin')
         ->group(function () {
@@ -70,16 +97,18 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
             Route::put('/projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
             Route::post('/projects/{project}/submit', [ProjectController::class, 'submit'])->name('projects.submit');
+            Route::get('/projects/{project}/show', [ProjectController::class, 'show'])->name('projects.show');
         });
 
-    // Point Focal
+    // ── Point Focal (Observateur) ───────────────────────────────────────────
     Route::prefix('point-focal')->name('point-focal.')
         ->middleware('role:point_focal,superadmin')
         ->group(function () {
             Route::get('/dashboard', [PointFocalDashboard::class, 'index'])->name('dashboard');
+            Route::get('/projects/{project}', [PointFocalDashboard::class, 'showProject'])->name('projects.show');
         });
 
-    // Comité Scientifique
+    // ── Comité Scientifique ─────────────────────────────────────────────────
     Route::prefix('comite')->name('comite.')
         ->middleware('role:comite_scientifique,superadmin')
         ->group(function () {
@@ -87,5 +116,23 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/projects/{project}', [ComiteDashboard::class, 'show'])->name('projects.show');
             Route::post('/projects/{project}/toggle', [SelectionController::class, 'toggle'])->name('projects.toggle');
             Route::post('/send-emails', [SelectionController::class, 'sendEmails'])->name('send-emails');
+
+            // Gestion porteurs par le comité
+            Route::resource('porteurs', ComitePorteurController::class)->except(['show']);
+            Route::post('porteurs/{porteur}/send-credentials', [ComitePorteurController::class, 'sendCredentials'])->name('porteurs.send-credentials');
+
+            // Période de soumission
+            Route::get('/submission-period', [ComiteEventController::class, 'edit'])->name('submission-period.edit');
+            Route::put('/submission-period', [ComiteEventController::class, 'update'])->name('submission-period.update');
+        });
+
+    // ── Secrétaire ──────────────────────────────────────────────────────────
+    Route::prefix('secretaire')->name('secretaire.')
+        ->middleware('role:secretaire,superadmin')
+        ->group(function () {
+            Route::get('/dashboard', [SecretaireDashboard::class, 'index'])->name('dashboard');
+            Route::resource('inscriptions', SecretaireRegistrationController::class)->only(['index','show','destroy']);
+            Route::patch('inscriptions/{registration}/presence', [SecretaireRegistrationController::class, 'togglePresence'])->name('inscriptions.presence');
+            Route::resource('questionnaires', SecretaireQuestionnaireController::class)->only(['index','show','destroy']);
         });
 });

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', $project ? 'Modifier le projet' : 'Remplir le formulaire')
-@section('page-title', $project ? 'Modifier le projet' : 'Formulaire de collecte – SRI 2026')
+@section('page-title', $project ? 'Modifier le projet' : 'Formulaire de collecte – ' . (\App\Models\EventConfig::active()?->event_name ?? 'SRI 2026'))
 @section('page-subtitle', $assignment->title)
 
 @section('content')
@@ -267,6 +267,91 @@
             </div>
         </div>
 
+        {{-- ===== SECTION COLLABORATEURS ===== --}}
+        @if(!$readonly)
+        <div class="card">
+            <div class="card-header">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs font-bold">+</div>
+                    <h3 class="section-title text-base">Collaborateurs de la communication</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="text-sm text-gray-500 mb-4">Ajoutez autant de collaborateurs que nécessaire.</p>
+
+                <div id="collaborateurs-list" class="space-y-4">
+                    @php $collabs = old('collaborateurs', $project?->collaborators?->toArray() ?? [[]]) @endphp
+                    @foreach($collabs as $idx => $collab)
+                    <div class="collaborateur-row border border-gray-200 rounded-xl p-4 space-y-3" data-index="{{ $idx }}">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="text-sm font-medium text-gray-700">Collaborateur {{ $idx + 1 }}</p>
+                            @if($idx > 0)
+                            <button type="button" onclick="removeCollaborateur(this)" class="text-xs text-red-500 hover:text-red-700">Supprimer</button>
+                            @endif
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="form-label text-xs">Nom <span class="text-red-500">*</span></label>
+                                <input type="text" name="collaborateurs[{{ $idx }}][nom]" value="{{ $collab['nom'] ?? '' }}" class="input-field text-sm">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Prénom</label>
+                                <input type="text" name="collaborateurs[{{ $idx }}][prenom]" value="{{ $collab['prenom'] ?? '' }}" class="input-field text-sm">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Email</label>
+                                <input type="email" name="collaborateurs[{{ $idx }}][email]" value="{{ $collab['email'] ?? '' }}" class="input-field text-sm">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Téléphone</label>
+                                <input type="text" name="collaborateurs[{{ $idx }}][telephone]" value="{{ $collab['telephone'] ?? '' }}" class="input-field text-sm">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Institution</label>
+                                <input type="text" name="collaborateurs[{{ $idx }}][institution]" value="{{ $collab['institution'] ?? '' }}" class="input-field text-sm">
+                            </div>
+                            <div>
+                                <label class="form-label text-xs">Rôle</label>
+                                <select name="collaborateurs[{{ $idx }}][role]" class="input-field text-sm">
+                                    <option value="">– Sélectionner –</option>
+                                    @foreach($collaboratorRoles as $opt)
+                                    <option value="{{ $opt->value }}" {{ ($collab['role_collaborateur'] ?? $collab['role'] ?? '') === $opt->value ? 'selected' : '' }}>{{ $opt->label }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
+                <button type="button" onclick="addCollaborateur()" class="mt-4 text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                    Ajouter un collaborateur
+                </button>
+            </div>
+        </div>
+        @else
+        {{-- Mode lecture seule : afficher les collaborateurs --}}
+        @if($project?->collaborators?->count() > 0)
+        <div class="card">
+            <div class="card-header">
+                <h3 class="section-title text-base">Collaborateurs</h3>
+            </div>
+            <div class="card-body space-y-3">
+                @foreach($project->collaborators as $collab)
+                <div class="flex items-start gap-3 text-sm border-b border-gray-50 pb-3 last:border-0 last:pb-0">
+                    <div>
+                        <p class="font-medium text-gray-900">{{ $collab->fullName() }}</p>
+                        @if($collab->role_collaborateur)<p class="text-xs text-gray-500">{{ $collab->role_collaborateur }}</p>@endif
+                        @if($collab->institution)<p class="text-xs text-gray-400">{{ $collab->institution }}</p>@endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+        @endif
+
         {{-- Boutons --}}
         @if(!$readonly)
         <div class="flex items-center gap-3 pb-6">
@@ -286,4 +371,42 @@
         @endif
     </form>
 </div>
+@push('scripts')
+<script>
+let collabCount = document.querySelectorAll('.collaborateur-row').length;
+
+function addCollaborateur() {
+    const idx = collabCount++;
+    const rolesHtml = `{{ $collaboratorRoles->map(fn($o) => '<option value="'.$o->value.'">'.$o->label.'</option>')->implode('') }}`;
+    const html = `
+    <div class="collaborateur-row border border-gray-200 rounded-xl p-4 space-y-3" data-index="${idx}">
+        <div class="flex items-center justify-between mb-1">
+            <p class="text-sm font-medium text-gray-700">Collaborateur ${idx + 1}</p>
+            <button type="button" onclick="removeCollaborateur(this)" class="text-xs text-red-500 hover:text-red-700">Supprimer</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div><label class="form-label text-xs">Nom <span class="text-red-500">*</span></label>
+                <input type="text" name="collaborateurs[${idx}][nom]" class="input-field text-sm"></div>
+            <div><label class="form-label text-xs">Prénom</label>
+                <input type="text" name="collaborateurs[${idx}][prenom]" class="input-field text-sm"></div>
+            <div><label class="form-label text-xs">Email</label>
+                <input type="email" name="collaborateurs[${idx}][email]" class="input-field text-sm"></div>
+            <div><label class="form-label text-xs">Téléphone</label>
+                <input type="text" name="collaborateurs[${idx}][telephone]" class="input-field text-sm"></div>
+            <div><label class="form-label text-xs">Institution</label>
+                <input type="text" name="collaborateurs[${idx}][institution]" class="input-field text-sm"></div>
+            <div><label class="form-label text-xs">Rôle</label>
+                <select name="collaborateurs[${idx}][role]" class="input-field text-sm">
+                    <option value="">– Sélectionner –</option>${rolesHtml}
+                </select></div>
+        </div>
+    </div>`;
+    document.getElementById('collaborateurs-list').insertAdjacentHTML('beforeend', html);
+}
+
+function removeCollaborateur(btn) {
+    btn.closest('.collaborateur-row').remove();
+}
+</script>
+@endpush
 @endsection
