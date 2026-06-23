@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EventConfig;
 use App\Models\Questionnaire;
 use Illuminate\Http\Request;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class QuestionnaireController extends Controller
 {
@@ -35,9 +36,11 @@ class QuestionnaireController extends Controller
         ]);
 
         $data['event_config_id'] = $event->id;
-        Questionnaire::create($data);
+        $questionnaire = Questionnaire::create($data);
 
-        return redirect()->route('public.questionnaire.show', $eventSlug)
-            ->with('success', 'Merci pour votre retour ! Votre questionnaire a bien été soumis.');
+        $qrUrl = route('public.questionnaire.show', $eventSlug);
+        $qrSvg = QrCode::size(180)->generate($qrUrl);
+
+        return view('public.questionnaire-confirmation', compact('event', 'qrSvg'));
     }
 }

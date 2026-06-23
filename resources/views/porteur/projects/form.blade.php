@@ -80,8 +80,18 @@
             <div class="card-body space-y-4">
                 <div>
                     <label class="form-label">Domaine scientifique <span class="text-red-500">*</span></label>
+                    @php $domainOptions = $formOptions['scientific_domain'] ?? collect(); @endphp
+                    @if($domainOptions->count())
+                    <select name="scientific_domain" class="form-input" {{ $readonly ? 'disabled' : '' }} required>
+                        <option value="">– Sélectionner –</option>
+                        @foreach($domainOptions as $opt)
+                        <option value="{{ $opt->value }}" {{ old('scientific_domain', $project?->scientific_domain) === $opt->value ? 'selected' : '' }}>{{ $opt->label }}</option>
+                        @endforeach
+                    </select>
+                    @else
                     <input type="text" name="scientific_domain" value="{{ old('scientific_domain', $project?->scientific_domain) }}"
-                           class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="Ex : Sciences de l'ingénieur, Biotechnologie, Droit..."  required>
+                           class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="Ex : Sciences de l'ingénieur, Biotechnologie..." required>
+                    @endif
                     @error('scientific_domain') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
 
@@ -89,14 +99,17 @@
                     <label class="form-label">Type de projet <span class="text-red-500">*</span></label>
                     @error('project_types') <p class="form-error">{{ $message }}</p> @enderror
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1">
-                        @php $selectedTypes = old('project_types', $project?->project_types ?? []); @endphp
-                        @foreach(\App\Models\Project::projectTypeLabels() as $value => $label)
-                        <label class="flex items-center gap-2 p-3 rounded-xl border {{ in_array($value, $selectedTypes) ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                            <input type="checkbox" name="project_types[]" value="{{ $value }}"
-                                   {{ in_array($value, $selectedTypes) ? 'checked' : '' }}
+                        @php
+                            $selectedTypes = old('project_types', $project?->project_types ?? []);
+                            $typeOptions   = $formOptions['project_type'] ?? collect();
+                        @endphp
+                        @foreach($typeOptions as $opt)
+                        <label class="flex items-center gap-2 p-3 rounded-xl border {{ in_array($opt->value, $selectedTypes) ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
+                            <input type="checkbox" name="project_types[]" value="{{ $opt->value }}"
+                                   {{ in_array($opt->value, $selectedTypes) ? 'checked' : '' }}
                                    {{ $readonly ? 'disabled' : '' }}
                                    class="w-4 h-4 rounded text-blue-600">
-                            <span class="text-sm text-gray-700 font-medium">{{ $label }}</span>
+                            <span class="text-sm text-gray-700 font-medium">{{ $opt->label }}</span>
                         </label>
                         @endforeach
                     </div>
@@ -151,15 +164,18 @@
 
                 <div>
                     <label class="form-label">Niveau de maturité</label>
-                    @php $selectedMaturity = old('maturity_level', $project?->maturity_level); @endphp
+                    @php
+                        $selectedMaturity = old('maturity_level', $project?->maturity_level);
+                        $maturityOptions  = $formOptions['maturity_level'] ?? collect();
+                    @endphp
                     <div class="flex gap-3 flex-wrap mt-1">
-                        @foreach(\App\Models\Project::maturityLabels() as $value => $label)
-                        <label class="flex items-center gap-2 px-4 py-2.5 rounded-xl border {{ $selectedMaturity === $value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                            <input type="radio" name="maturity_level" value="{{ $value }}"
-                                   {{ $selectedMaturity === $value ? 'checked' : '' }}
+                        @foreach($maturityOptions as $opt)
+                        <label class="flex items-center gap-2 px-4 py-2.5 rounded-xl border {{ $selectedMaturity === $opt->value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
+                            <input type="radio" name="maturity_level" value="{{ $opt->value }}"
+                                   {{ $selectedMaturity === $opt->value ? 'checked' : '' }}
                                    {{ $readonly ? 'disabled' : '' }}
                                    class="w-4 h-4 text-blue-600">
-                            <span class="text-sm font-medium text-gray-700">{{ $label }}</span>
+                            <span class="text-sm font-medium text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
                     </div>
@@ -167,15 +183,18 @@
 
                 <div>
                     <label class="form-label">Protection obtenue / souhaitée</label>
-                    @php $selectedProtections = old('protection_types', $project?->protection_types ?? []); @endphp
+                    @php
+                        $selectedProtections = old('protection_types', $project?->protection_types ?? []);
+                        $protectionOptions   = $formOptions['protection_type'] ?? collect();
+                    @endphp
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
-                        @foreach(\App\Models\Project::protectionLabels() as $value => $label)
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border {{ in_array($value, $selectedProtections) ? 'border-purple-400 bg-purple-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                            <input type="checkbox" name="protection_types[]" value="{{ $value }}"
-                                   {{ in_array($value, $selectedProtections) ? 'checked' : '' }}
+                        @foreach($protectionOptions as $opt)
+                        <label class="flex items-center gap-2 p-2.5 rounded-lg border {{ in_array($opt->value, $selectedProtections) ? 'border-purple-400 bg-purple-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
+                            <input type="checkbox" name="protection_types[]" value="{{ $opt->value }}"
+                                   {{ in_array($opt->value, $selectedProtections) ? 'checked' : '' }}
                                    {{ $readonly ? 'disabled' : '' }}
                                    class="w-4 h-4 rounded text-purple-600">
-                            <span class="text-xs text-gray-700">{{ $label }}</span>
+                            <span class="text-xs text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
                     </div>
@@ -187,15 +206,18 @@
 
                 <div>
                     <label class="form-label">Valorisation</label>
-                    @php $selectedValorisation = old('valorisation_types', $project?->valorisation_types ?? []); @endphp
+                    @php
+                        $selectedValorisation = old('valorisation_types', $project?->valorisation_types ?? []);
+                        $valorisationOptions  = $formOptions['valorisation_type'] ?? collect();
+                    @endphp
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
-                        @foreach(\App\Models\Project::valorisationLabels() as $value => $label)
-                        <label class="flex items-center gap-2 p-2.5 rounded-lg border {{ in_array($value, $selectedValorisation) ? 'border-emerald-400 bg-emerald-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                            <input type="checkbox" name="valorisation_types[]" value="{{ $value }}"
-                                   {{ in_array($value, $selectedValorisation) ? 'checked' : '' }}
+                        @foreach($valorisationOptions as $opt)
+                        <label class="flex items-center gap-2 p-2.5 rounded-lg border {{ in_array($opt->value, $selectedValorisation) ? 'border-emerald-400 bg-emerald-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
+                            <input type="checkbox" name="valorisation_types[]" value="{{ $opt->value }}"
+                                   {{ in_array($opt->value, $selectedValorisation) ? 'checked' : '' }}
                                    {{ $readonly ? 'disabled' : '' }}
                                    class="w-4 h-4 rounded text-emerald-600">
-                            <span class="text-xs text-gray-700">{{ $label }}</span>
+                            <span class="text-xs text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
                     </div>
@@ -216,15 +238,18 @@
                 </div>
             </div>
             <div class="card-body">
-                @php $selectedImpacts = old('impact_types', $project?->impact_types ?? []); @endphp
+                @php
+                    $selectedImpacts = old('impact_types', $project?->impact_types ?? []);
+                    $impactOptions   = $formOptions['impact_type'] ?? collect();
+                @endphp
                 <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
-                    @foreach(\App\Models\Project::impactLabels() as $value => $label)
-                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border text-center {{ in_array($value, $selectedImpacts) ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                        <input type="checkbox" name="impact_types[]" value="{{ $value }}"
-                               {{ in_array($value, $selectedImpacts) ? 'checked' : '' }}
+                    @foreach($impactOptions as $opt)
+                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border text-center {{ in_array($opt->value, $selectedImpacts) ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
+                        <input type="checkbox" name="impact_types[]" value="{{ $opt->value }}"
+                               {{ in_array($opt->value, $selectedImpacts) ? 'checked' : '' }}
                                {{ $readonly ? 'disabled' : '' }}
                                class="w-4 h-4 rounded text-blue-600">
-                        <span class="text-xs font-medium text-gray-700">{{ $label }}</span>
+                        <span class="text-xs font-medium text-gray-700">{{ $opt->label }}</span>
                     </label>
                     @endforeach
                 </div>
@@ -242,15 +267,18 @@
             <div class="card-body space-y-4">
                 <div>
                     <label class="form-label">Format de présentation souhaité</label>
-                    @php $selectedFormats = old('presentation_formats', $project?->presentation_formats ?? []); @endphp
+                    @php
+                        $selectedFormats  = old('presentation_formats', $project?->presentation_formats ?? []);
+                        $formatOptions    = $formOptions['presentation_format'] ?? collect();
+                    @endphp
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1">
-                        @foreach(\App\Models\Project::presentationLabels() as $value => $label)
-                        <label class="flex items-center gap-2 p-3 rounded-xl border {{ in_array($value, $selectedFormats) ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                            <input type="checkbox" name="presentation_formats[]" value="{{ $value }}"
-                                   {{ in_array($value, $selectedFormats) ? 'checked' : '' }}
+                        @foreach($formatOptions as $opt)
+                        <label class="flex items-center gap-2 p-3 rounded-xl border {{ in_array($opt->value, $selectedFormats) ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
+                            <input type="checkbox" name="presentation_formats[]" value="{{ $opt->value }}"
+                                   {{ in_array($opt->value, $selectedFormats) ? 'checked' : '' }}
                                    {{ $readonly ? 'disabled' : '' }}
                                    class="w-4 h-4 rounded text-amber-600">
-                            <span class="text-sm font-medium text-gray-700">{{ $label }}</span>
+                            <span class="text-sm font-medium text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
                     </div>

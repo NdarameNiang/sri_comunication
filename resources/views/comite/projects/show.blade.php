@@ -141,5 +141,22 @@
             </div>
         </div>
     </div>
+
+    {{-- Collaborateurs --}}
+    @if($project->collaborators && $project->collaborators->count() > 0)
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Collaborateurs ({{ $project->collaborators->count() }})</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            @foreach($project->collaborators as $collab)
+            <div class="border border-gray-100 rounded-lg p-3 text-sm">
+                <p class="font-medium text-gray-900">{{ $collab->fullName() }}</p>
+                @if($collab->role_collaborateur)<p class="text-xs text-gray-500">{{ $collab->role_collaborateur }}</p>@endif
+                @if($collab->institution)<p class="text-xs text-gray-400">{{ $collab->institution }}</p>@endif
+                @if($collab->email)<p class="text-xs text-gray-400">{{ $collab->email }}</p>@endif
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 </div>
 @endsection

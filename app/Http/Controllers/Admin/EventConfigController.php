@@ -27,6 +27,11 @@ class EventConfigController extends Controller
         return redirect()->route('admin.event-configs.index')->with('success', 'Événement créé avec succès.');
     }
 
+    public function show(EventConfig $eventConfig)
+    {
+        return redirect()->route('admin.event-configs.edit', $eventConfig);
+    }
+
     public function edit(EventConfig $eventConfig)
     {
         return view('admin.event-configs.edit', compact('eventConfig'));
