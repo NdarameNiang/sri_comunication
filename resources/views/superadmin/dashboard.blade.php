@@ -106,6 +106,7 @@
                     ['route' => 'direction.porteurs.create',     'label' => 'Nouveau porteur',    'sub' => 'Compte porteur de projet', 'bg' => 'bg-emerald-100','fg' => 'text-emerald-600','hbg' => 'group-hover:bg-emerald-200'],
                     ['route' => 'direction.point-focaux.create', 'label' => 'Observateur',        'sub' => 'Affecter un observateur',  'bg' => 'bg-amber-100',  'fg' => 'text-amber-600',  'hbg' => 'group-hover:bg-amber-200'],
                     ['route' => 'direction.comite.create',       'label' => 'Membre comité',      'sub' => 'Ajouter un évaluateur',   'bg' => 'bg-purple-100', 'fg' => 'text-purple-600', 'hbg' => 'group-hover:bg-purple-200'],
+                    ['route' => 'direction.secretaires.create',  'label' => 'Secrétaire',         'sub' => 'Ajouter une secrétaire',  'bg' => 'bg-rose-100',   'fg' => 'text-rose-600',   'hbg' => 'group-hover:bg-rose-200'],
                 ] as $action)
                 <a href="{{ route($action['route']) }}"
                    class="flex flex-col items-center gap-2.5 p-4 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all text-center group">
