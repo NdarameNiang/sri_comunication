@@ -10,18 +10,21 @@ class EventConfig extends Model
         'event_name', 'event_slug', 'event_description', 'organizer',
         'event_start_date', 'event_end_date',
         'submission_open_at', 'submission_close_at',
+        'inscription_open_at', 'inscription_close_at',
         'is_active', 'show_questionnaire',
     ];
 
     protected function casts(): array
     {
         return [
-            'event_start_date'    => 'date',
-            'event_end_date'      => 'date',
-            'submission_open_at'  => 'datetime',
-            'submission_close_at' => 'datetime',
-            'is_active'           => 'boolean',
-            'show_questionnaire'  => 'boolean',
+            'event_start_date'     => 'date',
+            'event_end_date'       => 'date',
+            'submission_open_at'   => 'datetime',
+            'submission_close_at'  => 'datetime',
+            'inscription_open_at'  => 'datetime',
+            'inscription_close_at' => 'datetime',
+            'is_active'            => 'boolean',
+            'show_questionnaire'   => 'boolean',
         ];
     }
 
@@ -31,6 +34,14 @@ class EventConfig extends Model
     public static function active(): ?self
     {
         return static::where('is_active', true)->first();
+    }
+
+    public function isInscriptionOpen(): bool
+    {
+        $now = now();
+        if ($this->inscription_open_at  && $now->lt($this->inscription_open_at))  return false;
+        if ($this->inscription_close_at && $now->gt($this->inscription_close_at)) return false;
+        return true;
     }
 
     public function isSubmissionOpen(): bool

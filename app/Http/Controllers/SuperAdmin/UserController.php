@@ -10,10 +10,37 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('structure')->latest()->paginate(15);
-        return view('superadmin.users.index', compact('users'));
+        $query = User::with('structure');
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        if ($role = $request->get('role')) {
+            $query->where('role', $role);
+        }
+
+        if ($structure = $request->get('structure')) {
+            $query->where('structure_id', $structure);
+        }
+
+        $users      = $query->orderBy('role')->orderBy('name')->paginate(20)->withQueryString();
+        $structures = Structure::orderBy('name')->get();
+        $roles = [
+            'superadmin'          => 'Super Administrateur',
+            'direction_recherche' => 'Organisateur',
+            'comite_scientifique' => 'Comité Scientifique',
+            'secretaire'          => 'Secrétaire',
+            'point_focal'         => 'Observateur',
+            'porteur_projet'      => 'Porteur de Projet',
+        ];
+
+        return view('superadmin.users.index', compact('users', 'structures', 'roles'));
     }
 
     public function create()

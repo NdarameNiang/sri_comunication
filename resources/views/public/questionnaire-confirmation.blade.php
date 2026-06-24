@@ -27,18 +27,42 @@
             <p class="text-xs text-gray-400">Partagez ce code pour inviter d'autres participants</p>
         </div>
 
-        <div class="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-5 shadow-sm">
+        <div id="qr-wrapper-q" class="bg-white rounded-2xl border-2 border-dashed border-gray-200 p-5 shadow-sm">
             {!! $qrSvg !!}
         </div>
 
-        <a href="{{ route('public.questionnaire.show', $event->event_slug) }}"
-           class="inline-flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
-            </svg>
-            Répondre à nouveau
-        </a>
+        <div class="flex flex-wrap gap-3 justify-center">
+            <button onclick="downloadQrQ()" type="button"
+                    class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                Télécharger QR
+            </button>
+            <a href="{{ route('public.questionnaire.show', $event->event_slug) }}"
+               class="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-gray-800 font-medium border border-gray-300 px-4 py-2.5 rounded-xl transition-colors bg-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/>
+                </svg>
+                Répondre à nouveau
+            </a>
+        </div>
     </div>
 
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function downloadQrQ() {
+    const svg = document.querySelector('#qr-wrapper-q svg');
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const blob = new Blob([svgData], {type: 'image/svg+xml'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'qr-questionnaire-{{ Str::slug($event->event_name) }}.svg';
+    a.click();
+}
+</script>
+@endpush

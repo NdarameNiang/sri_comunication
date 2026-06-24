@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SRI 2026') – Appel à Communication · UCAD</title>
+    <link rel="icon" type="image/png" href="/favicon-ucad.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -69,11 +70,12 @@
 
         {{-- Logo UCAD --}}
         <div class="fadein-up mb-5">
-            <img src="{{ asset('images/logo_ucad.png') }}"
-                 alt="Logo UCAD"
-                 class="h-16 w-auto object-contain mx-auto drop-shadow-2xl"
-                 style="filter: brightness(0) invert(1);"
-                 onerror="this.style.display='none'">
+            <div class="w-16 h-16 rounded-full bg-white mx-auto flex items-center justify-center shadow-lg p-1">
+                <img src="{{ asset('images/logo_ucad_white.png') }}"
+                     alt="Logo UCAD"
+                     class="w-full h-full object-contain"
+                     onerror="this.parentElement.style.display='none'">
+            </div>
         </div>
 
         {{-- Badge --}}

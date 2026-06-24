@@ -90,3 +90,24 @@
         </div>
     </div>
 </div>
+
+{{-- Période d'inscription --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Période d'inscription des participants</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label class="form-label">Ouverture des inscriptions</label>
+            <input type="datetime-local" name="inscription_open_at"
+                   value="{{ old('inscription_open_at', isset($eventConfig) ? $eventConfig->inscription_open_at?->format('Y-m-d\TH:i') : '') }}"
+                   class="form-input">
+            <p class="text-xs text-gray-400 mt-1">Les participants pourront s'inscrire à partir de cette date</p>
+        </div>
+        <div>
+            <label class="form-label">Clôture des inscriptions</label>
+            <input type="datetime-local" name="inscription_close_at"
+                   value="{{ old('inscription_close_at', isset($eventConfig) ? $eventConfig->inscription_close_at?->format('Y-m-d\TH:i') : '') }}"
+                   class="form-input">
+            <p class="text-xs text-gray-400 mt-1">Plus aucune inscription acceptée après cette date</p>
+        </div>
+    </div>
+</div>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $event->event_name }} – UCAD</title>
+    <link rel="icon" type="image/png" href="/favicon-ucad.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -69,23 +70,9 @@
             box-shadow: 0 1px 4px rgba(0,0,0,0.2);
         }
 
-        /* ---- QR code frame ---- */
-        .qr-frame { display:flex; align-items:center; gap:12px; }
-        .qr-frame .qr-box {
-            flex-shrink: 0;
-            width: 72px; height: 72px;
-            background: #fff;
-            border-radius: 10px;
-            padding: 6px;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.25), 0 2px 8px rgba(0,0,0,0.25);
-        }
-        .qr-frame .qr-box svg {
-            width: 100%; height: auto;
-            display: block;
-        }
     </style>
 </head>
-<body class="font-sans overflow-hidden h-screen">
+<body class="font-sans">
 
 {{-- ===== FOND DIAPORAMA ===== --}}
 <div class="fixed inset-0 z-0">
@@ -98,7 +85,7 @@
 </div>
 
 {{-- ===== LAYOUT ===== --}}
-<div class="relative z-10 flex h-screen">
+<div class="relative z-10 flex flex-col lg:flex-row min-h-screen">
 
 
     {{-- ===== GAUCHE : Branding ===== --}}
@@ -187,9 +174,9 @@
     </div>
 
     {{-- ===== DROITE : Actions glass ===== --}}
-    <div class="w-full lg:w-[45%] flex items-center justify-center p-6 lg:p-12">
+    <div class="w-full lg:w-[45%] flex items-center justify-center px-4 py-8 lg:p-12">
 
-        <div class="glass-form rounded-3xl shadow-2xl p-8 lg:p-10 w-full max-w-md">
+        <div class="glass-form rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-md">
 
             {{-- Header mobile --}}
             <div class="lg:hidden text-center mb-7">
@@ -249,15 +236,6 @@
                     </svg>
                     Accéder au formulaire d'inscription
                 </a>
-                @if($qrInscription)
-                <div class="qr-frame p-3 rounded-xl bg-white/6 border border-white/10">
-                    <div class="qr-box">{!! $qrInscription !!}</div>
-                    <div>
-                        <p class="text-white/65 text-xs font-semibold mb-0.5">Scanner pour s'inscrire</p>
-                        <p class="text-white/35 text-xs leading-snug">Pointez la caméra de votre téléphone vers ce code</p>
-                    </div>
-                </div>
-                @endif
             </div>
 
             {{-- ── Panneau Questionnaire ── --}}
@@ -273,15 +251,6 @@
                     </svg>
                     Accéder au questionnaire
                 </a>
-                @if($qrQuestionnaire)
-                <div class="qr-frame p-3 rounded-xl bg-white/6 border border-white/10">
-                    <div class="qr-box">{!! $qrQuestionnaire !!}</div>
-                    <div>
-                        <p class="text-white/65 text-xs font-semibold mb-0.5">Scanner le questionnaire</p>
-                        <p class="text-white/35 text-xs leading-snug">Pointez la caméra de votre téléphone vers ce code</p>
-                    </div>
-                </div>
-                @endif
             </div>
             @endif
 

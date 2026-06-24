@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'SRI 2026') – SRI Appel à Communication</title>
+    <link rel="icon" type="image/png" href="/favicon-ucad.png">
+    <link rel="shortcut icon" href="/favicon-ucad.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -68,15 +70,8 @@
 
         {{-- Profil utilisateur --}}
         <div class="px-4 py-4 border-b border-white/10">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-full bg-blue-600/30 border border-blue-500/40 flex items-center justify-center shrink-0">
-                    <span class="text-white text-sm font-semibold">{{ strtoupper(substr(auth()->user()->name, 0, 1)) }}</span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-white text-xs font-medium truncate">{{ auth()->user()->name }}</p>
-                    <p class="text-white/40 text-xs truncate">{{ \App\Models\User::roleLabel(auth()->user()->role) }}</p>
-                </div>
-            </div>
+            <p class="text-white text-xs font-medium truncate">{{ auth()->user()->name }}</p>
+            <p class="text-white/40 text-xs truncate mt-0.5">{{ \App\Models\User::roleLabel(auth()->user()->role) }}</p>
         </div>
 
         {{-- Navigation --}}
@@ -109,19 +104,35 @@
                     @include('components.icon', ['name' => 'cog'])
                     <span>Options formulaires</span>
                 </a>
+                <a href="{{ route('superadmin.projects.index') }}" class="sidebar-link {{ request()->routeIs('superadmin.projects.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'briefcase'])
+                    <span>Gestion des projets</span>
+                </a>
                 <div class="border-t border-white/10 my-3"></div>
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Gestion</p>
                 <a href="{{ route('direction.dashboard') }}" class="sidebar-link {{ request()->routeIs('direction.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'office'])
-                    <span>Espace Organisateur</span>
+                    <span>Espace {{ \App\Models\User::roleLabel('direction_recherche') }}</span>
                 </a>
                 <a href="{{ route('comite.dashboard') }}" class="sidebar-link {{ request()->routeIs('comite.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'star'])
-                    <span>Espace Comité</span>
+                    <span>Espace {{ \App\Models\User::roleLabel('comite_scientifique') }}</span>
                 </a>
-                <a href="{{ route('secretaire.dashboard') }}" class="sidebar-link {{ request()->routeIs('secretaire.*') ? 'active' : '' }}">
+                <a href="{{ route('secretaire.dashboard') }}" class="sidebar-link {{ request()->routeIs('secretaire.dashboard') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'document'])
-                    <span>Espace Secrétaire</span>
+                    <span>Espace {{ \App\Models\User::roleLabel('secretaire') }}</span>
+                </a>
+                <a href="{{ route('secretaire.inscriptions.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('secretaire.inscriptions.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'users'])
+                    <span>Inscriptions</span>
+                </a>
+                <a href="{{ route('secretaire.projets.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('secretaire.projets.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'briefcase'])
+                    <span>Projets soumis</span>
+                </a>
+                <a href="{{ route('secretaire.questionnaires.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('secretaire.questionnaires.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'check-circle'])
+                    <span>Questionnaires</span>
                 </a>
             @endif
 
@@ -144,6 +155,10 @@
                     @include('components.icon', ['name' => 'star'])
                     <span>Comité Scientifique</span>
                 </a>
+                <a href="{{ route('direction.secretaires.index') }}" class="sidebar-link {{ request()->routeIs('direction.secretaires.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'document'])
+                    <span>Secrétariat</span>
+                </a>
                 <div class="border-t border-white/10 my-3"></div>
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Paramétrage</p>
                 <a href="{{ route('admin.event-configs.index') }}" class="sidebar-link {{ request()->routeIs('admin.event-configs.*') ? 'active' : '' }}">
@@ -158,6 +173,14 @@
 
             {{-- Porteur de Projet --}}
             @if($role === 'porteur_projet')
+                {{-- Bouton retour superadmin (impersonation ou accès direct) --}}
+                @if(session('impersonate_user_id'))
+                <a href="{{ route('superadmin.impersonate.stop') }}"
+                   class="flex items-center gap-2 mx-3 mb-3 px-3 py-2 bg-violet-600/80 hover:bg-violet-500/80 border border-violet-400/40 rounded-xl text-white text-xs font-semibold transition">
+                    <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
+                    Retour espace superadmin
+                </a>
+                @endif
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Mon espace</p>
                 <a href="{{ route('porteur.dashboard') }}" class="sidebar-link {{ request()->routeIs('porteur.dashboard') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'home'])
@@ -205,6 +228,10 @@
                 <a href="{{ route('secretaire.inscriptions.index') }}" class="sidebar-link {{ request()->routeIs('secretaire.inscriptions.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'users'])
                     <span>Inscriptions</span>
+                </a>
+                <a href="{{ route('secretaire.projets.index') }}" class="sidebar-link {{ request()->routeIs('secretaire.projets.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'briefcase'])
+                    <span>Projets soumis</span>
                 </a>
                 <a href="{{ route('secretaire.questionnaires.index') }}" class="sidebar-link {{ request()->routeIs('secretaire.questionnaires.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'document'])
@@ -321,6 +348,20 @@
             </div>
         </header>
 
+        {{-- Bannière impersonation --}}
+        @if(session('impersonate_user_id'))
+        <div class="bg-violet-700 text-white px-4 lg:px-6 py-2.5 flex items-center justify-between gap-4 text-sm">
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                <span>Mode aperçu : vous consultez l'interface en tant que <strong>{{ auth()->user()->name }}</strong></span>
+            </div>
+            <a href="{{ route('superadmin.impersonate.stop') }}"
+               class="flex-shrink-0 bg-white/20 hover:bg-white/30 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+                ← Retour superadmin
+            </a>
+        </div>
+        @endif
+
         {{-- Flash messages --}}
         <div class="px-4 lg:px-6 pt-4">
             @if(session('success'))
@@ -341,6 +382,19 @@
                     <span>{{ session('error') }}</span>
                 </div>
             @endif
+            @if($errors->any())
+                <div class="flex items-start gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm mb-4" id="validation-errors-banner">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 mt-0.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                    <div>
+                        <p class="font-semibold mb-1">{{ $errors->count() }} champ(s) requis à corriger :</p>
+                        <ul class="list-disc list-inside space-y-0.5 text-xs">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
+            @endif
         </div>
 
         {{-- Page content --}}
@@ -358,6 +412,18 @@
         sidebar.classList.toggle('-translate-x-full');
         overlay.classList.toggle('hidden');
     }
+
+    // Fermer sidebar mobile au clic sur un lien
+    document.querySelectorAll('#sidebar a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        });
+    });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -518,6 +584,16 @@
         );
         if (ok && btn.form) { btn.form.removeAttribute('data-confirm'); btn.form.submit(); }
     }, true);
+})();
+
+// Scroll automatique vers le banner de validation si erreurs présentes
+(function() {
+    const banner = document.getElementById('validation-errors-banner');
+    if (banner) {
+        setTimeout(function() {
+            banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    }
 })();
 </script>
 

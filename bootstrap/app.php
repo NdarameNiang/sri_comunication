@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'active' => \App\Http\Middleware\CheckActive::class,
         ]);
 
+        // Impersonation : appliqué après l'authentification, avant la vérification de rôle
+        $middleware->appendToGroup('web', \App\Http\Middleware\HandleImpersonation::class);
+
         // Login et logout exemptés du CSRF — évite les 419 sur ces deux routes
         $middleware->validateCsrfTokens(except: [
             'login',

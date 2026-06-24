@@ -16,12 +16,17 @@ class RegistrationController extends Controller
     {
         $event = EventConfig::where('event_slug', $eventSlug)->where('is_active', true)->firstOrFail();
         $participantTypes = FormOption::forGroup('participant_type');
-        return view('public.registration', compact('event', 'participantTypes'));
+        $inscriptionClosed = !$event->isInscriptionOpen();
+        return view('public.registration', compact('event', 'participantTypes', 'inscriptionClosed'));
     }
 
     public function store(Request $request, string $eventSlug)
     {
         $event = EventConfig::where('event_slug', $eventSlug)->where('is_active', true)->firstOrFail();
+
+        if (!$event->isInscriptionOpen()) {
+            return back()->with('error', 'Les inscriptions sont actuellement fermées.');
+        }
 
         $data = $request->validate([
             'nom'              => 'required|string|max:255',

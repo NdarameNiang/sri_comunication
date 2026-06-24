@@ -10,10 +10,27 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $projects = Project::where('status', 'submitted')
+        $query = Project::where('status', 'submitted')
             ->with(['porteur', 'structure', 'assignment'])
-            ->latest()
-            ->paginate(20);
+            ->latest();
+
+        if ($search = request('search')) {
+            $query->whereHas('porteur', fn($u) => $u
+                ->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+            );
+        }
+
+        if ($structureId = request('structure_id')) {
+            $query->where('structure_id', $structureId);
+        }
+
+        if ($decision = request('decision')) {
+            if ($decision === 'selected')  $query->where('selected', true);
+            if ($decision === 'pending')   $query->where('selected', false);
+        }
+
+        $projects = $query->paginate(20)->withQueryString();
 
         $stats = [
             'total'    => Project::where('status', 'submitted')->count(),
@@ -24,7 +41,7 @@ class DashboardController extends Controller
         $structures = Structure::withCount([
             'projects as submitted_count' => fn($q) => $q->where('status', 'submitted'),
             'projects as selected_count'  => fn($q) => $q->where('selected', true),
-        ])->get();
+        ])->having('submitted_count', '>', 0)->get();
 
         return view('comite.dashboard', compact('projects', 'stats', 'structures'));
     }

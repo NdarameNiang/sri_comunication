@@ -5,10 +5,12 @@ use App\Http\Controllers\ComiteScientifique\DashboardController as ComiteDashboa
 use App\Http\Controllers\ComiteScientifique\SelectionController;
 use App\Http\Controllers\ComiteScientifique\PorteurController as ComitePorteurController;
 use App\Http\Controllers\ComiteScientifique\EventConfigController as ComiteEventController;
+use App\Http\Controllers\ComiteScientifique\ProjectController as ComiteProjectController;
 use App\Http\Controllers\DirectionRecherche\ComiteScientifiqueController;
 use App\Http\Controllers\DirectionRecherche\DashboardController as DirectionDashboard;
 use App\Http\Controllers\DirectionRecherche\PointFocalController;
 use App\Http\Controllers\DirectionRecherche\PorteurProjetController;
+use App\Http\Controllers\DirectionRecherche\SecretaireController as DirectionSecretaireController;
 use App\Http\Controllers\PointFocal\DashboardController as PointFocalDashboard;
 use App\Http\Controllers\PorteurProjet\DashboardController as PorteurDashboard;
 use App\Http\Controllers\PorteurProjet\ProjectController;
@@ -17,11 +19,14 @@ use App\Http\Controllers\Profile\PasswordController;
 use App\Http\Controllers\SuperAdmin\UserController;
 use App\Http\Controllers\SuperAdmin\RoleController;
 use App\Http\Controllers\SuperAdmin\PermissionController;
+use App\Http\Controllers\SuperAdmin\ProjectController as SuperAdminProjectController;
+use App\Http\Controllers\SuperAdmin\ImpersonateController;
 use App\Http\Controllers\Admin\FormOptionController;
 use App\Http\Controllers\Admin\EventConfigController as AdminEventConfigController;
 use App\Http\Controllers\Secretaire\DashboardController as SecretaireDashboard;
 use App\Http\Controllers\Secretaire\RegistrationController as SecretaireRegistrationController;
 use App\Http\Controllers\Secretaire\QuestionnaireController as SecretaireQuestionnaireController;
+use App\Http\Controllers\Secretaire\ProjectController as SecretaireProjectController;
 use App\Http\Controllers\Public\RegistrationController as PublicRegistrationController;
 use App\Http\Controllers\Public\QuestionnaireController as PublicQuestionnaireController;
 use App\Http\Controllers\Public\LandingController as PublicLandingController;
@@ -68,7 +73,23 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::resource('roles', RoleController::class)->except(['show']);
             // CRUD Permissions
             Route::resource('permissions', PermissionController::class)->except(['show']);
+
+            // Gestion des projets (superadmin)
+            Route::get('/projects', [SuperAdminProjectController::class, 'index'])->name('projects.index');
+            Route::get('/projects/create', [SuperAdminProjectController::class, 'create'])->name('projects.create');
+            Route::post('/projects', [SuperAdminProjectController::class, 'store'])->name('projects.store');
+            Route::get('/projects/{project}/edit', [SuperAdminProjectController::class, 'edit'])->name('projects.edit');
+            Route::put('/projects/{project}', [SuperAdminProjectController::class, 'update'])->name('projects.update');
+            Route::post('/projects/{project}/submit', [SuperAdminProjectController::class, 'submit'])->name('projects.submit');
+            Route::get('/assignments/{assignment}/fill', [SuperAdminProjectController::class, 'fill'])->name('assignments.fill');
+            Route::post('/assignments/{assignment}/fill', [SuperAdminProjectController::class, 'storeFill'])->name('assignments.store-fill');
+
+            // Impersonation porteur (start uniquement — stop est hors groupe pour rester accessible en tant que porteur)
+            Route::get('/impersonate/{user}', [ImpersonateController::class, 'start'])->name('impersonate.start')->whereNumber('user');
         });
+
+    // Stop impersonation — hors du groupe role:superadmin car l'user courant est le porteur
+    Route::get('/superadmin/impersonate/stop', [ImpersonateController::class, 'stop'])->name('superadmin.impersonate.stop');
 
     // ── Admin (superadmin + direction) ─────────────────────────────────────
     Route::prefix('admin')->name('admin.')
@@ -99,6 +120,10 @@ Route::middleware(['auth', 'active'])->group(function () {
 
             Route::resource('comite', ComiteScientifiqueController::class)
                 ->parameters(['comite' => 'membre'])
+                ->except(['show']);
+
+            Route::resource('secretaires', DirectionSecretaireController::class)
+                ->parameters(['secretaires' => 'secretaire'])
                 ->except(['show']);
         });
 
@@ -131,6 +156,7 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/projects/{project}', [ComiteDashboard::class, 'show'])->name('projects.show');
             Route::post('/projects/{project}/toggle', [SelectionController::class, 'toggle'])->name('projects.toggle');
             Route::post('/send-emails', [SelectionController::class, 'sendEmails'])->name('send-emails');
+            Route::get('/projects/export', [ComiteProjectController::class, 'export'])->name('projects.export');
 
             // Gestion porteurs par le comité
             Route::resource('porteurs', ComitePorteurController::class)->except(['show']);
@@ -146,8 +172,21 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->middleware('role:secretaire,superadmin')
         ->group(function () {
             Route::get('/dashboard', [SecretaireDashboard::class, 'index'])->name('dashboard');
-            Route::resource('inscriptions', SecretaireRegistrationController::class)->only(['index','show','destroy']);
+            Route::get('/qr/{type}', [SecretaireDashboard::class, 'downloadQr'])->name('qr.download');
+
+            Route::get('inscriptions/export', [SecretaireRegistrationController::class, 'export'])->name('inscriptions.export');
+            Route::post('inscriptions/import', [SecretaireRegistrationController::class, 'import'])->name('inscriptions.import');
+            Route::resource('inscriptions', SecretaireRegistrationController::class)
+                ->only(['index', 'show', 'destroy'])
+                ->parameters(['inscriptions' => 'registration']);
             Route::patch('inscriptions/{registration}/presence', [SecretaireRegistrationController::class, 'togglePresence'])->name('inscriptions.presence');
+
+            Route::get('questionnaires/export', [SecretaireQuestionnaireController::class, 'export'])->name('questionnaires.export');
+            Route::post('questionnaires/import', [SecretaireQuestionnaireController::class, 'import'])->name('questionnaires.import');
             Route::resource('questionnaires', SecretaireQuestionnaireController::class)->only(['index','show','destroy']);
+
+            Route::get('projets', [SecretaireProjectController::class, 'index'])->name('projets.index');
+            Route::get('projets/export', [SecretaireProjectController::class, 'export'])->name('projets.export');
+            Route::get('projets/{project}', [SecretaireProjectController::class, 'show'])->name('projets.show');
         });
 });

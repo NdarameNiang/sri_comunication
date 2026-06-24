@@ -56,6 +56,22 @@
     </div>
     @endif
 
+    {{-- Export CSV --}}
+    <div class="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap items-center gap-3">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <span class="text-sm font-medium text-gray-700">Exporter les appels à communication :</span>
+        <a href="{{ route('comite.projects.export') }}" class="btn-secondary text-sm flex items-center gap-1.5">
+            Tous les établissements
+        </a>
+        @foreach($structures->where('submitted_count', '>', 0) as $s)
+            <a href="{{ route('comite.projects.export', ['structure' => $s->id]) }}"
+               class="inline-flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 text-gray-700 font-medium transition-colors">
+                {{ $s->acronym ?? $s->name }}
+                <span class="text-gray-400">({{ $s->submitted_count }})</span>
+            </a>
+        @endforeach
+    </div>
+
     {{-- Résumé par structure --}}
     <div class="card">
         <div class="card-header">
@@ -82,10 +98,46 @@
         </div>
     </div>
 
+    {{-- Filtres projets --}}
+    <div class="bg-white rounded-xl border border-gray-200 p-4">
+        <form method="GET" action="{{ route('comite.dashboard') }}" class="flex flex-wrap gap-3 items-end">
+            <div class="flex-1 min-w-40">
+                <label class="block text-xs text-gray-500 mb-1">Recherche porteur</label>
+                <input type="text" name="search" value="{{ request('search') }}"
+                       placeholder="Nom, prénom, email…"
+                       class="input-field text-sm">
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Structure</label>
+                <select name="structure_id" class="input-field text-sm">
+                    <option value="">Toutes les structures</option>
+                    @foreach($structures as $s)
+                    <option value="{{ $s->id }}" {{ request('structure_id') == $s->id ? 'selected' : '' }}>
+                        {{ $s->acronym ?? $s->name }}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs text-gray-500 mb-1">Décision</label>
+                <select name="decision" class="input-field text-sm">
+                    <option value="">Toutes</option>
+                    <option value="selected" {{ request('decision') === 'selected' ? 'selected' : '' }}>Sélectionnés</option>
+                    <option value="pending"  {{ request('decision') === 'pending'  ? 'selected' : '' }}>En attente</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary text-sm">Filtrer</button>
+            @if(request()->hasAny(['search','structure_id','decision']))
+            <a href="{{ route('comite.dashboard') }}" class="btn-secondary text-sm">Réinitialiser</a>
+            @endif
+        </form>
+    </div>
+
     {{-- Liste des projets --}}
     <div class="card">
         <div class="card-header">
             <h3 class="section-title text-base">Projets soumis</h3>
+            <span class="text-xs text-gray-400">{{ $projects->total() }} résultat(s)</span>
         </div>
         <div class="divide-y divide-gray-50">
             @forelse($projects as $project)
@@ -93,18 +145,26 @@
                 <div class="flex items-start gap-4">
                     {{-- Checkbox sélection --}}
                     <div class="shrink-0 pt-0.5">
-                        <form method="POST" action="{{ route('comite.projects.toggle', $project) }}">
-                            @csrf
-                            <button type="submit" class="w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all
-                                {{ $project->selected
-                                    ? 'bg-emerald-500 border-emerald-500 hover:bg-emerald-600'
-                                    : 'border-gray-300 hover:border-emerald-400' }}"
-                                title="{{ $project->selected ? 'Désélectionner' : 'Sélectionner' }}">
-                                @if($project->selected)
+                        @if($project->selected && $project->email_sent_at)
+                            {{-- Verrouillé : email déjà envoyé --}}
+                            <div class="w-6 h-6 rounded-md border-2 bg-emerald-500 border-emerald-500 flex items-center justify-center cursor-not-allowed"
+                                 title="Email envoyé – impossible de désélectionner">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-                                @endif
-                            </button>
-                        </form>
+                            </div>
+                        @else
+                            <form method="POST" action="{{ route('comite.projects.toggle', $project) }}">
+                                @csrf
+                                <button type="submit" class="w-6 h-6 rounded-md border-2 flex items-center justify-center transition-all
+                                    {{ $project->selected
+                                        ? 'bg-emerald-500 border-emerald-500 hover:bg-emerald-600'
+                                        : 'border-gray-300 hover:border-emerald-400' }}"
+                                    title="{{ $project->selected ? 'Désélectionner' : 'Sélectionner' }}">
+                                    @if($project->selected)
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                    @endif
+                                </button>
+                            </form>
+                        @endif
                     </div>
 
                     {{-- Contenu --}}
@@ -125,6 +185,8 @@
                                     @if($project->email_sent_at)
                                         <span class="badge-blue text-xs">Email envoyé</span>
                                     @endif
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">En attente</span>
                                 @endif
                                 <a href="{{ route('comite.projects.show', $project) }}" class="btn-secondary text-xs px-3 py-1.5">
                                     @include('components.icon', ['name' => 'eye'])

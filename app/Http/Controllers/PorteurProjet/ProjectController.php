@@ -130,7 +130,27 @@ class ProjectController extends Controller
         $project->assignment->update(['status' => 'submitted']);
 
         try {
-            Mail::to($project->porteur->email)->send(new SubmissionConfirmationMail($project->porteur, $project->load('collaborators', 'assignment', 'structure')));
+            $project->load('collaborators', 'assignment', 'structure');
+
+            // Destinataire principal : email personnel si renseigné, sinon email UCAD
+            $primaryEmail = !empty($project->email_professionnel)
+                ? $project->email_professionnel
+                : $project->porteur->email;
+
+            $mailer = Mail::to($primaryEmail);
+
+            // CC : collaborateurs ayant un email
+            $collabEmails = $project->collaborators
+                ->filter(fn($c) => !empty($c->email))
+                ->map(fn($c) => $c->email)
+                ->values()
+                ->toArray();
+
+            if (!empty($collabEmails)) {
+                $mailer = $mailer->cc($collabEmails);
+            }
+
+            $mailer->send(new SubmissionConfirmationMail($project->porteur, $project));
         } catch (\Exception) {}
 
         return redirect()->route('porteur.dashboard')

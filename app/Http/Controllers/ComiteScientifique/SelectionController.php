@@ -17,6 +17,10 @@ class SelectionController extends Controller
             return back()->with('error', 'Seuls les projets soumis peuvent être sélectionnés.');
         }
 
+        if ($project->selected && $project->email_sent_at) {
+            return back()->with('error', 'Ce projet ne peut plus être désélectionné : l\'email de confirmation a déjà été envoyé au porteur.');
+        }
+
         $project->update([
             'selected'    => !$project->selected,
             'selected_at' => !$project->selected ? now() : null,

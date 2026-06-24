@@ -6,6 +6,24 @@
 
 @section('content')
 
+@if($inscriptionClosed)
+<div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-amber-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+    </svg>
+    <h3 class="font-bold text-amber-800 text-lg mb-1">Inscriptions fermées</h3>
+    <p class="text-amber-700 text-sm">
+        @if($event->inscription_open_at && now()->lt($event->inscription_open_at))
+            Les inscriptions ouvriront le {{ $event->inscription_open_at->format('d/m/Y à H:i') }}.
+        @elseif($event->inscription_close_at && now()->gt($event->inscription_close_at))
+            La période d'inscription s'est terminée le {{ $event->inscription_close_at->format('d/m/Y à H:i') }}.
+        @else
+            Les inscriptions ne sont pas disponibles pour le moment.
+        @endif
+    </p>
+</div>
+@else
+
 <div class="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
 
     {{-- En-tête formulaire --}}
@@ -123,5 +141,7 @@
         </div>
     </form>
 </div>
+
+@endif
 
 @endsection

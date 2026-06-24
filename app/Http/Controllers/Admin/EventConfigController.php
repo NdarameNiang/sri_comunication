@@ -65,9 +65,11 @@ class EventConfigController extends Controller
             'organizer'           => 'nullable|string|max:255',
             'event_start_date'    => 'nullable|date',
             'event_end_date'      => 'nullable|date|after_or_equal:event_start_date',
-            'submission_open_at'  => 'nullable|date',
-            'submission_close_at' => 'nullable|date|after_or_equal:submission_open_at',
-            'show_questionnaire'  => 'nullable|boolean',
+            'submission_open_at'   => 'nullable|date',
+            'submission_close_at'  => 'nullable|date|after_or_equal:submission_open_at',
+            'inscription_open_at'  => 'nullable|date',
+            'inscription_close_at' => 'nullable|date|after_or_equal:inscription_open_at',
+            'show_questionnaire'   => 'nullable|boolean',
         ]);
 
         $data['show_questionnaire'] = $request->boolean('show_questionnaire');

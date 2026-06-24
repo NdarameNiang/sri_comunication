@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion – SRI 2026 | UCAD</title>
+    <link rel="icon" type="image/png" href="/favicon-ucad.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -76,7 +77,7 @@
         .glass-input option { background: #1e293b; color: #fff; }
     </style>
 </head>
-<body class="font-sans overflow-hidden h-screen">
+<body class="font-sans">
 
 {{-- ===== FOND PLEIN ÉCRAN (photos UCAD) ===== --}}
 <div class="fixed inset-0 z-0">
@@ -100,7 +101,7 @@
 </div>
 
 {{-- ===== LAYOUT SUR LE FOND ===== --}}
-<div class="relative z-10 flex h-screen">
+<div class="relative z-10 flex flex-col lg:flex-row min-h-screen">
 
     {{-- ===== GAUCHE : Branding ===== --}}
     <div class="hidden lg:flex lg:w-[55%] flex-col justify-between p-12">
@@ -178,9 +179,9 @@
     </div>
 
     {{-- ===== DROITE : Formulaire glass ===== --}}
-    <div class="w-full lg:w-[45%] flex items-center justify-center p-6 lg:p-12">
+    <div class="w-full lg:w-[45%] flex items-center justify-center px-4 py-8 lg:p-12">
 
-        <div class="glass-form rounded-3xl shadow-2xl p-8 lg:p-10 w-full max-w-md">
+        <div class="glass-form rounded-3xl shadow-2xl p-6 sm:p-8 lg:p-10 w-full max-w-md">
 
             {{-- Header mobile --}}
             <div class="lg:hidden text-center mb-7">

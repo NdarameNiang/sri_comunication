@@ -18,6 +18,7 @@ class DashboardController extends Controller
             'porteurs'     => User::where('role', 'porteur_projet')->count(),
             'point_focaux' => User::where('role', 'point_focal')->count(),
             'comite'       => User::where('role', 'comite_scientifique')->count(),
+            'secretaires'  => User::where('role', 'secretaire')->count(),
             'assignments'  => ProjectAssignment::count(),
             'submitted'    => Project::where('status', 'submitted')->count(),
         ];
