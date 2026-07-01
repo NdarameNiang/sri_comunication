@@ -16,11 +16,24 @@ class PorteurController extends Controller
 {
     public function index()
     {
-        $porteurs = User::where('role', 'porteur_projet')
-            ->with(['structure', 'projectAssignments'])
-            ->latest()
-            ->paginate(15);
+        $query = User::where('role', 'porteur_projet')
+            ->with(['structure', 'projectAssignments.project'])
+            ->latest();
+
+        if ($search = request('search')) {
+            $query->where(fn($q) => $q
+                ->where('name', 'like', "%{$search}%")
+                ->orWhere('email', 'like', "%{$search}%")
+            );
+        }
+
+        if ($structureId = request('structure_id')) {
+            $query->where('structure_id', $structureId);
+        }
+
+        $porteurs   = $query->paginate(15)->withQueryString();
         $structures = Structure::orderBy('name')->get();
+
         return view('comite.porteurs.index', compact('porteurs', 'structures'));
     }
 

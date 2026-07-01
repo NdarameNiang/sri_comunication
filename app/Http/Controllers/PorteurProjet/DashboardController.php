@@ -12,7 +12,8 @@ class DashboardController extends Controller
     {
         $user        = Auth::user();
         $tab         = $request->get('tab', 'tous');
-        $assignments = $user->projectAssignments()->with('project')->get();
+        $search      = $request->get('search', '');
+        $assignments = $user->projectAssignments()->with('project', 'structure')->get();
 
         $grouped = [
             'tous'      => $assignments,
@@ -21,15 +22,16 @@ class DashboardController extends Controller
             'submitted' => $assignments->filter(fn($a) => $a->project?->status === 'submitted'),
         ];
 
-        $tabCounts = [
-            'tous'      => $grouped['tous']->count(),
-            'pending'   => $grouped['pending']->count(),
-            'draft'     => $grouped['draft']->count(),
-            'submitted' => $grouped['submitted']->count(),
-        ];
+        $tabCounts = collect($grouped)->map->count()->all();
 
         $displayed = $grouped[$tab] ?? $grouped['tous'];
 
-        return view('porteur.dashboard', compact('displayed', 'tab', 'tabCounts'));
+        if ($search) {
+            $displayed = $displayed->filter(fn($a) =>
+                str_contains(mb_strtolower($a->title), mb_strtolower($search))
+            );
+        }
+
+        return view('porteur.dashboard', compact('displayed', 'tab', 'tabCounts', 'search'));
     }
 }
