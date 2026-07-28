@@ -43,31 +43,31 @@
 
         /* ---- Glass card ---- */
         .glass-form {
-            background: rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.97);
             backdrop-filter: blur(28px) saturate(160%);
             -webkit-backdrop-filter: blur(28px) saturate(160%);
-            border: 1px solid rgba(255,255,255,0.22);
+            border: 1px solid rgba(255,255,255,0.6);
         }
 
         /* ---- Bouton action glass ---- */
         .glass-btn {
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.18);
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             transition: all .2s ease;
         }
         .glass-btn:hover {
-            background: rgba(255,255,255,0.15);
-            border-color: rgba(255,255,255,0.30);
+            background: #f1f5f9;
+            border-color: #cbd5e1;
             transform: translateY(-1px);
         }
         .glass-btn:active { transform: scale(.98); }
 
         /* ---- Onglets ---- */
-        .tab-btn { color: rgba(255,255,255,0.45); }
+        .tab-btn { color: #64748b; }
         .tab-btn.active {
-            background: rgba(255,255,255,0.18);
-            color: #fff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+            background: #fbbf24;
+            color: #1e293b;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
 
     </style>
@@ -195,18 +195,18 @@
                 <img src="{{ asset('images/logo_ucad.png') }}" alt="Logo UCAD"
                      class="h-14 mx-auto mb-3 object-contain drop-shadow"
                      onerror="this.style.display='none'">
-                <p class="text-white font-bold text-lg">{{ $event->event_name }} · UCAD</p>
-                <p class="text-white/70 text-xs mt-0.5">Appel à Communication</p>
+                <p class="text-slate-900 font-bold text-lg">{{ $event->event_name }} · UCAD</p>
+                <p class="text-slate-500 text-xs mt-0.5">Appel à Communication</p>
             </div>
 
             {{-- ── En-tête ── --}}
             <div class="mb-5">
-                <p class="text-white font-bold text-lg leading-tight">{{ $event->event_name }}</p>
-                <p class="text-white/60 text-xs mt-0.5 mb-1.5">
-                    <span class="text-amber-400 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
+                <p class="text-slate-900 font-bold text-lg leading-tight">{{ $event->event_name }}</p>
+                <p class="text-slate-500 text-xs mt-0.5 mb-1.5">
+                    <span class="text-amber-600 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
                 </p>
                 @if($event->event_start_date)
-                <p class="text-amber-400 text-sm font-semibold tracking-wide">
+                <p class="text-amber-600 text-sm font-semibold tracking-wide">
                     {{ $event->event_start_date->translatedFormat('d F Y') }}
                     @if($event->event_end_date) – {{ $event->event_end_date->translatedFormat('d F Y') }} @endif
                 </p>
@@ -215,7 +215,7 @@
 
             {{-- ── Barre d'onglets ── --}}
             @php $hasQuestionnaire = $event->show_questionnaire; @endphp
-            <div class="flex gap-1 p-1 rounded-xl mb-5" style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);">
+            <div class="flex gap-1 p-1 rounded-xl mb-5 bg-slate-100 border border-slate-200">
                 <button id="tab-btn-inscription" onclick="switchTab('inscription')"
                         class="tab-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -236,7 +236,7 @@
 
             {{-- ── Panneau Inscription ── --}}
             <div id="tab-inscription">
-                <p class="text-white/75 text-sm leading-relaxed mb-5">
+                <p class="text-slate-600 text-sm leading-relaxed mb-5">
                     Remplissez le formulaire d'inscription pour participer à l'événement.
                 </p>
                 <a href="{{ route('public.registration.show', $event->event_slug) }}"
@@ -254,12 +254,12 @@
             {{-- ── Panneau Questionnaire ── --}}
             @if($hasQuestionnaire)
             <div id="tab-questionnaire" style="display:none;">
-                <p class="text-white/75 text-sm leading-relaxed mb-5">
+                <p class="text-slate-600 text-sm leading-relaxed mb-5">
                     Donnez votre avis sur l'événement en répondant au questionnaire d'appréciation.
                 </p>
                 <a href="{{ route('public.questionnaire.show', $event->event_slug) }}"
-                   class="glass-btn w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4 text-white font-semibold text-sm tracking-wide">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white/70" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                   class="glass-btn w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4 text-slate-800 font-semibold text-sm tracking-wide">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z"/>
                     </svg>
                     Accéder au questionnaire
@@ -269,25 +269,25 @@
 
             {{-- Séparateur --}}
             <div class="flex items-center gap-3 mt-6 mb-4">
-                <div class="h-px flex-1 bg-white/10"></div>
-                <span class="text-white/20 text-xs">•</span>
-                <div class="h-px flex-1 bg-white/10"></div>
+                <div class="h-px flex-1 bg-slate-200"></div>
+                <span class="text-slate-300 text-xs">•</span>
+                <div class="h-px flex-1 bg-slate-200"></div>
             </div>
 
             {{-- Lien espace membres --}}
-            <div class="flex items-start gap-2.5 p-3.5 rounded-xl bg-white/6 border border-white/10">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white/35 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex items-start gap-2.5 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <p class="text-white/65 text-xs leading-relaxed">
+                <p class="text-slate-500 text-xs leading-relaxed">
                     Membre de l'équipe ?
-                    <a href="{{ route('login') }}" class="text-amber-400 hover:text-amber-300 font-medium underline underline-offset-2 transition-colors">
+                    <a href="{{ route('login') }}" class="text-amber-600 hover:text-amber-700 font-medium underline underline-offset-2 transition-colors">
                         Accéder à l'espace membres
                     </a>
                 </p>
             </div>
 
-            <p class="text-center text-white/40 text-xs mt-6">
+            <p class="text-center text-slate-400 text-xs mt-6">
                 © {{ date('Y') }} SRI · Université Cheikh Anta Diop · Dakar
             </p>
         </div>
