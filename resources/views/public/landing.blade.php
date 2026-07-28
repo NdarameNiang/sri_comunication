@@ -109,7 +109,6 @@
                 <span class="pulse-dot w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
                 <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">
                     Appel à contribution
-                    @if($event->event_start_date) · {{ $event->event_start_date->translatedFormat('F Y') }} @endif
                 </span>
             </div>
 
@@ -126,9 +125,22 @@
                     @endif
                 @endforeach
             </h1>
-            <p class="text-xl text-white/85 font-light tracking-wide mb-6">
-                Semaine de la Recherche et de l'Innovation
+            <p class="text-xl text-white/85 font-light tracking-wide mb-4">
+                <span class="text-amber-400 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
             </p>
+
+            {{-- Dates de l'événement --}}
+            @if($event->event_start_date)
+            <div class="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-lg bg-white/10 border border-white/15">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                </svg>
+                <span class="text-white text-sm font-semibold tracking-wide">
+                    {{ $event->event_start_date->translatedFormat('d F Y') }}
+                    @if($event->event_end_date) – {{ $event->event_end_date->translatedFormat('d F Y') }} @endif
+                </span>
+            </div>
+            @endif
 
             {{-- Description ou texte institutionnel --}}
             <div class="max-w-md space-y-4">
@@ -190,14 +202,15 @@
             {{-- ── En-tête ── --}}
             <div class="mb-5">
                 <p class="text-white font-bold text-lg leading-tight">{{ $event->event_name }}</p>
-                <p class="text-white/60 text-xs mt-0.5">
-                    @if($event->event_start_date)
-                        {{ $event->event_start_date->translatedFormat('d F Y') }}
-                        @if($event->event_end_date) – {{ $event->event_end_date->translatedFormat('d F Y') }} @endif
-                    @else
-                        Semaine de la Recherche et de l'Innovation
-                    @endif
+                <p class="text-white/60 text-xs mt-0.5 mb-1.5">
+                    <span class="text-amber-400 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
                 </p>
+                @if($event->event_start_date)
+                <p class="text-amber-400 text-sm font-semibold tracking-wide">
+                    {{ $event->event_start_date->translatedFormat('d F Y') }}
+                    @if($event->event_end_date) – {{ $event->event_end_date->translatedFormat('d F Y') }} @endif
+                </p>
+                @endif
             </div>
 
             {{-- ── Barre d'onglets ── --}}
