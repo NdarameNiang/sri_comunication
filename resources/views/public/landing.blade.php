@@ -98,7 +98,7 @@
                  onerror="this.style.display='none'">
             <div class="border-l border-white/20 pl-4">
                 <p class="text-white font-bold text-base tracking-wide leading-tight">Université Cheikh Anta Diop</p>
-                <p class="text-white/50 text-xs tracking-wider">Dakar · Sénégal</p>
+                <p class="text-white/70 text-xs tracking-wider">Dakar · Sénégal</p>
             </div>
         </div>
 
@@ -126,17 +126,17 @@
                     @endif
                 @endforeach
             </h1>
-            <p class="text-xl text-white/70 font-light tracking-wide mb-6">
+            <p class="text-xl text-white/85 font-light tracking-wide mb-6">
                 Semaine de la Recherche et de l'Innovation
             </p>
 
             {{-- Description ou texte institutionnel --}}
             <div class="max-w-md space-y-4">
                 @if($event->event_description)
-                <p class="text-sm text-white/65 leading-relaxed">{{ $event->event_description }}</p>
+                <p class="text-sm text-white/90 leading-relaxed">{{ $event->event_description }}</p>
                 @else
-                <p class="text-sm text-white/65 leading-relaxed">
-                    Dans le cadre de l'organisation de la <span class="text-white/90 font-medium">{{ $event->event_name }}</span>,
+                <p class="text-sm text-white/90 leading-relaxed">
+                    Dans le cadre de l'organisation de la <span class="text-white font-medium">{{ $event->event_name }}</span>,
                     la Direction de la Recherche et de l'Innovation (<span class="text-amber-400 font-semibold">DRI</span>)
                     lance un appel à contribution à l'ensemble des structures académiques, scientifiques et pédagogiques de l'UCAD.
                 </p>
@@ -145,10 +145,10 @@
                 <div class="space-y-2">
                     <p class="text-xs text-white uppercase tracking-widest font-semibold mb-3">Cet événement vise à</p>
                     @foreach([
-                        ['Sécuriser',  'les résultats issus de la recherche institutionnelle'],
-                        ['Valoriser',  'les travaux à fort impact scientifique et sociétal'],
-                        ['Promouvoir', 'les innovations des laboratoires et équipes de recherche'],
-                        ['Renforcer',  'la visibilité et les partenariats académiques et socio-économiques'],
+                        ['Faire connaître', "les capacités scientifiques et technologiques de l'UCAD"],
+                        ['Créer',           'des passerelles opérationnelles entre chercheurs, décideurs publics et acteurs socio-économiques, collectivités territoriales'],
+                        ['Renforcer',       "l'ancrage de la recherche dans les dynamiques de transformation socio-économique"],
+                        ['Mobiliser',       "des financements publics et privés en faveur de la recherche, de l'innovation et de la valorisation"],
                     ] as [$kw, $desc])
                     <div class="flex items-start gap-3">
                         <div class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
@@ -167,7 +167,7 @@
                 <button class="slide-dot active" onclick="goToSlide(0)"></button>
                 <button class="slide-dot"        onclick="goToSlide(1)"></button>
             </div>
-            <p class="text-white/25 text-xs tracking-wide">
+            <p class="text-white/45 text-xs tracking-wide">
                 © {{ date('Y') }} Direction de la Recherche · UCAD · Dakar, Sénégal
             </p>
         </div>
@@ -184,13 +184,13 @@
                      class="h-14 mx-auto mb-3 object-contain drop-shadow"
                      onerror="this.style.display='none'">
                 <p class="text-white font-bold text-lg">{{ $event->event_name }} · UCAD</p>
-                <p class="text-white/50 text-xs mt-0.5">Appel à Communication</p>
+                <p class="text-white/70 text-xs mt-0.5">Appel à Communication</p>
             </div>
 
             {{-- ── En-tête ── --}}
             <div class="mb-5">
                 <p class="text-white font-bold text-lg leading-tight">{{ $event->event_name }}</p>
-                <p class="text-white/40 text-xs mt-0.5">
+                <p class="text-white/60 text-xs mt-0.5">
                     @if($event->event_start_date)
                         {{ $event->event_start_date->translatedFormat('d F Y') }}
                         @if($event->event_end_date) – {{ $event->event_end_date->translatedFormat('d F Y') }} @endif
@@ -223,7 +223,7 @@
 
             {{-- ── Panneau Inscription ── --}}
             <div id="tab-inscription">
-                <p class="text-white/50 text-sm leading-relaxed mb-5">
+                <p class="text-white/75 text-sm leading-relaxed mb-5">
                     Remplissez le formulaire d'inscription pour participer à l'événement.
                 </p>
                 <a href="{{ route('public.registration.show', $event->event_slug) }}"
@@ -241,7 +241,7 @@
             {{-- ── Panneau Questionnaire ── --}}
             @if($hasQuestionnaire)
             <div id="tab-questionnaire" style="display:none;">
-                <p class="text-white/50 text-sm leading-relaxed mb-5">
+                <p class="text-white/75 text-sm leading-relaxed mb-5">
                     Donnez votre avis sur l'événement en répondant au questionnaire d'appréciation.
                 </p>
                 <a href="{{ route('public.questionnaire.show', $event->event_slug) }}"
@@ -266,15 +266,15 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-white/35 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <p class="text-white/40 text-xs leading-relaxed">
+                <p class="text-white/65 text-xs leading-relaxed">
                     Membre de l'équipe ?
-                    <a href="{{ route('login') }}" class="text-amber-400/80 hover:text-amber-400 font-medium underline underline-offset-2 transition-colors">
+                    <a href="{{ route('login') }}" class="text-amber-400 hover:text-amber-300 font-medium underline underline-offset-2 transition-colors">
                         Accéder à l'espace membres
                     </a>
                 </p>
             </div>
 
-            <p class="text-center text-white/20 text-xs mt-6">
+            <p class="text-center text-white/40 text-xs mt-6">
                 © {{ date('Y') }} SRI · Université Cheikh Anta Diop · Dakar
             </p>
         </div>
