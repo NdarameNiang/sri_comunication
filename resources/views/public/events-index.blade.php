@@ -70,7 +70,7 @@
     <div class="relative z-10 flex flex-col" style="min-height: 520px;">
 
         {{-- ===== NAV ===== --}}
-        <div class="flex items-center justify-between px-5 sm:px-10 py-5">
+        <div class="flex items-center justify-between px-4 sm:px-6 lg:px-10 py-5">
             <div class="flex items-center gap-3">
                 <img src="{{ asset('images/logo_ucad.png') }}" alt="Logo UCAD"
                      class="h-10 w-auto object-contain drop-shadow" onerror="this.style.display='none'">
@@ -90,7 +90,7 @@
         </div>
 
         {{-- ===== HERO INSTITUTIONNEL — carrousel texte synchronisé avec les photos ===== --}}
-        <div class="flex-1 flex flex-col justify-center px-5 sm:px-10 py-8 text-center max-w-3xl mx-auto">
+        <div class="flex-1 flex flex-col justify-center px-4 sm:px-6 lg:px-10 py-8 text-center max-w-3xl mx-auto w-full">
 
             {{-- Slide 1 : définition SRI --}}
             <div class="hero-text-slide active" id="hero-text-0">
@@ -146,19 +146,19 @@
 </div>
 
 {{-- ===== LISTE DES ÉVÉNEMENTS (fond clair) ===== --}}
-<div class="px-5 sm:px-10 py-14">
+<div class="px-4 sm:px-6 lg:px-10 py-10 sm:py-14">
     <div class="max-w-5xl mx-auto">
 
         @if($events->isEmpty())
-            <div class="event-card rounded-2xl shadow-xl p-10 text-center max-w-md mx-auto border border-slate-100">
+            <div class="event-card rounded-2xl shadow-xl p-8 sm:p-10 text-center max-w-md mx-auto border border-slate-100">
                 <p class="text-slate-700 font-semibold mb-1">Aucun événement disponible pour le moment</p>
                 <p class="text-slate-500 text-sm">Revenez bientôt ou contactez la Direction de la Recherche.</p>
             </div>
         @else
-            <p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-4 text-center">
+            <p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-5 text-center">
                 Événements disponibles
             </p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-7">
                 @foreach($events as $event)
                     @php
                         $statusLabel = 'Événement';
@@ -175,7 +175,7 @@
                         }
                     @endphp
                     <a href="{{ route('public.landing', $event->event_slug) }}"
-                       class="event-card rounded-2xl shadow-lg border border-slate-100 p-7 flex flex-col">
+                       class="event-card rounded-2xl shadow-lg border border-slate-100 p-6 sm:p-7 flex flex-col">
                         <div class="flex items-start justify-between gap-3 mb-4">
                             <h3 class="text-slate-900 font-bold text-xl leading-tight">{{ $event->event_name }}</h3>
                             <span class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border {{ $statusClasses }}">
