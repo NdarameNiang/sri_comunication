@@ -125,7 +125,7 @@
                     @endif
                 @endforeach
             </h1>
-            <p class="text-xl text-white/85 font-light tracking-wide mb-4">
+            <p class="text-xl text-white font-light tracking-wide mb-4 drop-shadow-lg">
                 <span class="text-amber-400 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
             </p>
 
