@@ -158,7 +158,7 @@
             <p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-4 text-center">
                 Événements disponibles
             </p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7">
                 @foreach($events as $event)
                     @php
                         $statusLabel = 'Événement';
@@ -175,16 +175,16 @@
                         }
                     @endphp
                     <a href="{{ route('public.landing', $event->event_slug) }}"
-                       class="event-card rounded-2xl shadow-lg border border-slate-100 p-6 flex flex-col">
-                        <div class="flex items-start justify-between gap-3 mb-3">
-                            <h3 class="text-slate-900 font-bold text-lg leading-tight">{{ $event->event_name }}</h3>
+                       class="event-card rounded-2xl shadow-lg border border-slate-100 p-7 flex flex-col">
+                        <div class="flex items-start justify-between gap-3 mb-4">
+                            <h3 class="text-slate-900 font-bold text-xl leading-tight">{{ $event->event_name }}</h3>
                             <span class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border {{ $statusClasses }}">
                                 {{ $statusLabel }}
                             </span>
                         </div>
 
                         @if($event->event_start_date)
-                        <div class="flex items-center gap-1.5 text-amber-600 text-xs font-semibold mb-3">
+                        <div class="flex items-center gap-1.5 text-amber-600 text-xs font-semibold mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
                             </svg>
@@ -193,8 +193,8 @@
                         </div>
                         @endif
 
-                        <p class="text-slate-500 text-sm leading-relaxed mb-5 flex-1">
-                            {{ \Illuminate\Support\Str::limit($event->event_description ?: "Appel à contribution de la Direction de la Recherche et de l'Innovation.", 130) }}
+                        <p class="text-slate-600 text-base leading-loose mb-6 flex-1">
+                            {{ \Illuminate\Support\Str::limit($event->event_description ?: "Appel à contribution de la Direction de la Recherche et de l'Innovation.", 180) }}
                         </p>
 
                         <span class="inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-400 text-slate-900 font-bold text-sm tracking-wide">
