@@ -10,8 +10,8 @@
     <div class="alert-info">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <div>
-            <strong>Règle de capacité :</strong> Chaque structure peut accueillir <strong>au maximum 5 projets</strong> au total.
-            Le porteur peut se voir assigner 1 à 5 projets, dans la limite des places disponibles pour sa structure.
+            <strong>Règle de capacité :</strong> Chaque structure peut accueillir <strong>au maximum {{ $maxProjects }} projet(s)</strong> au total.
+            Le porteur peut se voir assigner 1 à {{ $maxProjects }} projet(s), dans la limite des places disponibles pour sa structure.
         </div>
     </div>
 
@@ -76,7 +76,7 @@
                             <option value="">-- Sélectionner une structure --</option>
                             @foreach($structures as $structure)
                             @php
-                                $remaining = 5 - $structure->project_assignments_count;
+                                $remaining = $maxProjects - $structure->project_assignments_count;
                                 $disabled = $remaining <= 0;
                             @endphp
                             <option value="{{ $structure->id }}"
@@ -154,7 +154,7 @@
 </div>
 
 <script>
-let maxTitles = 5;
+let maxTitles = {{ $maxProjects }};
 
 function updateSlots(select) {
     const opt = select.options[select.selectedIndex];

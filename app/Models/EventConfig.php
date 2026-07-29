@@ -11,7 +11,7 @@ class EventConfig extends Model
         'event_start_date', 'event_end_date',
         'submission_open_at', 'submission_close_at',
         'inscription_open_at', 'inscription_close_at',
-        'is_active', 'show_questionnaire',
+        'is_active', 'show_questionnaire', 'max_projects_per_structure',
     ];
 
     protected function casts(): array

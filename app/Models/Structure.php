@@ -36,13 +36,18 @@ class Structure extends Model
         return $this->projectAssignments()->count();
     }
 
+    public static function maxProjectsPerStructure(): int
+    {
+        return EventConfig::active()?->max_projects_per_structure ?? 5;
+    }
+
     public function getRemainingSlots(): int
     {
-        return max(0, 5 - $this->projectAssignments()->count());
+        return max(0, static::maxProjectsPerStructure() - $this->projectAssignments()->count());
     }
 
     public function canAddProjects(int $count = 1): bool
     {
-        return ($this->projectAssignments()->count() + $count) <= 5;
+        return ($this->projectAssignments()->count() + $count) <= static::maxProjectsPerStructure();
     }
 }

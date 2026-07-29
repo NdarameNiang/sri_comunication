@@ -70,6 +70,7 @@ class EventConfigController extends Controller
             'inscription_open_at'  => 'nullable|date',
             'inscription_close_at' => 'nullable|date|after_or_equal:inscription_open_at',
             'show_questionnaire'   => 'nullable|boolean',
+            'max_projects_per_structure' => 'required|integer|min:1',
         ]);
 
         $data['show_questionnaire'] = $request->boolean('show_questionnaire');

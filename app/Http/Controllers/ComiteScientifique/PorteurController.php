@@ -40,18 +40,21 @@ class PorteurController extends Controller
     public function create()
     {
         $structures = Structure::withCount('projectAssignments')->orderBy('name')->get();
-        return view('comite.porteurs.create', compact('structures'));
+        $maxProjects = Structure::maxProjectsPerStructure();
+        return view('comite.porteurs.create', compact('structures', 'maxProjects'));
     }
 
     public function store(Request $request)
     {
+        $maxProjects = Structure::maxProjectsPerStructure();
+
         $data = $request->validate([
             'name'            => 'required|string|max:255',
             'email'           => 'required|email|unique:users',
             'email_personnel' => 'nullable|email|max:255',
             'phone'           => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'structure_id'    => 'required|exists:structures,id',
-            'titles'          => 'required|array|min:1|max:5',
+            'titles'          => "required|array|min:1|max:{$maxProjects}",
             'titles.*'        => 'required|string|max:500',
         ], [
             'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
@@ -62,7 +65,7 @@ class PorteurController extends Controller
 
         if (!$structure->canAddProjects(count($titles))) {
             $remaining = $structure->getRemainingSlots();
-            return back()->withErrors(['titles' => "Cette structure ne peut accueillir que {$remaining} projet(s) supplémentaire(s)."])->withInput();
+            return back()->withErrors(['titles' => "Cette structure ne peut accueillir que {$remaining} projet(s) supplémentaire(s) (max {$maxProjects})."])->withInput();
         }
 
         $plainPassword = Str::random(10);

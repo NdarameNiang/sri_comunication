@@ -63,9 +63,11 @@
         <div class="border-t border-gray-100 grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-100">
             @foreach([
                 ['Responsable', $project->responsable_nom],
-                ['Email', $project->contact_email],
-                ['Maturité', \App\Models\Project::maturityLabels()[$project->maturity_level] ?? '–'],
+                ['Email institutionnel', $project->contact_email],
+                ['Email personnel', $project->email_professionnel ?? '–'],
+                ['Téléphone', $project->contact_phone ?? '–'],
                 ['Domaine', $project->scientific_domain ?? '–'],
+                ['Maturité', \App\Models\Project::maturityLabels()[$project->maturity_level] ?? ($project->maturity_level ?? '–')],
             ] as [$label, $value])
             <div class="px-4 py-3">
                 <p class="text-xs text-gray-400">{{ $label }}</p>
@@ -99,17 +101,18 @@
     @endforeach
 
     {{-- Valorisation & Impact ------------------------------------------ --}}
-    @if($project->protection_types || $project->impact_types || $project->presentation_formats)
+    @if($project->protection_types || $project->valorisation_types || $project->impact_types || $project->presentation_formats)
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">
         <div class="px-5 py-3 border-b border-gray-100 bg-gray-50/50">
             <h3 class="text-sm font-semibold text-gray-700">Valorisation & Impact</h3>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
+        <div class="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
             @foreach([
-                ['Protection', $project->protection_types, \App\Models\Project::protectionLabels(), 'bg-amber-50 text-amber-700'],
-                ['Impact', $project->impact_types, \App\Models\Project::impactLabels(), 'bg-emerald-50 text-emerald-700'],
-                ['Présentation', $project->presentation_formats, \App\Models\Project::presentationLabels(), 'bg-blue-50 text-blue-700'],
-            ] as [$label, $values, $map, $cls])
+                ['Protection', $project->protection_types, \App\Models\Project::protectionLabels(), 'bg-amber-50 text-amber-700', $project->protection_autres],
+                ['Valorisation', $project->valorisation_types, \App\Models\Project::valorisationLabels(), 'bg-purple-50 text-purple-700', $project->valorisation_autres],
+                ['Impact', $project->impact_types, \App\Models\Project::impactLabels(), 'bg-emerald-50 text-emerald-700', null],
+                ['Présentation', $project->presentation_formats, \App\Models\Project::presentationLabels(), 'bg-blue-50 text-blue-700', $project->presentation_autres],
+            ] as [$label, $values, $map, $cls, $autres])
             @if($values)
             <div class="px-5 py-4">
                 <p class="text-xs text-gray-400 mb-2">{{ $label }}</p>
@@ -118,6 +121,9 @@
                     <span class="text-xs px-2 py-0.5 rounded-full {{ $cls }}">{{ $map[$v] ?? $v }}</span>
                     @endforeach
                 </div>
+                @if($autres)
+                <p class="text-xs text-gray-500 mt-2">Autres : {{ $autres }}</p>
+                @endif
             </div>
             @endif
             @endforeach
@@ -146,9 +152,16 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-medium text-gray-900">{{ $collab->fullName() }}</p>
-                    <p class="text-xs text-gray-400">{{ $collab->institution ?? $collab->role_collaborateur ?? '' }}</p>
+                    <p class="text-xs text-gray-400">
+                        {{ $collab->role_collaborateur ?? '' }}
+                        @if($collab->role_collaborateur && $collab->institution) · @endif
+                        {{ $collab->institution ?? '' }}
+                    </p>
                 </div>
-                @if($collab->email)<p class="text-xs text-gray-400 hidden sm:block">{{ $collab->email }}</p>@endif
+                <div class="text-right shrink-0 hidden sm:block">
+                    @if($collab->email)<p class="text-xs text-gray-400">{{ $collab->email }}</p>@endif
+                    @if($collab->telephone)<p class="text-xs text-gray-400">{{ $collab->telephone }}</p>@endif
+                </div>
             </div>
             @endforeach
         </div>

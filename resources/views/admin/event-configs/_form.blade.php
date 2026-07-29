@@ -50,6 +50,19 @@
     </div>
 </div>
 
+{{-- Règles de dépôt --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Règles de dépôt des projets</p>
+    <div class="sm:w-1/2 sm:pr-2">
+        <label class="form-label">Nombre maximum de projets par structure <span class="text-red-500">*</span></label>
+        <input type="number" min="1" name="max_projects_per_structure"
+               value="{{ old('max_projects_per_structure', $eventConfig->max_projects_per_structure ?? 5) }}"
+               class="form-input @error('max_projects_per_structure') border-red-400 @enderror" required>
+        <p class="text-xs text-gray-400 mt-1">Nombre de projets qu'une même structure peut soumettre au total pour cet événement</p>
+        @error('max_projects_per_structure') <p class="form-error">{{ $message }}</p> @enderror
+    </div>
+</div>
+
 {{-- Options publiques --}}
 <div>
     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Options de la page publique</p>

@@ -23,7 +23,10 @@
         <h2 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Responsable</h2>
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
             <div><p class="text-xs text-gray-500 mb-0.5">Nom</p><p class="font-medium">{{ $project->responsable_nom ?? $project->porteur?->name }}</p></div>
-            <div><p class="text-xs text-gray-500 mb-0.5">Email</p><p>{{ $project->contact_email ?? $project->porteur?->email }}</p></div>
+            <div><p class="text-xs text-gray-500 mb-0.5">Email institutionnel</p><p>{{ $project->contact_email ?? $project->porteur?->email }}</p></div>
+            @if($project->email_professionnel)
+            <div><p class="text-xs text-gray-500 mb-0.5">Email personnel</p><p>{{ $project->email_professionnel }}</p></div>
+            @endif
             @if($project->contact_phone)
             <div><p class="text-xs text-gray-500 mb-0.5">Téléphone</p><p>{{ $project->contact_phone }}</p></div>
             @endif
@@ -32,7 +35,7 @@
             <div><p class="text-xs text-gray-500 mb-0.5">Domaine scientifique</p><p>{{ $project->scientific_domain }}</p></div>
             @endif
             @if($project->maturity_level)
-            <div><p class="text-xs text-gray-500 mb-0.5">Maturité</p><p>{{ $project->maturity_level }}</p></div>
+            <div><p class="text-xs text-gray-500 mb-0.5">Maturité</p><p>{{ \App\Models\Project::maturityLabels()[$project->maturity_level] ?? $project->maturity_level }}</p></div>
             @endif
         </div>
     </div>
@@ -50,28 +53,37 @@
     {{-- Listes --}}
     @php
     $listFields = [
-        'project_types'       => 'Types de projet',
-        'protection_types'    => 'Protections',
-        'valorisation_types'  => 'Valorisations',
-        'impact_types'        => 'Impacts',
-        'presentation_formats'=> 'Formats de présentation',
+        'project_types'        => ['Types de projet', \App\Models\Project::projectTypeLabels(), null],
+        'protection_types'     => ['Protections', \App\Models\Project::protectionLabels(), $project->protection_autres],
+        'valorisation_types'   => ['Valorisations', \App\Models\Project::valorisationLabels(), $project->valorisation_autres],
+        'impact_types'         => ['Impacts', \App\Models\Project::impactLabels(), null],
+        'presentation_formats' => ['Formats de présentation', \App\Models\Project::presentationLabels(), $project->presentation_autres],
     ];
     @endphp
     <div class="bg-white rounded-xl border border-gray-200 p-5">
         <h3 class="text-sm font-semibold text-gray-700 mb-4 uppercase tracking-wide">Caractéristiques</h3>
         <div class="space-y-3 text-sm">
-            @foreach($listFields as $field => $label)
+            @foreach($listFields as $field => [$label, $map, $autres])
             @if($project->$field && count($project->$field) > 0)
             <div>
                 <p class="text-xs text-gray-500 mb-1">{{ $label }}</p>
                 <div class="flex flex-wrap gap-1">
                     @foreach($project->$field as $v)
-                    <span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full">{{ $v }}</span>
+                    <span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full">{{ $map[$v] ?? $v }}</span>
                     @endforeach
                 </div>
+                @if($autres)
+                <p class="text-xs text-gray-500 mt-1">Autres : {{ $autres }}</p>
+                @endif
             </div>
             @endif
             @endforeach
+            @if($project->logistic_needs)
+            <div>
+                <p class="text-xs text-gray-500 mb-1">Besoins logistiques</p>
+                <p class="text-sm text-gray-700">{{ $project->logistic_needs }}</p>
+            </div>
+            @endif
         </div>
     </div>
 
@@ -86,6 +98,7 @@
                 @if($collab->role_collaborateur)<p class="text-xs text-gray-500">{{ $collab->role_collaborateur }}</p>@endif
                 @if($collab->institution)<p class="text-xs text-gray-400">{{ $collab->institution }}</p>@endif
                 @if($collab->email)<p class="text-xs text-gray-400">{{ $collab->email }}</p>@endif
+                @if($collab->telephone)<p class="text-xs text-gray-400">{{ $collab->telephone }}</p>@endif
             </div>
             @endforeach
         </div>
