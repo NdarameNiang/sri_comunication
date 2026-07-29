@@ -125,9 +125,11 @@
                     @endif
                 @endforeach
             </h1>
-            <p class="text-xl text-white font-light tracking-wide mb-4 drop-shadow-lg">
-                <span class="text-amber-400 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
-            </p>
+            <div class="inline-block mb-5 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
+                <p class="text-lg sm:text-xl font-bold text-white tracking-wide">
+                    <span class="text-amber-400">SRI</span> — Semaine de la Recherche et de l'Innovation
+                </p>
+            </div>
 
             {{-- Dates de l'événement --}}
             @if($event->event_start_date)

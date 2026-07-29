@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\EventConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +14,9 @@ class LoginController extends Controller
         if (Auth::check()) {
             return redirect()->route(Auth::user()->getDashboardRoute());
         }
-        return view('auth.login');
+
+        $event = EventConfig::active();
+        return view('auth.login', compact('event'));
     }
 
     public function login(Request $request)
