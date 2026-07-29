@@ -48,8 +48,8 @@
     {{-- Nav overlay --}}
     <div class="absolute top-0 inset-x-0 z-20 flex items-center justify-between px-5 py-3">
         <a href="{{ url('/') }}"
-           class="inline-flex items-center gap-2 text-xs font-semibold text-white/70 hover:text-white transition-colors"
-           style="text-shadow:0 1px 3px rgba(0,0,0,0.4);">
+           class="inline-flex items-center gap-1.5 text-xs font-semibold text-white/80 hover:text-white px-3 py-1.5 rounded-full transition-all"
+           style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);backdrop-filter:blur(10px);">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/>
             </svg>

@@ -30,16 +30,11 @@ use App\Http\Controllers\Secretaire\ProjectController as SecretaireProjectContro
 use App\Http\Controllers\Public\RegistrationController as PublicRegistrationController;
 use App\Http\Controllers\Public\QuestionnaireController as PublicQuestionnaireController;
 use App\Http\Controllers\Public\LandingController as PublicLandingController;
+use App\Http\Controllers\Public\EventsIndexController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Routes publiques (sans auth) ────────────────────────────────────────────
-Route::get('/', function () {
-    $event = \App\Models\EventConfig::where('is_active', true)->first();
-    if ($event) {
-        return redirect()->route('public.landing', $event->event_slug);
-    }
-    return redirect()->route('login');
-});
+Route::get('/', [EventsIndexController::class, 'index'])->name('public.events.index');
 Route::get('/login',  [LoginController::class, 'showLogin'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout',[LoginController::class, 'logout'])->name('logout')->middleware('auth');
