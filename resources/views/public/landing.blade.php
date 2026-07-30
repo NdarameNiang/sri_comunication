@@ -108,7 +108,7 @@
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2 mb-7">
                 <span class="pulse-dot w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
                 <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">
-                    Appel à contribution
+                    {{ \App\Models\ContentBlock::resolve('landing.badge_text', $event)?->content ?? 'Appel à contribution' }}
                 </span>
             </div>
 
@@ -146,8 +146,20 @@
 
             {{-- Description ou texte institutionnel --}}
             <div class="max-w-md space-y-4">
+                @php
+                    $introBlock = \App\Models\ContentBlock::resolve('landing.intro', $event);
+                    $objectivesBlock = \App\Models\ContentBlock::resolve('landing.objectives', $event);
+                    $objectives = $objectivesBlock?->content_json ?: [
+                        ['title' => 'Faire connaître', 'description' => "les capacités scientifiques et technologiques de l'UCAD"],
+                        ['title' => 'Créer',           'description' => 'des passerelles opérationnelles entre chercheurs, décideurs publics et acteurs socio-économiques, collectivités territoriales'],
+                        ['title' => 'Renforcer',       'description' => "l'ancrage de la recherche dans les dynamiques de transformation socio-économique"],
+                        ['title' => 'Mobiliser',       'description' => "des financements publics et privés en faveur de la recherche, de l'innovation et de la valorisation"],
+                    ];
+                @endphp
                 @if($event->event_description)
                 <p class="text-sm text-white/90 leading-relaxed">{{ $event->event_description }}</p>
+                @elseif($introBlock)
+                <p class="text-sm text-white/90 leading-relaxed">{{ $introBlock->content }}</p>
                 @else
                 <p class="text-sm text-white/90 leading-relaxed">
                     Dans le cadre de l'organisation de la <span class="text-white font-medium">{{ $event->event_name }}</span>,
@@ -158,16 +170,11 @@
 
                 <div class="space-y-2">
                     <p class="text-xs text-white uppercase tracking-widest font-semibold mb-3">Cet événement vise à</p>
-                    @foreach([
-                        ['Faire connaître', "les capacités scientifiques et technologiques de l'UCAD"],
-                        ['Créer',           'des passerelles opérationnelles entre chercheurs, décideurs publics et acteurs socio-économiques, collectivités territoriales'],
-                        ['Renforcer',       "l'ancrage de la recherche dans les dynamiques de transformation socio-économique"],
-                        ['Mobiliser',       "des financements publics et privés en faveur de la recherche, de l'innovation et de la valorisation"],
-                    ] as [$kw, $desc])
+                    @foreach($objectives as $item)
                     <div class="flex items-start gap-3">
                         <div class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
                         <p class="text-sm text-white leading-snug">
-                            <span class="font-semibold">{{ $kw }}</span> {{ $desc }}
+                            <span class="font-semibold">{{ $item['title'] }}</span> {{ $item['description'] }}
                         </p>
                     </div>
                     @endforeach
@@ -182,7 +189,7 @@
                 <button class="slide-dot"        onclick="goToSlide(1)"></button>
             </div>
             <p class="text-white/45 text-xs tracking-wide">
-                © {{ date('Y') }} Direction de la Recherche · UCAD · Dakar, Sénégal
+                © {{ date('Y') }} {{ \App\Models\ContentBlock::resolve('landing.footer', $event)?->content ?? 'Direction de la Recherche · UCAD · Dakar, Sénégal' }}
             </p>
         </div>
     </div>

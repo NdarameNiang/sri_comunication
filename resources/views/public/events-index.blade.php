@@ -119,17 +119,20 @@
                     <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">Cet événement vise à</span>
                 </div>
 
+                @php
+                    $objectives = \App\Models\ContentBlock::resolve('landing.objectives')?->content_json ?: [
+                        ['title' => 'Faire connaître', 'description' => "les capacités scientifiques et technologiques de l'UCAD"],
+                        ['title' => 'Créer',           'description' => 'des passerelles entre chercheurs, décideurs publics et acteurs socio-économiques'],
+                        ['title' => 'Renforcer',       'description' => "l'ancrage de la recherche dans les dynamiques de transformation socio-économique"],
+                        ['title' => 'Mobiliser',       'description' => "des financements en faveur de la recherche, de l'innovation et de la valorisation"],
+                    ];
+                @endphp
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto text-left">
-                    @foreach([
-                        ['Faire connaître', "les capacités scientifiques et technologiques de l'UCAD"],
-                        ['Créer',           'des passerelles entre chercheurs, décideurs publics et acteurs socio-économiques'],
-                        ['Renforcer',       "l'ancrage de la recherche dans les dynamiques de transformation socio-économique"],
-                        ['Mobiliser',       "des financements en faveur de la recherche, de l'innovation et de la valorisation"],
-                    ] as [$kw, $desc])
+                    @foreach($objectives as $item)
                     <div class="flex items-start gap-2.5">
                         <div class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
                         <p class="text-xs sm:text-sm text-white/80 leading-snug">
-                            <span class="font-semibold text-white">{{ $kw }}</span> {{ $desc }}
+                            <span class="font-semibold text-white">{{ $item['title'] }}</span> {{ $item['description'] }}
                         </p>
                     </div>
                     @endforeach

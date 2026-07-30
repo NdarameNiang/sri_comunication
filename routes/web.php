@@ -23,6 +23,7 @@ use App\Http\Controllers\SuperAdmin\ProjectController as SuperAdminProjectContro
 use App\Http\Controllers\SuperAdmin\ImpersonateController;
 use App\Http\Controllers\Admin\FormOptionController;
 use App\Http\Controllers\Admin\EventConfigController as AdminEventConfigController;
+use App\Http\Controllers\Admin\ContentBlockController;
 use App\Http\Controllers\Secretaire\DashboardController as SecretaireDashboard;
 use App\Http\Controllers\Secretaire\RegistrationController as SecretaireRegistrationController;
 use App\Http\Controllers\Secretaire\QuestionnaireController as SecretaireQuestionnaireController;
@@ -98,6 +99,12 @@ Route::middleware(['auth', 'active'])->group(function () {
             // CRUD configuration événement
             Route::resource('event-configs', AdminEventConfigController::class);
             Route::patch('event-configs/{eventConfig}/activate', [AdminEventConfigController::class, 'activate'])->name('event-configs.activate');
+
+            // Contenu dynamique de la page publique
+            Route::get('content-blocks', [ContentBlockController::class, 'index'])->name('content-blocks.index');
+            Route::get('content-blocks/edit', [ContentBlockController::class, 'edit'])->name('content-blocks.edit');
+            Route::put('content-blocks', [ContentBlockController::class, 'update'])->name('content-blocks.update');
+            Route::delete('content-blocks', [ContentBlockController::class, 'destroy'])->name('content-blocks.destroy');
         });
 
     // ── Direction de la Recherche ───────────────────────────────────────────

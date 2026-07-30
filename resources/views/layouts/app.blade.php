@@ -104,6 +104,10 @@
                     @include('components.icon', ['name' => 'cog'])
                     <span>Options formulaires</span>
                 </a>
+                <a href="{{ route('admin.content-blocks.index') }}" class="sidebar-link {{ request()->routeIs('admin.content-blocks.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'document'])
+                    <span>Contenu page publique</span>
+                </a>
                 <a href="{{ route('superadmin.projects.index') }}" class="sidebar-link {{ request()->routeIs('superadmin.projects.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'briefcase'])
                     <span>Gestion des projets</span>
@@ -168,6 +172,10 @@
                 <a href="{{ route('admin.form-options.index') }}" class="sidebar-link {{ request()->routeIs('admin.form-options.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'cog'])
                     <span>Options formulaires</span>
+                </a>
+                <a href="{{ route('admin.content-blocks.index') }}" class="sidebar-link {{ request()->routeIs('admin.content-blocks.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'document'])
+                    <span>Contenu page publique</span>
                 </a>
             @endif
 
