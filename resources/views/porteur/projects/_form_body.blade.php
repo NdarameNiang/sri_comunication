@@ -144,6 +144,10 @@
                         <option value="{{ $opt->value }}" {{ old('scientific_domain', $project?->scientific_domain) === $opt->value ? 'selected' : '' }}>{{ $opt->label }}</option>
                         @endforeach
                     </select>
+                    <div id="scientific_domain_autre_wrap" class="{{ old('scientific_domain', $project?->scientific_domain) === 'autres' ? '' : 'hidden' }} mt-2">
+                        <input type="text" name="scientific_domain_autre" value="{{ old('scientific_domain_autre', $project?->scientific_domain_autre) }}"
+                               class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez le domaine scientifique…">
+                    </div>
                     @else
                     <input type="text" name="scientific_domain" value="{{ old('scientific_domain', $project?->scientific_domain) }}"
                            class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="Ex : Sciences de l'ingénieur…" required>
@@ -167,6 +171,10 @@
                         </label>
                         @endforeach
                     </div>
+                    <div id="project_types_autres_wrap" class="{{ in_array('autres', $selectedTypes) ? '' : 'hidden' }} mt-2">
+                        <input type="text" name="project_types_autres" value="{{ old('project_types_autres', $project?->project_types_autres) }}"
+                               class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez le type de projet…">
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">Niveau de maturité</label>
@@ -183,6 +191,10 @@
                             <span class="text-sm font-medium text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
+                    </div>
+                    <div id="maturity_level_autre_wrap" class="{{ $selectedMaturity === 'autres' ? '' : 'hidden' }} mt-2">
+                        <input type="text" name="maturity_level_autre" value="{{ old('maturity_level_autre', $project?->maturity_level_autre) }}"
+                               class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez le niveau de maturité…">
                     </div>
                 </div>
             </div>
@@ -252,8 +264,10 @@
                         </label>
                         @endforeach
                     </div>
-                    <input type="text" name="protection_autres" value="{{ old('protection_autres', $project?->protection_autres) }}"
-                           class="form-input text-sm mt-2" {{ $readonly ? 'disabled' : '' }} placeholder="Précisions ou commentaires sur vos choix ci-dessus…">
+                    <div id="protection_autres_wrap" class="{{ in_array('autres', $selectedProtections) ? '' : 'hidden' }} mt-2">
+                        <input type="text" name="protection_autres" value="{{ old('protection_autres', $project?->protection_autres) }}"
+                               class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez la protection…">
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">Valorisation</label>
@@ -271,8 +285,10 @@
                         </label>
                         @endforeach
                     </div>
-                    <input type="text" name="valorisation_autres" value="{{ old('valorisation_autres', $project?->valorisation_autres) }}"
-                           class="form-input text-sm mt-2" {{ $readonly ? 'disabled' : '' }} placeholder="Précisions ou commentaires sur vos choix ci-dessus…">
+                    <div id="valorisation_autres_wrap" class="{{ in_array('autres', $selectedValorisation) ? '' : 'hidden' }} mt-2">
+                        <input type="text" name="valorisation_autres" value="{{ old('valorisation_autres', $project?->valorisation_autres) }}"
+                               class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez la valorisation…">
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">Impact attendu</label>
@@ -289,6 +305,10 @@
                             <span class="text-xs font-medium text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
+                    </div>
+                    <div id="impact_types_autres_wrap" class="{{ in_array('autres', $selectedImpacts) ? '' : 'hidden' }} mt-2">
+                        <input type="text" name="impact_types_autres" value="{{ old('impact_types_autres', $project?->impact_types_autres) }}"
+                               class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez l'impact…">
                     </div>
                 </div>
             </div>
@@ -321,8 +341,10 @@
                         </label>
                         @endforeach
                     </div>
-                    <input type="text" name="presentation_autres" value="{{ old('presentation_autres', $project?->presentation_autres) }}"
-                           class="form-input text-sm mt-2" {{ $readonly ? 'disabled' : '' }} placeholder="Précisions ou commentaires sur vos choix ci-dessus…">
+                    <div id="presentation_autres_wrap" class="{{ in_array('autres', $selectedFormats) ? '' : 'hidden' }} mt-2">
+                        <input type="text" name="presentation_autres" value="{{ old('presentation_autres', $project?->presentation_autres) }}"
+                               class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez le format de présentation…">
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">Besoins logistiques spécifiques</label>
@@ -674,6 +696,28 @@
     window.removeCollaborateur = function(btn) {
         btn.closest('.collaborateur-row').remove();
     };
+
+    // Bascule générique des champs "Autre" (texte libre) selon la sélection d'une option "autres"
+    function initAutreToggle(inputsSelector, wrapId) {
+        const wrap = document.getElementById(wrapId);
+        if (!wrap) return;
+        const inputs = document.querySelectorAll(inputsSelector);
+        function sync() {
+            const anyOther = [...inputs].some(el =>
+                (el.type === 'checkbox' || el.type === 'radio') ? (el.checked && el.value === 'autres') : (el.value === 'autres')
+            );
+            wrap.classList.toggle('hidden', !anyOther);
+        }
+        inputs.forEach(el => el.addEventListener('change', sync));
+        sync();
+    }
+    initAutreToggle('select[name="scientific_domain"]', 'scientific_domain_autre_wrap');
+    initAutreToggle('input[name="project_types[]"]', 'project_types_autres_wrap');
+    initAutreToggle('input[name="maturity_level"]', 'maturity_level_autre_wrap');
+    initAutreToggle('input[name="protection_types[]"]', 'protection_autres_wrap');
+    initAutreToggle('input[name="valorisation_types[]"]', 'valorisation_autres_wrap');
+    initAutreToggle('input[name="impact_types[]"]', 'impact_types_autres_wrap');
+    initAutreToggle('input[name="presentation_formats[]"]', 'presentation_autres_wrap');
 })();
 </script>
 @endpush

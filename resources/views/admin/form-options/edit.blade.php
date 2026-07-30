@@ -30,6 +30,14 @@
                 <input type="number" name="sort_order" value="{{ old('sort_order', $formOption->sort_order) }}" min="0" class="input-field w-24">
             </div>
 
+            <label class="flex items-start gap-2.5 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
+                <input type="checkbox" name="is_other" value="1" {{ old('is_other', $formOption->is_other) ? 'checked' : '' }} class="mt-0.5">
+                <span class="text-sm text-gray-700">
+                    Est l'option "Autre"
+                    <span class="block text-xs text-gray-400 mt-0.5">Quand cette option est sélectionnée dans le formulaire, un champ de texte libre apparaît.</span>
+                </span>
+            </label>
+
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="btn-primary">Enregistrer</button>
                 <a href="{{ route('admin.form-options.index', ['group' => $formOption->group]) }}" class="btn-secondary">Annuler</a>

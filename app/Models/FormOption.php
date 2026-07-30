@@ -6,16 +6,33 @@ use Illuminate\Database\Eloquent\Model;
 
 class FormOption extends Model
 {
-    protected $fillable = ['group', 'label', 'value', 'sort_order', 'is_active'];
+    protected $fillable = ['group', 'label', 'value', 'sort_order', 'is_active', 'is_other'];
 
     protected function casts(): array
     {
-        return ['is_active' => 'boolean', 'sort_order' => 'integer'];
+        return ['is_active' => 'boolean', 'sort_order' => 'integer', 'is_other' => 'boolean'];
     }
 
     public static function forGroup(string $group): \Illuminate\Support\Collection
     {
         return static::where('group', $group)->where('is_active', true)->orderBy('sort_order')->get();
+    }
+
+    /**
+     * value => label map for a group, sourced from active AND inactive rows so
+     * historically-submitted values still resolve to a label after an option is deactivated.
+     */
+    public static function labelsForGroup(string $group): array
+    {
+        return static::where('group', $group)->pluck('label', 'value')->all();
+    }
+
+    /**
+     * Values within a group that are flagged as the free-text "Autre" trigger.
+     */
+    public static function otherValuesForGroup(string $group): array
+    {
+        return static::where('group', $group)->where('is_other', true)->pluck('value')->all();
     }
 
     public static function groups(): array

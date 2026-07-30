@@ -43,6 +43,9 @@
                     <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">{{ $typeLabels[$t] ?? $t }}</span>
                     @endforeach
                 </div>
+                @if(in_array('autres', (array)($project->project_types ?? [])) && $project->project_types_autres)
+                <p class="text-xs text-gray-500 mt-1.5">Type "Autre" : {{ $project->project_types_autres }}</p>
+                @endif
             </div>
         </div>
 
@@ -52,8 +55,8 @@
                 ['Email institutionnel', $project->contact_email],
                 ['Email personnel', $project->email_professionnel ?? '–'],
                 ['Téléphone', $project->contact_phone ?? '–'],
-                ['Domaine scientifique', $project->scientific_domain ?? '–'],
-                ['Niveau de maturité', $maturityLabels[$project->maturity_level] ?? ($project->maturity_level ?? '–')],
+                ['Domaine scientifique', $project->scientific_domain === 'autres' && $project->scientific_domain_autre ? $project->scientific_domain_autre : ($project->scientific_domain ?? '–')],
+                ['Niveau de maturité', $project->maturity_level === 'autres' && $project->maturity_level_autre ? $project->maturity_level_autre : ($maturityLabels[$project->maturity_level] ?? ($project->maturity_level ?? '–'))],
                 ['Soumis le', $project->created_at->format('d/m/Y')],
             ] as [$label, $value])
             <div class="px-4 py-3">
@@ -98,7 +101,7 @@
             @foreach([
                 ['Protection IP', $project->protection_types, $protectionLabels, 'bg-amber-50 text-amber-700', $project->protection_autres],
                 ['Valorisation',  $project->valorisation_types, $valorisationLabels, 'bg-purple-50 text-purple-700', $project->valorisation_autres],
-                ['Impact',        $project->impact_types, $impactLabels, 'bg-emerald-50 text-emerald-700', null],
+                ['Impact',        $project->impact_types, $impactLabels, 'bg-emerald-50 text-emerald-700', $project->impact_types_autres],
                 ['Présentation',  $project->presentation_formats, $presentationLabels, 'bg-blue-50 text-blue-700', $project->presentation_autres],
             ] as [$label, $values, $map, $cls, $autres])
             @if($values)

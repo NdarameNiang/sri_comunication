@@ -30,9 +30,11 @@ class FormOptionController extends Controller
             'label'      => 'required|string|max:255',
             'value'      => 'required|string|max:255|alpha_dash',
             'sort_order' => 'nullable|integer|min:0',
+            'is_other'   => 'nullable|boolean',
         ]);
 
         $data['value'] = strtolower($data['value']);
+        $data['is_other'] = $request->boolean('is_other');
 
         try {
             FormOption::create(array_merge($data, ['is_active' => true]));
@@ -54,7 +56,10 @@ class FormOptionController extends Controller
         $data = $request->validate([
             'label'      => 'required|string|max:255',
             'sort_order' => 'nullable|integer|min:0',
+            'is_other'   => 'nullable|boolean',
         ]);
+
+        $data['is_other'] = $request->boolean('is_other');
 
         $formOption->update($data);
 
@@ -74,5 +79,11 @@ class FormOptionController extends Controller
     {
         $formOption->update(['is_active' => !$formOption->is_active]);
         return back()->with('success', 'Statut mis à jour.');
+    }
+
+    public function toggleOther(FormOption $formOption)
+    {
+        $formOption->update(['is_other' => !$formOption->is_other]);
+        return back()->with('success', 'Statut "Autre" mis à jour.');
     }
 }

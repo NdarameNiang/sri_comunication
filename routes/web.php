@@ -93,6 +93,7 @@ Route::middleware(['auth', 'active'])->group(function () {
             // CRUD options formulaire
             Route::resource('form-options', FormOptionController::class);
             Route::patch('form-options/{formOption}/toggle', [FormOptionController::class, 'toggle'])->name('form-options.toggle');
+            Route::patch('form-options/{formOption}/toggle-other', [FormOptionController::class, 'toggleOther'])->name('form-options.toggle-other');
 
             // CRUD configuration événement
             Route::resource('event-configs', AdminEventConfigController::class);

@@ -63,9 +63,17 @@ class Project extends Model
     public function isDraft(): bool     { return $this->status === 'draft'; }
     public function isSelected(): bool  { return (bool) $this->selected; }
 
+    /**
+     * These delegate to FormOption::labelsForGroup() so every read view (show pages, PDF
+     * recap, selection emails) sources labels from the same place as the submission form,
+     * instead of a separate hardcoded copy that can drift from the live FormOption data.
+     * A legacy fallback map is merged in (FormOption wins on key collision) so historically
+     * submitted values still render a label even if the corresponding FormOption row is
+     * missing/renamed in a given environment.
+     */
     public static function projectTypeLabels(): array
     {
-        return [
+        return FormOption::labelsForGroup('project_type') + [
             'recherche'         => 'Recherche',
             'innovation'        => 'Innovation',
             'prototype'         => 'Prototype',
@@ -75,7 +83,7 @@ class Project extends Model
 
     public static function maturityLabels(): array
     {
-        return [
+        return FormOption::labelsForGroup('maturity_level') + [
             'prototype' => 'Prototype',
             'teste'     => 'Testé',
             'deploye'   => 'Déployé',
@@ -84,7 +92,7 @@ class Project extends Model
 
     public static function protectionLabels(): array
     {
-        return [
+        return FormOption::labelsForGroup('protection_type') + [
             'brevet'                    => 'Brevet',
             'semi_conducteur'           => 'Semi-conducteur',
             'certificat_vegetale'       => 'Certificat d\'obtention végétale',
@@ -99,7 +107,7 @@ class Project extends Model
 
     public static function valorisationLabels(): array
     {
-        return [
+        return FormOption::labelsForGroup('valorisation_type') + [
             'publication'               => 'Publication',
             'startup'                   => 'Start-up',
             'transfert_technologique'   => 'Transfert de technologie',
@@ -114,7 +122,7 @@ class Project extends Model
 
     public static function impactLabels(): array
     {
-        return [
+        return FormOption::labelsForGroup('impact_type') + [
             'scientifique'   => 'Scientifique',
             'economique'     => 'Économique',
             'social'         => 'Social',
@@ -125,7 +133,7 @@ class Project extends Model
 
     public static function presentationLabels(): array
     {
-        return [
+        return FormOption::labelsForGroup('presentation_format') + [
             'poster'        => 'Poster',
             'demonstration' => 'Démonstration',
             'pitch'         => 'Pitch',

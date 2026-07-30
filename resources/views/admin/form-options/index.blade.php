@@ -34,6 +34,7 @@
                         <th class="text-left py-3 px-4 text-xs text-gray-500 font-medium">Valeur</th>
                         <th class="text-center py-3 px-4 text-xs text-gray-500 font-medium">Ordre</th>
                         <th class="text-center py-3 px-4 text-xs text-gray-500 font-medium">Actif</th>
+                        <th class="text-center py-3 px-4 text-xs text-gray-500 font-medium">Autre</th>
                         <th class="text-left py-3 px-4 text-xs text-gray-500 font-medium">Actions</th>
                     </tr>
                 </thead>
@@ -52,6 +53,15 @@
                                 </button>
                             </form>
                         </td>
+                        <td class="py-3 px-4 text-center">
+                            <form method="POST" action="{{ route('admin.form-options.toggle-other', $opt) }}">
+                                @csrf @method('PATCH')
+                                <button type="submit" class="text-xs px-2 py-1 rounded-full font-medium
+                                    {{ $opt->is_other ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200' }}">
+                                    {{ $opt->is_other ? 'Oui' : 'Non' }}
+                                </button>
+                            </form>
+                        </td>
                         <td class="py-3 px-4">
                             <div class="flex gap-3">
                                 <a href="{{ route('admin.form-options.edit', $opt) }}" class="text-blue-600 text-xs hover:text-blue-800">Modifier</a>
@@ -64,7 +74,7 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="5" class="py-8 text-center text-gray-400 text-sm">Aucune option dans ce groupe.</td></tr>
+                    <tr><td colspan="6" class="py-8 text-center text-gray-400 text-sm">Aucune option dans ce groupe.</td></tr>
                     @endforelse
                 </tbody>
             </table>
