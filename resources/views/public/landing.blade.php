@@ -303,6 +303,93 @@
     </div>
 </div>
 
+{{-- ===== DÉTAILS DE L'APPEL (fond clair, sous le panneau principal) ===== --}}
+@php
+    $whoCanApply    = \App\Models\ContentBlock::resolve('landing.who_can_apply', $event);
+    $expectedProjects = \App\Models\ContentBlock::resolve('landing.expected_projects', $event);
+    $modalities     = \App\Models\ContentBlock::resolve('landing.submission_modalities', $event);
+    $calendarBlock  = \App\Models\ContentBlock::resolve('landing.calendar', $event);
+    $criteriaBlock  = \App\Models\ContentBlock::resolve('landing.criteria', $event);
+    $closingBlock   = \App\Models\ContentBlock::resolve('landing.closing', $event);
+    $hasDetails = $whoCanApply || $expectedProjects || $modalities || $calendarBlock || $criteriaBlock || $closingBlock;
+@endphp
+@if($hasDetails)
+<div class="relative z-10 bg-slate-50 px-4 sm:px-10 py-14">
+    <div class="max-w-3xl mx-auto space-y-6">
+
+        @if($whoCanApply)
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Qui peut candidater ?</h2>
+            <div class="space-y-3">
+                @foreach($whoCanApply->content_json as $item)
+                <div class="flex items-start gap-2.5">
+                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">
+                        @if(!empty($item['title']))<span class="font-semibold text-slate-800">{{ $item['title'] }}</span>@endif
+                        {{ $item['description'] }}
+                    </p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        @if($expectedProjects)
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Projets attendus</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                @foreach($expectedProjects->content_json as $item)
+                <div class="flex items-start gap-2.5">
+                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">{{ $item['description'] }}</p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        @if($modalities)
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Modalités de soumission</h2>
+            <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{{ $modalities->content }}</p>
+        </div>
+        @endif
+
+        @if($calendarBlock)
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Calendrier</h2>
+            <div class="space-y-3">
+                @foreach($calendarBlock->content_json as $item)
+                <div class="flex items-start gap-3">
+                    <span class="shrink-0 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1">{{ $item['title'] }}</span>
+                    <p class="text-sm text-slate-600 leading-relaxed mt-0.5">{{ $item['description'] }}</p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        @if($criteriaBlock)
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
+            <h2 class="text-lg font-bold text-slate-900 mb-4">Critères de sélection</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                @foreach($criteriaBlock->content_json as $item)
+                <div class="flex items-start gap-2.5">
+                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                    <p class="text-sm text-slate-600 leading-relaxed">{{ $item['description'] }}</p>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
+        @if($closingBlock)
+        <p class="text-sm text-slate-500 leading-relaxed text-center italic px-4">{{ $closingBlock->content }}</p>
+        @endif
+    </div>
+</div>
+@endif
+
 <script>
     // ── Onglets ──────────────────────────────────────────────────────────
     function switchTab(tab) {

@@ -31,10 +31,16 @@ class ContentBlock extends Model
     public static function keys(): array
     {
         return [
-            'landing.badge_text' => ['label' => 'Badge "Appel à contribution"', 'type' => 'text'],
-            'landing.intro'      => ['label' => 'Paragraphe d\'introduction (si aucune description d\'événement)', 'type' => 'richtext'],
-            'landing.objectives' => ['label' => 'Liste "Cet événement vise à"', 'type' => 'list'],
-            'landing.footer'     => ['label' => 'Texte du pied de page', 'type' => 'text'],
+            'landing.badge_text'        => ['label' => 'Badge "Appel à contribution"', 'type' => 'text'],
+            'landing.intro'             => ['label' => 'Paragraphe d\'introduction (si aucune description d\'événement)', 'type' => 'richtext'],
+            'landing.objectives'        => ['label' => 'Objectifs de l\'appel', 'type' => 'list'],
+            'landing.who_can_apply'     => ['label' => 'Qui peut candidater ?', 'type' => 'list'],
+            'landing.expected_projects' => ['label' => 'Projets attendus', 'type' => 'list'],
+            'landing.submission_modalities' => ['label' => 'Modalités de soumission', 'type' => 'richtext'],
+            'landing.calendar'          => ['label' => 'Calendrier', 'type' => 'list'],
+            'landing.criteria'          => ['label' => 'Critères de sélection', 'type' => 'list'],
+            'landing.closing'           => ['label' => 'Paragraphe de clôture', 'type' => 'richtext'],
+            'landing.footer'            => ['label' => 'Texte du pied de page', 'type' => 'text'],
         ];
     }
 
