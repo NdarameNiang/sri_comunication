@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EventConfig;
 use App\Models\FormOption;
 use App\Models\Registration;
+use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -46,12 +47,24 @@ class RegistrationController extends Controller
             'fonction'         => 'nullable|string|max:255',
             'type_participant' => 'nullable|string|max:100',
             'population_category' => ['nullable', Rule::in($allowedCategories)],
+            'numero_carte'     => ['nullable', 'string', 'max:50', 'required_if:population_category,etudiant_licence,etudiant_master,etudiant_doctorat'],
         ], [
             'email.same' => 'Les deux adresses email ne correspondent pas.',
             'population_category.in' => "Cette catégorie n'est pas ouverte à l'inscription pour cet événement.",
+            'numero_carte.required_if' => 'Le numéro de carte étudiant est requis pour cette catégorie.',
         ]);
 
         unset($data['email_confirmation']);
+
+        // Vérification du numéro de carte contre la base StudentCenter (si synchronisée) :
+        // ne bloque pas l'inscription si l'étudiant est introuvable (la synchro peut être en
+        // retard), mais réaligne la catégorie sur le cycle réel quand la correspondance existe.
+        if (!empty($data['numero_carte'])) {
+            $student = Student::where('numero_carte', $data['numero_carte'])->first();
+            if ($student && $student->populationCategoryValue()) {
+                $data['population_category'] = $student->populationCategoryValue();
+            }
+        }
 
         $token = Str::uuid()->toString();
         $data['event_config_id']  = $event->id;

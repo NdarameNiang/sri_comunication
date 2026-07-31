@@ -129,7 +129,7 @@
         {{-- Section : Catégorie de population --}}
         <div>
             <label class="form-label">Catégorie</label>
-            <select name="population_category" class="form-select @error('population_category') border-red-400 bg-red-50 @enderror">
+            <select name="population_category" id="population_category" class="form-select @error('population_category') border-red-400 bg-red-50 @enderror" onchange="toggleNumeroCarte()">
                 <option value="">— Sélectionner votre catégorie —</option>
                 @foreach($populationCategories as $opt)
                 <option value="{{ $opt->value }}" {{ old('population_category') === $opt->value ? 'selected' : '' }}>
@@ -138,6 +138,14 @@
                 @endforeach
             </select>
             @error('population_category') <p class="form-error">{{ $message }}</p> @enderror
+        </div>
+
+        <div id="numero-carte-field" class="hidden">
+            <label class="form-label">Numéro de carte étudiant <span class="text-red-500">*</span></label>
+            <input type="text" name="numero_carte" value="{{ old('numero_carte') }}"
+                   class="form-input @error('numero_carte') border-red-400 bg-red-50 @enderror"
+                   placeholder="Ex : 1995000VG">
+            @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
         </div>
         @endif
 
@@ -159,5 +167,18 @@
 </div>
 
 @endif
+
+@push('scripts')
+<script>
+    function toggleNumeroCarte() {
+        const select = document.getElementById('population_category');
+        const field  = document.getElementById('numero-carte-field');
+        if (!select || !field) return;
+        const isStudent = ['etudiant_licence', 'etudiant_master', 'etudiant_doctorat'].includes(select.value);
+        field.classList.toggle('hidden', !isStudent);
+    }
+    toggleNumeroCarte();
+</script>
+@endpush
 
 @endsection

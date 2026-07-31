@@ -24,6 +24,7 @@ use App\Http\Controllers\SuperAdmin\ImpersonateController;
 use App\Http\Controllers\Admin\FormOptionController;
 use App\Http\Controllers\Admin\EventConfigController as AdminEventConfigController;
 use App\Http\Controllers\Admin\ContentBlockController;
+use App\Http\Controllers\Admin\StudentSyncController;
 use App\Http\Controllers\Secretaire\DashboardController as SecretaireDashboard;
 use App\Http\Controllers\Secretaire\RegistrationController as SecretaireRegistrationController;
 use App\Http\Controllers\Secretaire\QuestionnaireController as SecretaireQuestionnaireController;
@@ -117,6 +118,10 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::delete('content-blocks/sections/{section}', [ContentBlockController::class, 'destroySection'])->name('content-blocks.sections.destroy');
             Route::patch('content-blocks/sections/{section}/toggle', [ContentBlockController::class, 'toggleSection'])->name('content-blocks.sections.toggle');
             Route::post('content-blocks/sections/reorder', [ContentBlockController::class, 'reorderSections'])->name('content-blocks.sections.reorder');
+
+            // Base étudiants StudentCenter
+            Route::get('students', [StudentSyncController::class, 'index'])->name('students.index');
+            Route::post('students/sync', [StudentSyncController::class, 'sync'])->name('students.sync');
         });
 
     // ── Direction de la Recherche ───────────────────────────────────────────

@@ -108,6 +108,10 @@
                     @include('components.icon', ['name' => 'document'])
                     <span>Contenu page publique</span>
                 </a>
+                <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'users'])
+                    <span>Étudiants (StudentCenter)</span>
+                </a>
                 <a href="{{ route('superadmin.projects.index') }}" class="sidebar-link {{ request()->routeIs('superadmin.projects.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'briefcase'])
                     <span>Gestion des projets</span>
@@ -176,6 +180,10 @@
                 <a href="{{ route('admin.content-blocks.index') }}" class="sidebar-link {{ request()->routeIs('admin.content-blocks.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'document'])
                     <span>Contenu page publique</span>
+                </a>
+                <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'users'])
+                    <span>Étudiants (StudentCenter)</span>
                 </a>
             @endif
 

@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'studentcenter' => [
+        'url'   => env('STUDENTCENTER_API_URL'),
+        'token' => env('STUDENTCENTER_API_TOKEN'),
+    ],
+
 ];
