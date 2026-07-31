@@ -37,7 +37,7 @@
             transition: all 0.4s ease;
         }
         .slide-dot.active {
-            background: #f59e0b;
+            background: #2563eb;
             width: 22px;
         }
 
@@ -124,7 +124,7 @@
         <div>
             {{-- Badge --}}
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2 mb-7">
-                <span class="pulse-dot w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+                <span class="pulse-dot w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
                 <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">Appel à contribution</span>
             </div>
 
@@ -136,7 +136,7 @@
             <h1 class="text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl leading-none mb-2">
                 @foreach($parts as $part)
                     @if(is_numeric($part))
-                        <span class="text-amber-400">{{ $part }}</span>
+                        <span class="text-blue-300">{{ $part }}</span>
                     @else
                         {{ $part }}
                     @endif
@@ -146,14 +146,14 @@
             {{-- Définition SRI mise en avant --}}
             <div class="inline-block mb-5 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
                 <p class="text-lg sm:text-xl font-bold text-white tracking-wide">
-                    <span class="text-amber-400">SRI</span> — Semaine de la Recherche et de l'Innovation
+                    <span class="text-blue-300">SRI</span> — Semaine de la Recherche et de l'Innovation
                 </p>
             </div>
 
             {{-- Dates de l'événement --}}
             @if(!empty($event) && $event->event_start_date)
             <div class="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-lg bg-white/10 border border-white/15">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
                 </svg>
                 <span class="text-white text-sm font-semibold tracking-wide">
@@ -167,7 +167,7 @@
             <div class="max-w-md space-y-4">
                 <p class="text-sm text-white/90 leading-relaxed">
                     Dans le cadre de l'organisation de la <span class="text-white font-medium">{{ $eventName }}</span>,
-                    la Direction de la Recherche et de l'Innovation (<span class="text-amber-400 font-semibold">DRI</span>)
+                    la Direction de la Recherche et de l'Innovation (<span class="text-blue-300 font-semibold">DRI</span>)
                     lance un appel à contribution à l'ensemble des structures académiques, scientifiques et pédagogiques de l'UCAD.
                 </p>
 
@@ -181,7 +181,7 @@
                         ['Mobiliser',       "des financements publics et privés en faveur de la recherche, de l'innovation et de la valorisation"],
                     ] as [$kw, $desc])
                     <div class="flex items-start gap-3">
-                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
                         <p class="text-sm text-white leading-snug">
                             <span class="font-semibold">{{ $kw }}</span>
                             {{ $desc }}
@@ -223,8 +223,8 @@
             {{-- Titre --}}
             <div class="mb-7">
                 <div class="flex items-center gap-3 mb-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <div class="w-10 h-10 rounded-xl bg-blue-100 border border-blue-200 flex items-center justify-center shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/>
                         </svg>
                     </div>
@@ -297,7 +297,7 @@
                 {{-- Se souvenir --}}
                 <div class="flex items-center gap-2">
                     <input type="checkbox" name="remember" id="remember"
-                           class="w-4 h-4 rounded border-slate-300 bg-white text-amber-500 focus:ring-amber-400/40 focus:ring-offset-0">
+                           class="w-4 h-4 rounded border-slate-300 bg-white text-blue-600 focus:ring-blue-500/40 focus:ring-offset-0">
                     <label for="remember" class="text-slate-600 text-sm cursor-pointer select-none">
                         Se souvenir de moi
                     </label>
@@ -306,10 +306,10 @@
                 {{-- Bouton connexion --}}
                 <button type="submit"
                         class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl
-                               bg-amber-400 hover:bg-amber-300 active:bg-amber-500
-                               text-slate-900 font-bold text-sm tracking-wide
-                               transition-all duration-200 shadow-lg hover:shadow-amber-400/30
-                               focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 focus:ring-offset-transparent
+                               bg-blue-600 hover:bg-blue-500 active:bg-blue-800
+                               text-white font-bold text-sm tracking-wide
+                               transition-all duration-200 shadow-lg hover:shadow-blue-600/30
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-transparent
                                active:scale-[.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
@@ -451,12 +451,12 @@
         btn.style.cssText = 'position:absolute;top:0;right:0;height:100%;padding:0 0.65rem;display:flex;align-items:center;background:transparent;border:none;cursor:pointer;color:#94a3b8;';
         btn.innerHTML = EYE_OPEN;
         btn.addEventListener('mouseenter', () => btn.style.color = '#475569');
-        btn.addEventListener('mouseleave', () => btn.style.color = input.type === 'text' ? '#f59e0b' : '#94a3b8');
+        btn.addEventListener('mouseleave', () => btn.style.color = input.type === 'text' ? '#2563eb' : '#94a3b8');
         btn.addEventListener('click', function () {
             const visible = input.type === 'text';
             input.type    = visible ? 'password' : 'text';
             btn.innerHTML = visible ? EYE_OPEN : EYE_OFF;
-            btn.style.color = visible ? '#94a3b8' : '#f59e0b';
+            btn.style.color = visible ? '#94a3b8' : '#2563eb';
         });
 
         parent.appendChild(btn);

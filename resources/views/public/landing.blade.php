@@ -35,7 +35,7 @@
             cursor: pointer;
             transition: all 0.4s ease;
         }
-        .slide-dot.active { background: #f59e0b; width: 22px; }
+        .slide-dot.active { background: #2563eb; width: 22px; }
 
         /* ---- Pulse ---- */
         @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
@@ -65,8 +65,8 @@
         /* ---- Onglets ---- */
         .tab-btn { color: #64748b; }
         .tab-btn.active {
-            background: #fbbf24;
-            color: #1e293b;
+            background: #2563eb;
+            color: #fff;
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
 
@@ -106,7 +106,7 @@
         <div>
             {{-- Badge --}}
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2 mb-7">
-                <span class="pulse-dot w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+                <span class="pulse-dot w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
                 <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">
                     {{ \App\Models\ContentBlock::resolve('landing.badge_text', $event)?->content ?? 'Appel à contribution' }}
                 </span>
@@ -119,7 +119,7 @@
             <h1 class="text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl leading-none mb-2">
                 @foreach($parts as $part)
                     @if(is_numeric($part))
-                        <span class="text-amber-400">{{ $part }}</span>
+                        <span class="text-blue-300">{{ $part }}</span>
                     @else
                         {{ $part }}
                     @endif
@@ -127,14 +127,14 @@
             </h1>
             <div class="inline-block mb-5 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
                 <p class="text-lg sm:text-xl font-bold text-white tracking-wide">
-                    <span class="text-amber-400">SRI</span> — Semaine de la Recherche et de l'Innovation
+                    <span class="text-blue-300">SRI</span> — Semaine de la Recherche et de l'Innovation
                 </p>
             </div>
 
             {{-- Dates de l'événement --}}
             @if($event->event_start_date)
             <div class="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-lg bg-white/10 border border-white/15">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-blue-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
                 </svg>
                 <span class="text-white text-sm font-semibold tracking-wide">
@@ -163,7 +163,7 @@
                 @else
                 <p class="text-sm text-white/90 leading-relaxed">
                     Dans le cadre de l'organisation de la <span class="text-white font-medium">{{ $event->event_name }}</span>,
-                    la Direction de la Recherche et de l'Innovation (<span class="text-amber-400 font-semibold">DRI</span>)
+                    la Direction de la Recherche et de l'Innovation (<span class="text-blue-300 font-semibold">DRI</span>)
                     lance un appel à contribution à l'ensemble des structures académiques, scientifiques et pédagogiques de l'UCAD.
                 </p>
                 @endif
@@ -172,7 +172,7 @@
                     <p class="text-xs text-white uppercase tracking-widest font-semibold mb-3">Cet événement vise à</p>
                     @foreach($objectives as $item)
                     <div class="flex items-start gap-3">
-                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
                         <p class="text-sm text-white leading-snug">
                             <span class="font-semibold">{{ $item['title'] }}</span> {{ $item['description'] }}
                         </p>
@@ -212,10 +212,10 @@
             <div class="mb-5">
                 <p class="text-slate-900 font-bold text-lg leading-tight">{{ $event->event_name }}</p>
                 <p class="text-slate-500 text-xs mt-0.5 mb-1.5">
-                    <span class="text-amber-600 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
+                    <span class="text-blue-600 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
                 </p>
                 @if($event->event_start_date)
-                <p class="text-amber-600 text-sm font-semibold tracking-wide">
+                <p class="text-blue-600 text-sm font-semibold tracking-wide">
                     {{ $event->event_start_date->translatedFormat('d F Y') }}
                     @if($event->event_end_date) – {{ $event->event_end_date->translatedFormat('d F Y') }} @endif
                 </p>
@@ -250,9 +250,9 @@
                 </p>
                 <a href="{{ route('public.registration.show', $event->event_slug) }}"
                    class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4
-                          bg-amber-400 hover:bg-amber-300 active:bg-amber-500
-                          text-slate-900 font-bold text-sm tracking-wide
-                          transition-all duration-200 shadow-lg hover:shadow-amber-400/30 active:scale-[.98]">
+                          bg-blue-600 hover:bg-blue-500 active:bg-blue-800
+                          text-white font-bold text-sm tracking-wide
+                          transition-all duration-200 shadow-lg hover:shadow-blue-600/30 active:scale-[.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 019.374 21c-2.331 0-4.512-.645-6.374-1.766z"/>
                     </svg>
@@ -290,7 +290,7 @@
                 </svg>
                 <p class="text-slate-500 text-xs leading-relaxed">
                     Membre de l'équipe ?
-                    <a href="{{ route('login') }}" class="text-amber-600 hover:text-amber-700 font-medium underline underline-offset-2 transition-colors">
+                    <a href="{{ route('login') }}" class="text-blue-600 hover:text-blue-700 font-medium underline underline-offset-2 transition-colors">
                         Accéder à l'espace membres
                     </a>
                 </p>
@@ -323,7 +323,7 @@
             <div class="space-y-3">
                 @foreach($whoCanApply->content_json as $item)
                 <div class="flex items-start gap-2.5">
-                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0"></div>
                     <p class="text-sm text-slate-600 leading-relaxed">
                         @if(!empty($item['title']))<span class="font-semibold text-slate-800">{{ $item['title'] }}</span>@endif
                         {{ $item['description'] }}
@@ -340,7 +340,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 @foreach($expectedProjects->content_json as $item)
                 <div class="flex items-start gap-2.5">
-                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0"></div>
                     <p class="text-sm text-slate-600 leading-relaxed">{{ $item['description'] }}</p>
                 </div>
                 @endforeach
@@ -361,7 +361,7 @@
             <div class="space-y-3">
                 @foreach($calendarBlock->content_json as $item)
                 <div class="flex items-start gap-3">
-                    <span class="shrink-0 text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1">{{ $item['title'] }}</span>
+                    <span class="shrink-0 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-1">{{ $item['title'] }}</span>
                     <p class="text-sm text-slate-600 leading-relaxed mt-0.5">{{ $item['description'] }}</p>
                 </div>
                 @endforeach
@@ -375,7 +375,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 @foreach($criteriaBlock->content_json as $item)
                 <div class="flex items-start gap-2.5">
-                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0"></div>
                     <p class="text-sm text-slate-600 leading-relaxed">{{ $item['description'] }}</p>
                 </div>
                 @endforeach

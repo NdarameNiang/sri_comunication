@@ -45,7 +45,7 @@
             cursor: pointer;
             transition: all 0.4s ease;
         }
-        .hero-dot.active { background: #f59e0b; width: 24px; }
+        .hero-dot.active { background: #2563eb; width: 24px; }
 
         .event-card {
             background: #fff;
@@ -95,13 +95,13 @@
             {{-- Slide 1 : définition SRI --}}
             <div class="hero-text-slide active" id="hero-text-0">
                 <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2 mb-6">
-                    <span class="pulse-dot w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+                    <span class="pulse-dot w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
                     <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">Direction de la Recherche et de l'Innovation</span>
                 </div>
 
                 <div class="inline-block mb-5 px-6 py-3.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
                     <p class="text-xl sm:text-2xl font-bold text-white tracking-wide">
-                        <span class="text-amber-400">SRI</span> — Semaine de la Recherche et de l'Innovation
+                        <span class="text-blue-300">SRI</span> — Semaine de la Recherche et de l'Innovation
                     </p>
                 </div>
 
@@ -115,7 +115,7 @@
             {{-- Slide 2 : objectifs --}}
             <div class="hero-text-slide" id="hero-text-1">
                 <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2 mb-6">
-                    <span class="pulse-dot w-2 h-2 rounded-full bg-amber-400 inline-block"></span>
+                    <span class="pulse-dot w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
                     <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">Cet événement vise à</span>
                 </div>
 
@@ -130,7 +130,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl mx-auto text-left">
                     @foreach($objectives as $item)
                     <div class="flex items-start gap-2.5">
-                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
                         <p class="text-xs sm:text-sm text-white/80 leading-snug">
                             <span class="font-semibold text-white">{{ $item['title'] }}</span> {{ $item['description'] }}
                         </p>
@@ -168,7 +168,7 @@
                         $statusClasses = 'bg-slate-100 text-slate-500 border-slate-200';
                         if ($event->is_active) {
                             $statusLabel = 'Actif';
-                            $statusClasses = 'bg-amber-100 text-amber-700 border-amber-200';
+                            $statusClasses = 'bg-blue-600 text-white border-blue-600';
                         } elseif ($event->event_end_date && $event->event_end_date->isPast()) {
                             $statusLabel = 'Terminé';
                             $statusClasses = 'bg-slate-100 text-slate-500 border-slate-200';
@@ -178,7 +178,7 @@
                         }
                     @endphp
                     <a href="{{ route('public.landing', $event->event_slug) }}"
-                       class="event-card rounded-2xl shadow-lg border border-slate-100 p-6 sm:p-7 flex flex-col">
+                       class="event-card group rounded-2xl shadow-lg border border-slate-100 p-6 sm:p-7 flex flex-col">
                         <div class="flex items-start justify-between gap-3 mb-4">
                             <h3 class="text-slate-900 font-bold text-xl leading-tight">{{ $event->event_name }}</h3>
                             <span class="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-full border {{ $statusClasses }}">
@@ -187,7 +187,7 @@
                         </div>
 
                         @if($event->event_start_date)
-                        <div class="flex items-center gap-1.5 text-amber-600 text-xs font-semibold mb-4">
+                        <div class="flex items-center gap-1.5 text-blue-600 text-xs font-semibold mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
                             </svg>
@@ -200,7 +200,7 @@
                             {{ \Illuminate\Support\Str::limit($event->event_description ?: "Appel à contribution de la Direction de la Recherche et de l'Innovation.", 180) }}
                         </p>
 
-                        <span class="inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-amber-400 text-slate-900 font-bold text-sm tracking-wide">
+                        <span class="inline-flex items-center justify-center gap-2 py-2.5 rounded-xl bg-blue-600 group-hover:bg-blue-700 text-white font-bold text-sm tracking-wide">
                             Découvrir l'événement
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/>

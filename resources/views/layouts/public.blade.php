@@ -80,7 +80,7 @@
 
         {{-- Badge --}}
         <div class="fadein-up-2 inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-4">
-            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
             <span class="text-white/80 text-xs font-semibold tracking-wide uppercase">
                 @yield('event-badge', 'Formulaire officiel')
             </span>
