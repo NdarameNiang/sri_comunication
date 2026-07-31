@@ -104,6 +104,26 @@
     </div>
 </div>
 
+{{-- Soumission publique --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Soumission de projet sans compte</p>
+    <label class="flex items-center gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+        <div class="relative inline-flex items-center">
+            <input type="hidden" name="allow_public_submission" value="0">
+            <input type="checkbox" name="allow_public_submission" value="1"
+                   id="allow_public_submission"
+                   {{ old('allow_public_submission', $eventConfig->allow_public_submission ?? false) ? 'checked' : '' }}
+                   class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-checked:bg-blue-600 rounded-full transition-colors"></div>
+            <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+        </div>
+        <div>
+            <p class="text-sm font-semibold text-gray-800">Autoriser la soumission publique de projet</p>
+            <p class="text-xs text-gray-400 mt-0.5">Un visiteur sans compte pourra créer son propre dossier depuis la page publique (un compte porteur lui est créé automatiquement, avec vérification de sa catégorie via l'API StudentCenter s'il se déclare étudiant).</p>
+        </div>
+    </label>
+</div>
+
 {{-- Période d'inscription --}}
 <div>
     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Période d'inscription des participants</p>

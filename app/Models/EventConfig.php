@@ -13,6 +13,7 @@ class EventConfig extends Model
         'inscription_open_at', 'inscription_close_at',
         'is_active', 'show_questionnaire', 'max_projects_per_structure',
         'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
+        'allow_public_submission',
     ];
 
     protected function casts(): array
@@ -28,6 +29,7 @@ class EventConfig extends Model
             'evaluation_close_at'  => 'datetime',
             'is_active'            => 'boolean',
             'show_questionnaire'   => 'boolean',
+            'allow_public_submission' => 'boolean',
         ];
     }
 
@@ -89,6 +91,11 @@ class EventConfig extends Model
         if ($this->submission_open_at  && $now->lt($this->submission_open_at))  return false;
         if ($this->submission_close_at && $now->gt($this->submission_close_at)) return false;
         return true;
+    }
+
+    public function allowsPublicSubmission(): bool
+    {
+        return $this->allow_public_submission && $this->isSubmissionOpen();
     }
 
     public function submissionStatus(): string

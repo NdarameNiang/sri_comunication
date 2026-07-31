@@ -33,6 +33,7 @@ use App\Http\Controllers\Public\RegistrationController as PublicRegistrationCont
 use App\Http\Controllers\Public\QuestionnaireController as PublicQuestionnaireController;
 use App\Http\Controllers\Public\LandingController as PublicLandingController;
 use App\Http\Controllers\Public\EventsIndexController;
+use App\Http\Controllers\Public\ProjectSubmissionController as PublicProjectSubmissionController;
 use App\Http\Controllers\GenericDashboardController;
 use App\Http\Controllers\Generic\ProjectController as GenericProjectController;
 use App\Http\Controllers\Admin\EvaluationRubricController;
@@ -53,6 +54,8 @@ Route::prefix('event/{eventSlug}')->group(function () {
     Route::post('/inscription',    [PublicRegistrationController::class, 'store'])->name('public.registration.store');
     Route::get('/questionnaire',   [PublicQuestionnaireController::class, 'show'])->name('public.questionnaire.show');
     Route::post('/questionnaire',  [PublicQuestionnaireController::class, 'store'])->name('public.questionnaire.store');
+    Route::get('/soumission',      [PublicProjectSubmissionController::class, 'show'])->name('public.project-submission.show');
+    Route::post('/soumission',     [PublicProjectSubmissionController::class, 'store'])->name('public.project-submission.store');
     Route::get('/confirmation/{token}', [PublicRegistrationController::class, 'confirmation'])->name('public.registration.confirmation');
 });
 
