@@ -105,6 +105,8 @@ class ContentBlockController extends Controller
             'title'           => 'required|string|max:255',
             'type'            => 'required|in:richtext,list',
             'content'         => 'nullable|string|max:5000',
+            'image'           => 'nullable|image|max:4096',
+            'remove_image'    => 'nullable|boolean',
         ]);
 
         $maxOrder = ContentBlock::where('event_config_id', $data['event_config_id'])->whereNull('key')->max('sort_order');
@@ -116,6 +118,7 @@ class ContentBlockController extends Controller
             'type'            => $data['type'],
             'content'         => $data['type'] === 'richtext' ? $data['content'] : null,
             'content_json'    => $data['type'] === 'list' ? $this->parseItems($request->input('items', [])) : null,
+            'image_path'      => $request->hasFile('image') ? $request->file('image')->store('sections', 'public') : null,
             'sort_order'      => ($maxOrder ?? 0) + 1,
             'is_active'       => true,
         ]);
@@ -135,16 +138,30 @@ class ContentBlockController extends Controller
         abort_if($section->key !== null, 404);
 
         $data = $request->validate([
-            'title'   => 'required|string|max:255',
-            'type'    => 'required|in:richtext,list',
-            'content' => 'nullable|string|max:5000',
+            'title'        => 'required|string|max:255',
+            'type'         => 'required|in:richtext,list',
+            'content'      => 'nullable|string|max:5000',
+            'image'        => 'nullable|image|max:4096',
+            'remove_image' => 'nullable|boolean',
         ]);
+
+        $imagePath = $section->image_path;
+        if ($request->hasFile('image')) {
+            if ($imagePath) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($imagePath);
+            }
+            $imagePath = $request->file('image')->store('sections', 'public');
+        } elseif ($request->boolean('remove_image') && $imagePath) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($imagePath);
+            $imagePath = null;
+        }
 
         $section->update([
             'title'        => $data['title'],
             'type'         => $data['type'],
             'content'      => $data['type'] === 'richtext' ? $data['content'] : null,
             'content_json' => $data['type'] === 'list' ? $this->parseItems($request->input('items', [])) : null,
+            'image_path'   => $imagePath,
         ]);
 
         return redirect()->route('admin.content-blocks.sections', ['event_config_id' => $section->event_config_id])
@@ -155,6 +172,9 @@ class ContentBlockController extends Controller
     {
         abort_if($section->key !== null, 404);
         $eventId = $section->event_config_id;
+        if ($section->image_path) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($section->image_path);
+        }
         $section->delete();
 
         return redirect()->route('admin.content-blocks.sections', ['event_config_id' => $eventId])

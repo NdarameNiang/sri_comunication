@@ -6,13 +6,28 @@
 @section('content')
 <div class="max-w-2xl">
     <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <form method="POST" action="{{ route('admin.content-blocks.sections.update', $section) }}" class="space-y-5" id="section-form">
+        <form method="POST" action="{{ route('admin.content-blocks.sections.update', $section) }}" class="space-y-5" id="section-form" enctype="multipart/form-data">
             @csrf @method('PUT')
 
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Titre de la section <span class="text-red-500">*</span></label>
                 <input type="text" name="title" value="{{ old('title', $section->title) }}" required class="input-field">
                 @error('title')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+                @if($section->image_path)
+                <div class="flex items-center gap-3 mb-2">
+                    <img src="{{ $section->image_url }}" class="w-24 h-16 object-cover rounded-lg border border-gray-200">
+                    <label class="flex items-center gap-1.5 text-xs text-red-500">
+                        <input type="checkbox" name="remove_image" value="1"> Supprimer l'image actuelle
+                    </label>
+                </div>
+                @endif
+                <input type="file" name="image" accept="image/*" class="input-field">
+                <p class="text-xs text-gray-400 mt-1">Laissez vide pour conserver l'image actuelle.</p>
+                @error('image')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div>

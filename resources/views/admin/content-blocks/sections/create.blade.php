@@ -6,7 +6,7 @@
 @section('content')
 <div class="max-w-2xl">
     <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <form method="POST" action="{{ route('admin.content-blocks.sections.store') }}" class="space-y-5" id="section-form">
+        <form method="POST" action="{{ route('admin.content-blocks.sections.store') }}" class="space-y-5" id="section-form" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="event_config_id" value="{{ $event->id }}">
 
@@ -14,6 +14,13 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Titre de la section <span class="text-red-500">*</span></label>
                 <input type="text" name="title" value="{{ old('title') }}" required class="input-field" placeholder="Ex : Critères de sélection">
                 @error('title')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Image (optionnelle)</label>
+                <input type="file" name="image" accept="image/*" class="input-field">
+                <p class="text-xs text-gray-400 mt-1">Affichée à côté du texte, en alternance gauche/droite selon la position de la section.</p>
+                @error('image')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             </div>
 
             <div>

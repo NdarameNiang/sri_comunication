@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ContentBlock extends Model
 {
     protected $fillable = [
-        'event_config_id', 'key', 'title', 'type', 'content', 'content_json', 'sort_order', 'is_active',
+        'event_config_id', 'key', 'title', 'type', 'content', 'content_json', 'image_path', 'sort_order', 'is_active',
     ];
 
     protected function casts(): array
@@ -22,6 +22,11 @@ class ContentBlock extends Model
     public function event()
     {
         return $this->belongsTo(EventConfig::class, 'event_config_id');
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path ? \Illuminate\Support\Facades\Storage::url($this->image_path) : null;
     }
 
     /**

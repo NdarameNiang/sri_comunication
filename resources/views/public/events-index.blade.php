@@ -55,6 +55,7 @@
             transform: translateY(-4px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.12);
         }
+        .text-shadow-strong { text-shadow: 0 2px 12px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body class="font-sans bg-slate-50">
@@ -65,7 +66,7 @@
     <div class="bg-slide active" id="bg-slide-0" style="background-image: url('{{ asset('images/ucad_bg_1.jpg') }}');"></div>
     <div class="bg-slide" id="bg-slide-1" style="background-image: url('{{ asset('images/ucad_bg.2.jpg') }}');"></div>
     <div class="absolute inset-0"
-         style="background: linear-gradient(160deg,rgba(10,16,35,.85) 0%,rgba(10,16,35,.62) 45%,rgba(10,16,35,.85) 100%);"></div>
+         style="background: linear-gradient(160deg,rgba(8,13,30,.93) 0%,rgba(8,13,30,.80) 45%,rgba(8,13,30,.93) 100%);"></div>
 
     <div class="relative z-10 flex flex-col" style="min-height: 520px;">
 
@@ -105,8 +106,8 @@
                     </p>
                 </div>
 
-                <p class="text-sm sm:text-base text-white/90 leading-relaxed max-w-2xl mx-auto">
-                    La <span class="text-white font-medium">DRI</span> lance des appels à contribution à l'ensemble
+                <p class="text-sm sm:text-base text-white leading-relaxed max-w-2xl mx-auto text-shadow-strong">
+                    La <span class="font-medium">DRI</span> lance des appels à contribution à l'ensemble
                     des structures académiques, scientifiques et pédagogiques de l'UCAD. Découvrez ci-dessous les
                     événements ouverts et à venir.
                 </p>
@@ -131,8 +132,8 @@
                     @foreach($objectives as $item)
                     <div class="flex items-start gap-2.5">
                         <div class="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
-                        <p class="text-xs sm:text-sm text-white/80 leading-snug">
-                            <span class="font-semibold text-white">{{ $item['title'] }}</span> {{ $item['description'] }}
+                        <p class="text-xs sm:text-sm text-white/95 leading-snug text-shadow-strong">
+                            <span class="font-semibold">{{ $item['title'] }}</span> {{ $item['description'] }}
                         </p>
                     </div>
                     @endforeach

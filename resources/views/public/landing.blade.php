@@ -70,6 +70,27 @@
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
 
+        /* ---- Lisibilité garantie du texte sur photo, quel que soit le fond ---- */
+        .text-shadow-strong { text-shadow: 0 2px 12px rgba(0,0,0,0.55), 0 1px 2px rgba(0,0,0,0.5); }
+
+        /* ---- Animation d'apparition au défilement ---- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);
+        }
+        .reveal.reveal-visible { opacity: 1; transform: translateY(0); }
+
+        /* ---- Cartes de section : légère élévation au survol ---- */
+        .detail-card { transition: transform .3s ease, box-shadow .3s ease; }
+        .detail-card:hover { transform: translateY(-3px); box-shadow: 0 24px 48px -12px rgba(15,23,42,0.16); }
+        .detail-image { transition: transform .5s ease; }
+        .detail-card:hover .detail-image { transform: scale(1.035); }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .detail-card, .detail-image { transition: none; }
+        }
     </style>
 </head>
 <body class="font-sans">
@@ -81,7 +102,8 @@
     <div class="bg-slide" id="slide-1"
          style="background-image: url('{{ asset('images/ucad_bg.2.jpg') }}');"></div>
     <div class="absolute inset-0"
-         style="background: linear-gradient(110deg,rgba(10,16,35,.80) 0%,rgba(10,16,35,.55) 45%,rgba(10,16,35,.78) 100%);"></div>
+         style="background: linear-gradient(115deg,rgba(8,13,30,.92) 0%,rgba(8,13,30,.78) 45%,rgba(8,13,30,.90) 100%);"></div>
+    <div class="absolute inset-0" style="background: radial-gradient(ellipse 60% 50% at 30% 40%, rgba(8,13,30,.35), transparent);"></div>
 </div>
 
 {{-- ===== LAYOUT ===== --}}
@@ -116,7 +138,7 @@
             @php
                 $parts = preg_split('/(\d+)/', $event->event_name, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
             @endphp
-            <h1 class="text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl leading-none mb-2">
+            <h1 class="text-6xl font-extrabold text-white tracking-tight text-shadow-strong leading-none mb-2">
                 @foreach($parts as $part)
                     @if(is_numeric($part))
                         <span class="text-blue-300">{{ $part }}</span>
@@ -148,12 +170,12 @@
             <div class="max-w-md space-y-4">
                 @php $introBlock = \App\Models\ContentBlock::resolve('landing.intro', $event); @endphp
                 @if($event->event_description)
-                <p class="text-sm text-white/90 leading-relaxed">{{ $event->event_description }}</p>
+                <p class="text-sm text-white leading-relaxed text-shadow-strong">{{ $event->event_description }}</p>
                 @elseif($introBlock)
-                <p class="text-sm text-white/90 leading-relaxed">{{ $introBlock->content }}</p>
+                <p class="text-sm text-white leading-relaxed text-shadow-strong">{{ $introBlock->content }}</p>
                 @else
-                <p class="text-sm text-white/90 leading-relaxed">
-                    Dans le cadre de l'organisation de la <span class="text-white font-medium">{{ $event->event_name }}</span>,
+                <p class="text-sm text-white leading-relaxed text-shadow-strong">
+                    Dans le cadre de l'organisation de la <span class="font-medium">{{ $event->event_name }}</span>,
                     la Direction de la Recherche et de l'Innovation (<span class="text-blue-300 font-semibold">DRI</span>)
                     lance un appel à contribution à l'ensemble des structures académiques, scientifiques et pédagogiques de l'UCAD.
                 </p>
@@ -289,48 +311,63 @@
     </div>
 </div>
 
-{{-- ===== DÉTAILS DE L'APPEL — sections libres pilotées par l'admin (fond clair) ===== --}}
+{{-- ===== DÉTAILS DE L'APPEL — sections libres pilotées par l'admin ===== --}}
 @php $sections = \App\Models\ContentBlock::sectionsFor($event); @endphp
 @if($sections->count())
-<div id="appel-details" class="relative z-10 bg-slate-50 px-4 sm:px-10 py-16 scroll-mt-4">
-    <div class="max-w-3xl mx-auto">
+<div id="appel-details" class="relative z-10 scroll-mt-4" style="background: linear-gradient(180deg,#f8fafc 0%,#eef2f9 100%);">
 
-        <div class="text-center mb-10">
-            <p class="text-blue-600 text-xs font-bold uppercase tracking-widest mb-2">L'appel en détail</p>
-            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Tout ce qu'il faut savoir</h2>
+    {{-- Séparateur décoratif en haut de section --}}
+    <svg class="block w-full text-[#f8fafc]" style="margin-top:-1px" viewBox="0 0 1440 48" fill="none" preserveAspectRatio="none" height="48">
+        <path d="M0 48 C 360 0, 1080 0, 1440 48 L1440 0 L0 0 Z" fill="currentColor"/>
+    </svg>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-8 py-14 sm:py-20">
+
+        <div class="reveal text-center mb-14">
+            <p class="text-blue-600 text-xs font-bold uppercase tracking-[0.2em] mb-3">L'appel en détail</p>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">Tout ce qu'il faut savoir</h2>
+            <div class="w-14 h-1 bg-blue-600 rounded-full mx-auto mt-5"></div>
         </div>
 
-        <div class="space-y-5">
+        <div class="space-y-8 sm:space-y-12">
             @foreach($sections as $index => $section)
-            <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-8">
-                <div class="flex items-center gap-3 mb-5">
-                    <span class="w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
+            @php $imageRight = $index % 2 === 1; @endphp
+
+            @if($section->image_url)
+            {{-- Section avec image : mise en page alternée gauche/droite --}}
+            <div class="reveal detail-card bg-white rounded-3xl shadow-xl shadow-slate-200/60 overflow-hidden grid grid-cols-1 md:grid-cols-2">
+                <div class="relative h-56 md:h-auto overflow-hidden {{ $imageRight ? 'md:order-2' : '' }}">
+                    <img src="{{ $section->image_url }}" alt="{{ $section->title }}" class="detail-image absolute inset-0 w-full h-full object-cover">
+                </div>
+                <div class="p-7 sm:p-10 flex flex-col justify-center {{ $imageRight ? 'md:order-1' : '' }}">
+                    <span class="text-xs font-bold text-blue-600 tracking-widest uppercase mb-2">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>
+                    <h3 class="text-xl sm:text-2xl font-bold text-slate-900 mb-4">{{ $section->title }}</h3>
+                    @include('public.partials.section-content', ['section' => $section])
+                </div>
+            </div>
+            @else
+            {{-- Section sans image : carte pleine largeur --}}
+            <div class="reveal detail-card bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-200/50 p-7 sm:p-10">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="w-9 h-9 rounded-xl bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
                         {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
                     </span>
-                    <h3 class="text-lg font-bold text-slate-900">{{ $section->title }}</h3>
+                    <h3 class="text-lg sm:text-xl font-bold text-slate-900">{{ $section->title }}</h3>
                 </div>
-
-                @if($section->type === 'list')
-                    @php $items = $section->content_json ?? []; @endphp
-                    <div class="grid grid-cols-1 {{ count($items) > 4 ? 'sm:grid-cols-2' : '' }} gap-3.5 pl-11">
-                        @foreach($items as $item)
-                        <div class="flex items-start gap-2.5">
-                            <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></div>
-                            <p class="text-sm text-slate-600 leading-relaxed">
-                                @if(!empty($item['title']))
-                                    <span class="font-semibold text-slate-800">{{ $item['title'] }}</span>
-                                    @if(!empty($item['description'])) — @endif
-                                @endif
-                                {{ $item['description'] ?? '' }}
-                            </p>
-                        </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line pl-11">{{ $section->content }}</p>
-                @endif
+                <div class="sm:pl-12">
+                    @include('public.partials.section-content', ['section' => $section])
+                </div>
             </div>
+            @endif
             @endforeach
+        </div>
+
+        <div class="reveal text-center mt-14">
+            <a href="{{ route('public.registration.show', $event->event_slug) }}"
+               class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm tracking-wide shadow-lg hover:shadow-blue-600/30 transition-all active:scale-[.98]">
+                Je participe à l'appel
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5-5m5 5H6"/></svg>
+            </a>
         </div>
     </div>
 </div>
@@ -355,6 +392,24 @@
     }
     // Activer l'onglet inscription par défaut
     switchTab('inscription');
+
+    // ── Animation d'apparition au défilement ────────────────────────────────
+    if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach((el, i) => {
+            el.style.transitionDelay = Math.min(i * 60, 240) + 'ms';
+            revealObserver.observe(el);
+        });
+    } else {
+        document.querySelectorAll('.reveal').forEach(el => el.classList.add('reveal-visible'));
+    }
 
     // ── Diaporama ────────────────────────────────────────────────────────
     const TOTAL = 2, DELAY = 6000;
