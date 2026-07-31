@@ -35,6 +35,9 @@ use App\Http\Controllers\Public\LandingController as PublicLandingController;
 use App\Http\Controllers\Public\EventsIndexController;
 use App\Http\Controllers\GenericDashboardController;
 use App\Http\Controllers\Generic\ProjectController as GenericProjectController;
+use App\Http\Controllers\Admin\EvaluationRubricController;
+use App\Http\Controllers\Admin\EvaluationRankingController;
+use App\Http\Controllers\Deliberation\ScoringController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Routes publiques (sans auth) ────────────────────────────────────────────
@@ -221,5 +224,38 @@ Route::middleware(['auth', 'active'])->group(function () {
                 Route::get('/projects', [GenericProjectController::class, 'index'])->name('projects.index');
                 Route::get('/projects/{project}', [GenericProjectController::class, 'show'])->name('projects.show');
             });
+        });
+
+    // ── Évaluation / classement (accès par capacité, indépendant du rôle) ──────
+    Route::prefix('evaluation')->name('evaluation.')
+        ->group(function () {
+            Route::middleware('capability:evaluation.manageRubric')->group(function () {
+                Route::get('/rubrics', [EvaluationRubricController::class, 'index'])->name('rubrics.index');
+                Route::get('/rubrics/{template}/edit', [EvaluationRubricController::class, 'edit'])->name('rubrics.edit');
+                Route::put('/rubrics/{template}', [EvaluationRubricController::class, 'update'])->name('rubrics.update');
+            });
+
+            Route::middleware('capability:evaluation.viewRanking')->group(function () {
+                Route::get('/ranking', [EvaluationRankingController::class, 'index'])->name('ranking.index');
+            });
+
+            Route::middleware('capability:evaluation.finalize')->group(function () {
+                Route::put('/ranking/quota', [EvaluationRankingController::class, 'updateQuota'])->name('ranking.quota');
+                Route::post('/ranking/recalculate', [EvaluationRankingController::class, 'recalculate'])->name('ranking.recalculate');
+                Route::post('/ranking/apply-selection', [EvaluationRankingController::class, 'applyToSelection'])->name('ranking.apply-selection');
+            });
+
+            Route::middleware('capability:evaluation.resolveTies')->group(function () {
+                Route::post('/ranking/{project}/resolve-tie', [EvaluationRankingController::class, 'resolveTie'])->name('ranking.resolve-tie');
+            });
+        });
+
+    // ── Comité de délibération : notation des projets (accès par capacité) ─────
+    Route::prefix('deliberation')->name('deliberation.')
+        ->middleware('capability:evaluation.score')
+        ->group(function () {
+            Route::get('/scoring', [ScoringController::class, 'index'])->name('scoring.index');
+            Route::get('/scoring/{project}', [ScoringController::class, 'show'])->name('scoring.show');
+            Route::post('/scoring/{project}', [ScoringController::class, 'store'])->name('scoring.store');
         });
 });

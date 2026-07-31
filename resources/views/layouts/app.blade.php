@@ -116,6 +116,14 @@
                     @include('components.icon', ['name' => 'briefcase'])
                     <span>Gestion des projets</span>
                 </a>
+                <a href="{{ route('evaluation.rubrics.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.rubrics.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'check-circle'])
+                    <span>Grille d'évaluation</span>
+                </a>
+                <a href="{{ route('evaluation.ranking.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.ranking.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'star'])
+                    <span>Classement & sélection</span>
+                </a>
                 <div class="border-t border-white/10 my-3"></div>
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Gestion</p>
                 <a href="{{ route('direction.dashboard') }}" class="sidebar-link {{ request()->routeIs('direction.*') ? 'active' : '' }}">
@@ -184,6 +192,14 @@
                 <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'users'])
                     <span>Étudiants (StudentCenter)</span>
+                </a>
+                <a href="{{ route('evaluation.rubrics.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.rubrics.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'check-circle'])
+                    <span>Grille d'évaluation</span>
+                </a>
+                <a href="{{ route('evaluation.ranking.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.ranking.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'star'])
+                    <span>Classement & sélection</span>
                 </a>
             @endif
 

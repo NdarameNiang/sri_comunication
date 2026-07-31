@@ -12,6 +12,7 @@ class EventConfig extends Model
         'submission_open_at', 'submission_close_at',
         'inscription_open_at', 'inscription_close_at',
         'is_active', 'show_questionnaire', 'max_projects_per_structure',
+        'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
     ];
 
     protected function casts(): array
@@ -23,6 +24,8 @@ class EventConfig extends Model
             'submission_close_at'  => 'datetime',
             'inscription_open_at'  => 'datetime',
             'inscription_close_at' => 'datetime',
+            'evaluation_open_at'   => 'datetime',
+            'evaluation_close_at'  => 'datetime',
             'is_active'            => 'boolean',
             'show_questionnaire'   => 'boolean',
         ];
@@ -30,6 +33,24 @@ class EventConfig extends Model
 
     public function registrations() { return $this->hasMany(Registration::class); }
     public function questionnaires() { return $this->hasMany(Questionnaire::class); }
+
+    public function evaluationRubrics()
+    {
+        return $this->hasMany(EvaluationRubric::class);
+    }
+
+    public function rubricFor(string $submissionTemplate): ?EvaluationRubric
+    {
+        return $this->evaluationRubrics()->where('submission_template', $submissionTemplate)->first();
+    }
+
+    public function isEvaluationOpen(): bool
+    {
+        $now = now();
+        if ($this->evaluation_open_at  && $now->lt($this->evaluation_open_at))  return false;
+        if ($this->evaluation_close_at && $now->gt($this->evaluation_close_at)) return false;
+        return true;
+    }
 
     public function audienceCategories()
     {

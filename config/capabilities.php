@@ -9,4 +9,19 @@ return [
         'icon'  => 'briefcase',
         'label' => 'Projets soumis',
     ],
+    'evaluation.score' => [
+        'route' => 'deliberation.scoring.index',
+        'icon'  => 'star',
+        'label' => 'Noter les projets soumis',
+    ],
+    'evaluation.viewRanking' => [
+        'route' => 'evaluation.ranking.index',
+        'icon'  => 'check-circle',
+        'label' => 'Classement & sélection',
+    ],
+    'evaluation.manageRubric' => [
+        'route' => 'evaluation.rubrics.index',
+        'icon'  => 'cog',
+        'label' => 'Grille d\'évaluation',
+    ],
 ];

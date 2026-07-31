@@ -18,6 +18,8 @@ class Project extends Model
         'presentation_formats', 'presentation_autres',
         'logistic_needs',
         'status', 'selected', 'selected_at', 'selected_by', 'email_sent_at',
+        'average_score', 'rank_position', 'evaluation_status',
+        'evaluation_finalized_at', 'evaluation_decided_by', 'evaluation_decided_at',
     ];
 
     protected function casts(): array
@@ -31,7 +33,20 @@ class Project extends Model
             'selected'            => 'boolean',
             'selected_at'         => 'datetime',
             'email_sent_at'       => 'datetime',
+            'average_score'       => 'float',
+            'evaluation_finalized_at' => 'datetime',
+            'evaluation_decided_at'   => 'datetime',
         ];
+    }
+
+    public function scores()
+    {
+        return $this->hasMany(ProjectScore::class);
+    }
+
+    public function isEvaluationTiedPending(): bool
+    {
+        return $this->evaluation_status === 'tied_pending';
     }
 
     public function collaborators()
