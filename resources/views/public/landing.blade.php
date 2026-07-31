@@ -146,16 +146,7 @@
 
             {{-- Description ou texte institutionnel --}}
             <div class="max-w-md space-y-4">
-                @php
-                    $introBlock = \App\Models\ContentBlock::resolve('landing.intro', $event);
-                    $objectivesBlock = \App\Models\ContentBlock::resolve('landing.objectives', $event);
-                    $objectives = $objectivesBlock?->content_json ?: [
-                        ['title' => 'Faire connaître', 'description' => "les capacités scientifiques et technologiques de l'UCAD"],
-                        ['title' => 'Créer',           'description' => 'des passerelles opérationnelles entre chercheurs, décideurs publics et acteurs socio-économiques, collectivités territoriales'],
-                        ['title' => 'Renforcer',       'description' => "l'ancrage de la recherche dans les dynamiques de transformation socio-économique"],
-                        ['title' => 'Mobiliser',       'description' => "des financements publics et privés en faveur de la recherche, de l'innovation et de la valorisation"],
-                    ];
-                @endphp
+                @php $introBlock = \App\Models\ContentBlock::resolve('landing.intro', $event); @endphp
                 @if($event->event_description)
                 <p class="text-sm text-white/90 leading-relaxed">{{ $event->event_description }}</p>
                 @elseif($introBlock)
@@ -168,17 +159,12 @@
                 </p>
                 @endif
 
-                <div class="space-y-2">
-                    <p class="text-xs text-white uppercase tracking-widest font-semibold mb-3">Cet événement vise à</p>
-                    @foreach($objectives as $item)
-                    <div class="flex items-start gap-3">
-                        <div class="mt-1 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0"></div>
-                        <p class="text-sm text-white leading-snug">
-                            <span class="font-semibold">{{ $item['title'] }}</span> {{ $item['description'] }}
-                        </p>
-                    </div>
-                    @endforeach
-                </div>
+                @if(\App\Models\ContentBlock::sectionsFor($event)->count())
+                <a href="#appel-details" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-300 hover:text-blue-200 transition-colors">
+                    Découvrir l'appel en détail
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                </a>
+                @endif
             </div>
         </div>
 
@@ -303,89 +289,49 @@
     </div>
 </div>
 
-{{-- ===== DÉTAILS DE L'APPEL (fond clair, sous le panneau principal) ===== --}}
-@php
-    $whoCanApply    = \App\Models\ContentBlock::resolve('landing.who_can_apply', $event);
-    $expectedProjects = \App\Models\ContentBlock::resolve('landing.expected_projects', $event);
-    $modalities     = \App\Models\ContentBlock::resolve('landing.submission_modalities', $event);
-    $calendarBlock  = \App\Models\ContentBlock::resolve('landing.calendar', $event);
-    $criteriaBlock  = \App\Models\ContentBlock::resolve('landing.criteria', $event);
-    $closingBlock   = \App\Models\ContentBlock::resolve('landing.closing', $event);
-    $hasDetails = $whoCanApply || $expectedProjects || $modalities || $calendarBlock || $criteriaBlock || $closingBlock;
-@endphp
-@if($hasDetails)
-<div class="relative z-10 bg-slate-50 px-4 sm:px-10 py-14">
-    <div class="max-w-3xl mx-auto space-y-6">
+{{-- ===== DÉTAILS DE L'APPEL — sections libres pilotées par l'admin (fond clair) ===== --}}
+@php $sections = \App\Models\ContentBlock::sectionsFor($event); @endphp
+@if($sections->count())
+<div id="appel-details" class="relative z-10 bg-slate-50 px-4 sm:px-10 py-16 scroll-mt-4">
+    <div class="max-w-3xl mx-auto">
 
-        @if($whoCanApply)
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
-            <h2 class="text-lg font-bold text-slate-900 mb-4">Qui peut candidater ?</h2>
-            <div class="space-y-3">
-                @foreach($whoCanApply->content_json as $item)
-                <div class="flex items-start gap-2.5">
-                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0"></div>
-                    <p class="text-sm text-slate-600 leading-relaxed">
-                        @if(!empty($item['title']))<span class="font-semibold text-slate-800">{{ $item['title'] }}</span>@endif
-                        {{ $item['description'] }}
-                    </p>
+        <div class="text-center mb-10">
+            <p class="text-blue-600 text-xs font-bold uppercase tracking-widest mb-2">L'appel en détail</p>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Tout ce qu'il faut savoir</h2>
+        </div>
+
+        <div class="space-y-5">
+            @foreach($sections as $index => $section)
+            <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-8">
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="w-8 h-8 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center shrink-0">
+                        {{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}
+                    </span>
+                    <h3 class="text-lg font-bold text-slate-900">{{ $section->title }}</h3>
                 </div>
-                @endforeach
+
+                @if($section->type === 'list')
+                    @php $items = $section->content_json ?? []; @endphp
+                    <div class="grid grid-cols-1 {{ count($items) > 4 ? 'sm:grid-cols-2' : '' }} gap-3.5 pl-11">
+                        @foreach($items as $item)
+                        <div class="flex items-start gap-2.5">
+                            <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></div>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                @if(!empty($item['title']))
+                                    <span class="font-semibold text-slate-800">{{ $item['title'] }}</span>
+                                    @if(!empty($item['description'])) — @endif
+                                @endif
+                                {{ $item['description'] ?? '' }}
+                            </p>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line pl-11">{{ $section->content }}</p>
+                @endif
             </div>
+            @endforeach
         </div>
-        @endif
-
-        @if($expectedProjects)
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
-            <h2 class="text-lg font-bold text-slate-900 mb-4">Projets attendus</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                @foreach($expectedProjects->content_json as $item)
-                <div class="flex items-start gap-2.5">
-                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0"></div>
-                    <p class="text-sm text-slate-600 leading-relaxed">{{ $item['description'] }}</p>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
-
-        @if($modalities)
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
-            <h2 class="text-lg font-bold text-slate-900 mb-4">Modalités de soumission</h2>
-            <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{{ $modalities->content }}</p>
-        </div>
-        @endif
-
-        @if($calendarBlock)
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
-            <h2 class="text-lg font-bold text-slate-900 mb-4">Calendrier</h2>
-            <div class="space-y-3">
-                @foreach($calendarBlock->content_json as $item)
-                <div class="flex items-start gap-3">
-                    <span class="shrink-0 text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 rounded-full px-2.5 py-1">{{ $item['title'] }}</span>
-                    <p class="text-sm text-slate-600 leading-relaxed mt-0.5">{{ $item['description'] }}</p>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
-
-        @if($criteriaBlock)
-        <div class="bg-white rounded-2xl border border-slate-100 shadow-lg p-6 sm:p-7">
-            <h2 class="text-lg font-bold text-slate-900 mb-4">Critères de sélection</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                @foreach($criteriaBlock->content_json as $item)
-                <div class="flex items-start gap-2.5">
-                    <div class="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-600 shrink-0"></div>
-                    <p class="text-sm text-slate-600 leading-relaxed">{{ $item['description'] }}</p>
-                </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
-
-        @if($closingBlock)
-        <p class="text-sm text-slate-500 leading-relaxed text-center italic px-4">{{ $closingBlock->content }}</p>
-        @endif
     </div>
 </div>
 @endif

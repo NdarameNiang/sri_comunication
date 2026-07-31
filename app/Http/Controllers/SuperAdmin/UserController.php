@@ -7,9 +7,15 @@ use App\Models\Structure;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+    private function roleOptions(): \Illuminate\Support\Collection
+    {
+        return Role::orderBy('label')->pluck('label', 'name');
+    }
+
     public function index(Request $request)
     {
         $query = User::with('structure');
@@ -31,14 +37,7 @@ class UserController extends Controller
 
         $users      = $query->orderBy('role')->orderBy('name')->paginate(20)->withQueryString();
         $structures = Structure::orderBy('name')->get();
-        $roles = [
-            'superadmin'          => 'Super Administrateur',
-            'direction_recherche' => 'Organisateur',
-            'comite_scientifique' => 'Comité Scientifique',
-            'secretaire'          => 'Secrétaire',
-            'point_focal'         => 'Observateur',
-            'porteur_projet'      => 'Porteur de Projet',
-        ];
+        $roles      = $this->roleOptions();
 
         return view('superadmin.users.index', compact('users', 'structures', 'roles'));
     }
@@ -46,32 +45,20 @@ class UserController extends Controller
     public function create()
     {
         $structures = Structure::orderBy('name')->get();
-        $roles = [
-            'superadmin'          => 'Super Administrateur',
-            'direction_recherche' => 'Organisateur (DR)',
-            'comite_scientifique' => 'Comité Scientifique',
-            'secretaire'          => 'Secrétaire',
-            'point_focal'         => 'Observateur',
-            'porteur_projet'      => 'Porteur de Projet',
-        ];
+        $roles      = $this->roleOptions();
         return view('superadmin.users.create', compact('structures', 'roles'));
-    }
-
-    private function institutionalRoles(): array
-    {
-        return ['superadmin', 'direction_recherche', 'comite_scientifique', 'secretaire', 'point_focal'];
     }
 
     public function store(Request $request)
     {
-        $needsUcad = in_array($request->role, $this->institutionalRoles());
+        $needsUcad = $request->role !== 'porteur_projet';
 
         $data = $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => array_filter(['required', 'email', 'unique:users', $needsUcad ? 'regex:/@ucad\.edu\.sn$/i' : null]),
             'phone'        => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'password'     => 'required|min:8|confirmed',
-            'role'         => 'required|in:superadmin,direction_recherche,point_focal,porteur_projet,comite_scientifique,secretaire',
+            'role'         => 'required|string|exists:roles,name',
             'structure_id' => 'nullable|exists:structures,id',
             'is_active'    => 'boolean',
         ], [
@@ -82,7 +69,8 @@ class UserController extends Controller
         $data['password'] = bcrypt($data['password']);
         $data['is_active'] = $request->boolean('is_active', true);
 
-        User::create($data);
+        $user = User::create($data);
+        $user->syncRoles([$data['role']]);
 
         return redirect()->route('superadmin.users.index')->with('success', 'Utilisateur créé avec succès.');
     }
@@ -90,27 +78,20 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $structures = Structure::orderBy('name')->get();
-        $roles = [
-            'superadmin'          => 'Super Administrateur',
-            'direction_recherche' => 'Organisateur (DR)',
-            'comite_scientifique' => 'Comité Scientifique',
-            'secretaire'          => 'Secrétaire',
-            'point_focal'         => 'Observateur',
-            'porteur_projet'      => 'Porteur de Projet',
-        ];
+        $roles      = $this->roleOptions();
         return view('superadmin.users.edit', compact('user', 'structures', 'roles'));
     }
 
     public function update(Request $request, User $user)
     {
-        $needsUcad = in_array($request->role, $this->institutionalRoles());
+        $needsUcad = $request->role !== 'porteur_projet';
 
         $data = $request->validate([
             'name'         => 'required|string|max:255',
             'email'        => array_filter(['required', 'email', Rule::unique('users')->ignore($user->id), $needsUcad ? 'regex:/@ucad\.edu\.sn$/i' : null]),
             'phone'        => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
             'password'     => 'nullable|min:8|confirmed',
-            'role'         => 'required|in:superadmin,direction_recherche,point_focal,porteur_projet,comite_scientifique,secretaire',
+            'role'         => 'required|string|exists:roles,name',
             'structure_id' => 'nullable|exists:structures,id',
             'is_active'    => 'boolean',
         ], [
@@ -126,6 +107,7 @@ class UserController extends Controller
         $data['is_active'] = $request->boolean('is_active');
 
         $user->update($data);
+        $user->syncRoles([$data['role']]);
 
         return redirect()->route('superadmin.users.index')->with('success', 'Utilisateur mis à jour.');
     }

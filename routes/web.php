@@ -32,6 +32,8 @@ use App\Http\Controllers\Public\RegistrationController as PublicRegistrationCont
 use App\Http\Controllers\Public\QuestionnaireController as PublicQuestionnaireController;
 use App\Http\Controllers\Public\LandingController as PublicLandingController;
 use App\Http\Controllers\Public\EventsIndexController;
+use App\Http\Controllers\GenericDashboardController;
+use App\Http\Controllers\Generic\ProjectController as GenericProjectController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Routes publiques (sans auth) ────────────────────────────────────────────
@@ -105,6 +107,16 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('content-blocks/edit', [ContentBlockController::class, 'edit'])->name('content-blocks.edit');
             Route::put('content-blocks', [ContentBlockController::class, 'update'])->name('content-blocks.update');
             Route::delete('content-blocks', [ContentBlockController::class, 'destroy'])->name('content-blocks.destroy');
+
+            // Sections libres (type CMS) par événement
+            Route::get('content-blocks/sections', [ContentBlockController::class, 'sections'])->name('content-blocks.sections');
+            Route::get('content-blocks/sections/create', [ContentBlockController::class, 'createSection'])->name('content-blocks.sections.create');
+            Route::post('content-blocks/sections', [ContentBlockController::class, 'storeSection'])->name('content-blocks.sections.store');
+            Route::get('content-blocks/sections/{section}/edit', [ContentBlockController::class, 'editSection'])->name('content-blocks.sections.edit');
+            Route::put('content-blocks/sections/{section}', [ContentBlockController::class, 'updateSection'])->name('content-blocks.sections.update');
+            Route::delete('content-blocks/sections/{section}', [ContentBlockController::class, 'destroySection'])->name('content-blocks.sections.destroy');
+            Route::patch('content-blocks/sections/{section}/toggle', [ContentBlockController::class, 'toggleSection'])->name('content-blocks.sections.toggle');
+            Route::post('content-blocks/sections/reorder', [ContentBlockController::class, 'reorderSections'])->name('content-blocks.sections.reorder');
         });
 
     // ── Direction de la Recherche ───────────────────────────────────────────
@@ -191,5 +203,16 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('projets', [SecretaireProjectController::class, 'index'])->name('projets.index');
             Route::get('projets/export', [SecretaireProjectController::class, 'export'])->name('projets.export');
             Route::get('projets/{project}', [SecretaireProjectController::class, 'show'])->name('projets.show');
+        });
+
+    // ── Générique (rôles créés via le générateur, dashboard piloté par capacités) ──
+    Route::prefix('workspace')->name('generic.')
+        ->group(function () {
+            Route::get('/dashboard', [GenericDashboardController::class, 'index'])->name('dashboard');
+
+            Route::middleware('capability:projects.viewAll')->group(function () {
+                Route::get('/projects', [GenericProjectController::class, 'index'])->name('projects.index');
+                Route::get('/projects/{project}', [GenericProjectController::class, 'show'])->name('projects.show');
+            });
         });
 });

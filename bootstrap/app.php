@@ -12,8 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role'   => \App\Http\Middleware\CheckRole::class,
-            'active' => \App\Http\Middleware\CheckActive::class,
+            'role'       => \App\Http\Middleware\CheckRole::class,
+            'active'     => \App\Http\Middleware\CheckActive::class,
+            'capability' => \App\Http\Middleware\CheckCapability::class,
         ]);
 
         // Impersonation : appliqué après l'authentification, avant la vérification de rôle

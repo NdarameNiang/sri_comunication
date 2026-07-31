@@ -247,6 +247,21 @@
                 </a>
             @endif
 
+            {{-- Rôle générique (créé via le générateur de rôles) --}}
+            @if(!in_array($role, ['superadmin','direction_recherche','porteur_projet','point_focal','comite_scientifique','secretaire']))
+                <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Mon espace</p>
+                <a href="{{ route('generic.dashboard') }}" class="sidebar-link {{ request()->routeIs('generic.dashboard') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'home'])
+                    <span>Tableau de bord</span>
+                </a>
+                @foreach(\App\Http\Controllers\GenericDashboardController::navItems() as $item)
+                <a href="{{ route($item['route']) }}" class="sidebar-link {{ request()->routeIs($item['route'] === 'generic.projects.index' ? 'generic.projects.*' : $item['route']) ? 'active' : '' }}">
+                    @include('components.icon', ['name' => $item['icon']])
+                    <span>{{ $item['label'] }}</span>
+                </a>
+                @endforeach
+            @endif
+
         </nav>
 
         {{-- Changer mot de passe --}}

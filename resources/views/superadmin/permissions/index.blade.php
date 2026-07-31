@@ -11,11 +11,8 @@
             @include('components.icon', ['name' => 'arrow-left'])
             Retour aux rôles
         </a>
-        <a href="{{ route('superadmin.permissions.create') }}" class="btn-primary text-sm flex items-center gap-2">
-            @include('components.icon', ['name' => 'plus'])
-            Nouvelle permission
-        </a>
     </div>
+    <p class="text-xs text-gray-400">Catalogue fini de capacités — libellé et regroupement modifiables, création réservée au code (voir <code class="bg-gray-100 px-1 rounded">RolePermissionSeeder</code>).</p>
 
     @foreach($permissions as $group => $perms)
     <div class="card overflow-hidden">

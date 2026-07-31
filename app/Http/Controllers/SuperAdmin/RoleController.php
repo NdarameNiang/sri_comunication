@@ -76,9 +76,7 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
-        $systemRoles = ['superadmin', 'direction_recherche', 'comite_scientifique', 'secretaire', 'point_focal', 'porteur_projet'];
-
-        if (in_array($role->name, $systemRoles)) {
+        if ($role->is_system) {
             return back()->with('error', 'Les rôles système ne peuvent pas être supprimés.');
         }
 

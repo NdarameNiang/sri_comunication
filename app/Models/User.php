@@ -74,7 +74,7 @@ class User extends Authenticatable
             'point_focal'         => 'point-focal.dashboard',
             'comite_scientifique' => 'comite.dashboard',
             'secretaire'          => 'secretaire.dashboard',
-            default               => 'login',
+            default               => 'generic.dashboard',
         };
     }
 
@@ -87,7 +87,7 @@ class User extends Authenticatable
             'porteur_projet'      => 'Porteur de Projet',
             'comite_scientifique' => 'Comité Scientifique',
             'secretaire'          => 'Secrétaire',
-            default               => ucfirst($role),
+            default               => \Spatie\Permission\Models\Role::where('name', $role)->value('label') ?? ucfirst($role),
         };
     }
 }

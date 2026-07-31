@@ -105,7 +105,7 @@
     </div>
     @endif
 
-    <a href="{{ route('point-focal.dashboard') }}" class="btn-secondary text-sm inline-flex items-center gap-2">
+    <a href="{{ auth()->user()->hasLegacyRole('point_focal') ? route('point-focal.dashboard') : route('generic.dashboard') }}" class="btn-secondary text-sm inline-flex items-center gap-2">
         @include('components.icon', ['name' => 'arrow-left']) Retour au tableau de bord
     </a>
 </div>

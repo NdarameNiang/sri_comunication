@@ -16,25 +16,13 @@ class PermissionController extends Controller
 
     public function create()
     {
-        $groups = Permission::distinct()->orderBy('group')->pluck('group')->filter()->values();
-        return view('superadmin.permissions.create', compact('groups'));
+        return redirect()->route('superadmin.permissions.index')
+            ->with('error', 'Les capacités forment un catalogue fini (voir database/seeders/RolePermissionSeeder.php) — elles ne se créent plus depuis cet écran, seuls leur libellé et leur regroupement restent modifiables.');
     }
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'name'  => 'required|string|max:100|unique:permissions,name|regex:/^[a-z0-9.\-_]+$/',
-            'label' => 'required|string|max:150',
-            'group' => 'required|string|max:100',
-        ], [
-            'name.regex'  => 'Le nom technique doit être en minuscules, chiffres, points ou tirets.',
-            'name.unique' => 'Cette permission existe déjà.',
-        ]);
-
-        Permission::create(['name' => $data['name'], 'label' => $data['label'], 'group' => $data['group'], 'guard_name' => 'web']);
-
-        return redirect()->route('superadmin.permissions.index')
-            ->with('success', "Permission \"{$data['label']}\" créée.");
+        return redirect()->route('superadmin.permissions.index');
     }
 
     public function edit(Permission $permission)

@@ -5,8 +5,6 @@
 
 @section('content')
 @php
-$systemRoles = ['superadmin','direction_recherche','comite_scientifique','secretaire','point_focal','porteur_projet'];
-
 $palette = [
     'superadmin'          => ['dot' => 'bg-purple-500', 'pill' => 'bg-purple-50 text-purple-700 border-purple-200',  'row' => 'border-purple-100'],
     'direction_recherche' => ['dot' => 'bg-blue-500',   'pill' => 'bg-blue-50 text-blue-700 border-blue-200',        'row' => 'border-blue-100'],
@@ -33,7 +31,7 @@ $default = ['dot' => 'bg-gray-400', 'pill' => 'bg-gray-50 text-gray-600 border-g
         @foreach($roles as $role)
         @php
             $c       = $palette[$role->name] ?? $default;
-            $system  = in_array($role->name, $systemRoles);
+            $system  = (bool) $role->is_system;
             $perms   = $role->permissions->sortBy('group');
             $byGroup = $perms->groupBy('group');
         @endphp

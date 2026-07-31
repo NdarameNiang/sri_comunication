@@ -6,11 +6,27 @@
 @section('content')
 <div class="space-y-4">
 
+    {{-- Sections libres (type CMS) --}}
+    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
+        <div>
+            <p class="text-sm font-semibold text-blue-900">Sections de la page (Objectifs, Calendrier, Critères…)</p>
+            <p class="text-xs text-blue-700 mt-0.5">Titre, contenu et ordre entièrement libres, par événement — aucun événement n'est obligé d'avoir les mêmes sections.</p>
+        </div>
+        <form method="GET" action="{{ route('admin.content-blocks.sections') }}" class="flex items-center gap-2">
+            <select name="event_config_id" class="input-field text-sm" onchange="this.form.submit()">
+                <option value="">— Choisir un événement —</option>
+                @foreach($events as $ev)
+                    <option value="{{ $ev->id }}">{{ $ev->event_name }}{{ $ev->is_active ? ' (actif)' : '' }}</option>
+                @endforeach
+            </select>
+        </form>
+    </div>
+
     {{-- Sélecteurs --}}
     <div class="bg-white rounded-xl border border-gray-200 p-4">
         <form method="GET" class="flex flex-wrap gap-3 items-end">
             <div class="flex-1 min-w-48">
-                <label class="block text-xs text-gray-500 mb-1">Bloc de contenu</label>
+                <label class="block text-xs text-gray-500 mb-1">Champ structurel</label>
                 <select name="key" onchange="this.form.submit()" class="input-field text-sm">
                     @foreach($keys as $k => $meta)
                         <option value="{{ $k }}" {{ $key === $k ? 'selected' : '' }}>{{ $meta['label'] }}</option>
@@ -48,7 +64,7 @@
                     <div class="space-y-3">
                         @forelse($block->content_json ?? [] as $item)
                         <div class="flex items-start gap-3">
-                            <div class="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></div>
+                            <div class="mt-1 w-1.5 h-1.5 rounded-full bg-blue-500 shrink-0"></div>
                             <p class="text-sm text-gray-700"><span class="font-semibold">{{ $item['title'] }}</span> {{ $item['description'] }}</p>
                         </div>
                         @empty
