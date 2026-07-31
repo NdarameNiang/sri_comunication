@@ -87,6 +87,8 @@
         </div>
     </div>
 
+    @include('partials.project-approfondi-detail', ['project' => $project])
+
     {{-- Collaborateurs --}}
     @if($project->collaborators && $project->collaborators->count() > 0)
     <div class="bg-white rounded-xl border border-gray-200 p-5">

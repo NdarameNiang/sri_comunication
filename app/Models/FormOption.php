@@ -48,6 +48,10 @@ class FormOption extends Model
             'participant_type'   => 'Types de participant (inscription)',
             'population_category'=> 'Catégories de population (ciblage inscription)',
             'collaborator_role'  => 'Rôles de collaborateur',
+            'trl_level'          => 'Niveaux TRL (soumission Approfondie)',
+            'voie_valorisation'  => 'Voies de valorisation (soumission Approfondie)',
+            'impact_dimension'   => 'Dimensions d\'impact (soumission Approfondie)',
+            'annexe_type'        => 'Types d\'annexes (soumission Approfondie)',
         ];
     }
 }

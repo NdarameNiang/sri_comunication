@@ -212,7 +212,7 @@
                                     </form>
                                 </div>
                             @else
-                                <a href="{{ route('porteur.projects.create', $assignment) }}"
+                                <a href="{{ route('porteur.projects.choose-template', $assignment) }}"
                                    class="inline-flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors">
                                     <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                     Remplir

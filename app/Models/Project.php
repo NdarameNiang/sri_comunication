@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     protected $fillable = [
-        'assignment_id', 'porteur_id', 'structure_id',
+        'assignment_id', 'porteur_id', 'structure_id', 'submission_template',
         'responsable_nom', 'contact_email', 'email_professionnel', 'contact_phone',
-        'scientific_domain', 'project_types',
+        'scientific_domain', 'scientific_domain_autre', 'project_types', 'project_types_autres',
         'summary', 'problematic', 'solution',
-        'results', 'maturity_level',
+        'results', 'maturity_level', 'maturity_level_autre',
         'protection_types', 'protection_autres',
         'valorisation_types', 'valorisation_autres',
-        'impact_types',
+        'impact_types', 'impact_types_autres',
         'presentation_formats', 'presentation_autres',
         'logistic_needs',
         'status', 'selected', 'selected_at', 'selected_by', 'email_sent_at',
@@ -36,7 +36,22 @@ class Project extends Model
 
     public function collaborators()
     {
-        return $this->hasMany(ProjectCollaborator::class);
+        return $this->hasMany(ProjectCollaborator::class)->where('category', 'collaborateur');
+    }
+
+    public function coPorteurs()
+    {
+        return $this->hasMany(ProjectCollaborator::class)->where('category', 'co_porteur');
+    }
+
+    public function approfondiDetails()
+    {
+        return $this->hasOne(ProjectApprofondiDetail::class);
+    }
+
+    public function isApprofondi(): bool
+    {
+        return $this->submission_template === 'approfondi';
     }
 
     public function assignment()
@@ -141,4 +156,10 @@ class Project extends Model
             'autres'        => 'Autres',
         ];
     }
+
+    // ── Labels spécifiques à la soumission Approfondie ──────────────────────
+    public static function trlLabels(): array { return FormOption::labelsForGroup('trl_level'); }
+    public static function voieValorisationLabels(): array { return FormOption::labelsForGroup('voie_valorisation'); }
+    public static function impactDimensionLabels(): array { return FormOption::labelsForGroup('impact_dimension'); }
+    public static function annexeTypeLabels(): array { return FormOption::labelsForGroup('annexe_type'); }
 }

@@ -77,7 +77,9 @@ class FormOptionSeeder extends Seeder
             ['group' => 'presentation_format', 'label' => 'Pitch',           'value' => 'pitch',         'sort_order' => 3],
             ['group' => 'presentation_format', 'label' => 'Stand',           'value' => 'stand',         'sort_order' => 4],
             ['group' => 'presentation_format', 'label' => 'Communication orale', 'value' => 'communication_orale', 'sort_order' => 5],
-            ['group' => 'presentation_format', 'label' => 'Autres',          'value' => 'autres', 'sort_order' => 6, 'is_other' => true],
+            ['group' => 'presentation_format', 'label' => 'Conférence',      'value' => 'conference', 'sort_order' => 6],
+            ['group' => 'presentation_format', 'label' => 'Atelier',         'value' => 'atelier', 'sort_order' => 7],
+            ['group' => 'presentation_format', 'label' => 'Autres',          'value' => 'autres', 'sort_order' => 8, 'is_other' => true],
 
             // Types de participant (inscription)
             ['group' => 'participant_type', 'label' => 'Chercheur / Enseignant-chercheur', 'value' => 'chercheur',   'sort_order' => 1],
@@ -100,6 +102,36 @@ class FormOptionSeeder extends Seeder
             ['group' => 'collaborator_role', 'label' => 'Doctorant',       'value' => 'doctorant',   'sort_order' => 4],
             ['group' => 'collaborator_role', 'label' => 'Technicien',      'value' => 'technicien',  'sort_order' => 5],
             ['group' => 'collaborator_role', 'label' => 'Partenaire',      'value' => 'partenaire',  'sort_order' => 6],
+
+            // Niveaux TRL (soumission Approfondie, Section D)
+            ['group' => 'trl_level', 'label' => 'TRL 1–3 : Idée / preuve de concept',                    'value' => 'trl_1_3', 'sort_order' => 1],
+            ['group' => 'trl_level', 'label' => 'TRL 4–6 : Prototype validé en laboratoire',              'value' => 'trl_4_6', 'sort_order' => 2],
+            ['group' => 'trl_level', 'label' => 'TRL 7–8 : Démonstration en environnement réel',          'value' => 'trl_7_8', 'sort_order' => 3],
+            ['group' => 'trl_level', 'label' => 'TRL 9 : Solution déployée et opérationnelle',            'value' => 'trl_9',   'sort_order' => 4],
+
+            // Voies de valorisation (soumission Approfondie, Section D)
+            ['group' => 'voie_valorisation', 'label' => 'Publication scientifique',                'value' => 'publication_scientifique', 'sort_order' => 1],
+            ['group' => 'voie_valorisation', 'label' => 'Brevet / Propriété intellectuelle',        'value' => 'brevet_pi',                'sort_order' => 2],
+            ['group' => 'voie_valorisation', 'label' => 'Création de start-up / spin-off',           'value' => 'startup_spinoff',          'sort_order' => 3],
+            ['group' => 'voie_valorisation', 'label' => 'Transfert technologique vers un industriel', 'value' => 'transfert_industriel',    'sort_order' => 4],
+            ['group' => 'voie_valorisation', 'label' => 'Licence d\'exploitation',                   'value' => 'licence_exploitation',     'sort_order' => 5],
+            ['group' => 'voie_valorisation', 'label' => 'Politique publique / Recommandation',       'value' => 'politique_publique',       'sort_order' => 6],
+
+            // Dimensions d'impact (soumission Approfondie, Section E)
+            ['group' => 'impact_dimension', 'label' => 'Scientifique',     'value' => 'scientifique',    'sort_order' => 1],
+            ['group' => 'impact_dimension', 'label' => 'Économique',       'value' => 'economique',      'sort_order' => 2],
+            ['group' => 'impact_dimension', 'label' => 'Social',           'value' => 'social',          'sort_order' => 3],
+            ['group' => 'impact_dimension', 'label' => 'Environnemental',  'value' => 'environnemental', 'sort_order' => 4],
+            ['group' => 'impact_dimension', 'label' => 'Sanitaire',        'value' => 'sanitaire',       'sort_order' => 5],
+            ['group' => 'impact_dimension', 'label' => 'Pédagogique',      'value' => 'pedagogique',     'sort_order' => 6],
+
+            // Types d'annexes (soumission Approfondie, Section G)
+            ['group' => 'annexe_type', 'label' => 'Pitch deck (présentation synthétique)',  'value' => 'pitch_deck',           'sort_order' => 1],
+            ['group' => 'annexe_type', 'label' => 'Photos / vidéos du prototype',           'value' => 'photos_videos',        'sort_order' => 2],
+            ['group' => 'annexe_type', 'label' => 'Liste des publications',                 'value' => 'liste_publications',   'sort_order' => 3],
+            ['group' => 'annexe_type', 'label' => 'Lettres d\'engagement / partenariat',    'value' => 'lettres_engagement',   'sort_order' => 4],
+            ['group' => 'annexe_type', 'label' => 'Justificatifs de propriété intellectuelle', 'value' => 'justificatifs_pi',  'sort_order' => 5],
+            ['group' => 'annexe_type', 'label' => 'Autres',                                 'value' => 'autres', 'sort_order' => 6, 'is_other' => true],
         ];
 
         // upsert (pas insert/truncate) : idempotent et ne détruit pas les options

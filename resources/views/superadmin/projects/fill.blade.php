@@ -4,9 +4,18 @@
 @section('page-subtitle', $assignment->title)
 
 @section('content')
-@include('porteur.projects._form_body', [
-    'adminMode'   => true,
-    'adminAction' => route('superadmin.assignments.store-fill', $assignment),
-    'adminMethod' => 'POST',
-])
+@php $template = $template ?? 'standard'; @endphp
+@if($template === 'approfondi')
+    @include('porteur.projects._form_body_approfondi', [
+        'adminMode'   => true,
+        'adminAction' => route('superadmin.assignments.store-fill', $assignment),
+        'adminMethod' => 'POST',
+    ])
+@else
+    @include('porteur.projects._form_body', [
+        'adminMode'   => true,
+        'adminAction' => route('superadmin.assignments.store-fill', $assignment),
+        'adminMethod' => 'POST',
+    ])
+@endif
 @endsection

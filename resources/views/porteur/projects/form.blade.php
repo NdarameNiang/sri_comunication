@@ -4,5 +4,12 @@
 @section('page-subtitle', $assignment->title)
 
 @section('content')
-@include('porteur.projects._form_body')
+@php
+    $template = $project?->submission_template ?? ($template ?? 'standard');
+@endphp
+@if($template === 'approfondi')
+    @include('porteur.projects._form_body_approfondi')
+@else
+    @include('porteur.projects._form_body')
+@endif
 @endsection

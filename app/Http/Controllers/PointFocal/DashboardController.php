@@ -65,7 +65,7 @@ class DashboardController extends Controller
 
     public function showProject(Project $project)
     {
-        $project->load(['porteur', 'structure', 'assignment', 'collaborators']);
+        $project->load(['porteur', 'structure', 'assignment', 'collaborators', 'coPorteurs', 'approfondiDetails']);
         return view('point-focal.projects.show', compact('project'));
     }
 }

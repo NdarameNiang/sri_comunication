@@ -158,7 +158,7 @@
                         <td class="py-3 px-4">
                             <div class="flex items-center gap-1.5 flex-wrap">
                                 @if($pstatus === 'pending')
-                                    <a href="{{ route('superadmin.assignments.fill', $a) }}"
+                                    <a href="{{ route('superadmin.assignments.choose-template', $a) }}"
                                        class="btn-primary text-xs py-1 px-2.5 gap-1">
                                         <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                                         Remplir

@@ -80,6 +80,7 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('/projects/{project}/edit', [SuperAdminProjectController::class, 'edit'])->name('projects.edit');
             Route::put('/projects/{project}', [SuperAdminProjectController::class, 'update'])->name('projects.update');
             Route::post('/projects/{project}/submit', [SuperAdminProjectController::class, 'submit'])->name('projects.submit');
+            Route::get('/assignments/{assignment}/choose-template', [SuperAdminProjectController::class, 'chooseTemplate'])->name('assignments.choose-template');
             Route::get('/assignments/{assignment}/fill', [SuperAdminProjectController::class, 'fill'])->name('assignments.fill');
             Route::post('/assignments/{assignment}/fill', [SuperAdminProjectController::class, 'storeFill'])->name('assignments.store-fill');
 
@@ -152,6 +153,7 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->middleware('role:porteur_projet,superadmin')
         ->group(function () {
             Route::get('/dashboard', [PorteurDashboard::class, 'index'])->name('dashboard');
+            Route::get('/projects/{assignment}/choose-template', [ProjectController::class, 'chooseTemplate'])->name('projects.choose-template');
             Route::get('/projects/{assignment}/fill', [ProjectController::class, 'create'])->name('projects.create');
             Route::post('/projects/{assignment}', [ProjectController::class, 'store'])->name('projects.store');
             Route::get('/projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');

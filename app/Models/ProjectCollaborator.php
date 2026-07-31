@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectCollaborator extends Model
 {
     protected $fillable = [
-        'project_id', 'nom', 'prenom', 'email',
+        'project_id', 'category', 'nom', 'prenom', 'email',
         'telephone', 'institution', 'role_collaborateur',
     ];
 
