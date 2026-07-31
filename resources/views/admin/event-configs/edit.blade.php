@@ -13,10 +13,16 @@
                 <span class="badge-green mt-1 inline-block">Événement actif</span>
                 @endif
             </div>
-            <a href="{{ route('admin.event-configs.index') }}" class="btn-secondary text-xs">
-                @include('components.icon', ['name' => 'arrow-left'])
-                Retour
-            </a>
+            <div class="flex items-center gap-2">
+                <a href="{{ route('admin.content-blocks.index', ['event_config_id' => $eventConfig->id]) }}" class="btn-secondary text-xs">
+                    @include('components.icon', ['name' => 'document'])
+                    Contenu de la page publique
+                </a>
+                <a href="{{ route('admin.event-configs.index') }}" class="btn-secondary text-xs">
+                    @include('components.icon', ['name' => 'arrow-left'])
+                    Retour
+                </a>
+            </div>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ route('admin.event-configs.update', $eventConfig) }}" class="space-y-6">
