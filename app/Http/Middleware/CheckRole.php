@@ -18,7 +18,7 @@ class CheckRole
         $user = Auth::user();
 
         // Vérifie via la colonne role (compatibilité existante) OU via Spatie
-        if (!in_array($user->role, $roles) && !$user->hasRole($roles)) {
+        if (!$user->hasLegacyRole($roles) && !$user->hasRole($roles)) {
             abort(403, 'Accès non autorisé.');
         }
 

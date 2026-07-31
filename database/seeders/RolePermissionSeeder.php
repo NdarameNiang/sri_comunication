@@ -91,8 +91,11 @@ class RolePermissionSeeder extends Seeder
         }
 
         // ── Assigner les rôles Spatie aux users existants ────────────────────
+        // Idempotent : syncRoles() ne fait rien si déjà à jour, donc pas besoin de
+        // garde préalable (l'ancienne garde était cassée : hasRole($user->role) résolvait
+        // vers la méthode legacy, qui compare la colonne à elle-même = toujours vrai).
         \App\Models\User::all()->each(function ($user) {
-            if ($user->role && !$user->hasRole($user->role)) {
+            if ($user->role && \Spatie\Permission\Models\Role::where('name', $user->role)->exists()) {
                 try {
                     $user->syncRoles([$user->role]);
                 } catch (\Exception) {}

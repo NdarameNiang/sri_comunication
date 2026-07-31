@@ -53,7 +53,12 @@ class User extends Authenticatable
     public function isPorteurProjet(): bool      { return $this->role === 'porteur_projet'; }
     public function isComiteScientifique(): bool  { return $this->role === 'comite_scientifique'; }
 
-    public function hasRole(string|array $roles): bool
+    /**
+     * Vérifie la colonne role "historique" (source de vérité pour les 6 rôles système).
+     * Distinct de HasRoles::hasRole() (Spatie, table roles) hérité du trait — les deux
+     * coexistent : voir CheckRole::handle() et CheckCapability::handle().
+     */
+    public function hasLegacyRole(string|array $roles): bool
     {
         return in_array($this->role, (array) $roles);
     }
