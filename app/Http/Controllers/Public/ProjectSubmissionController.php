@@ -30,11 +30,27 @@ class ProjectSubmissionController extends Controller
 
     private const SESSION_IDENTITY_KEY = 'public_submission_identity';
 
+    /**
+     * Vérifie uniquement que la fonctionnalité est activée pour l'événement (le toggle
+     * admin) — 404 sinon, la page n'existe simplement pas. La période de soumission est
+     * vérifiée séparément (submissionOpenOrFail) pour pouvoir afficher un message clair
+     * plutôt qu'une erreur brute quand la fonctionnalité existe mais est temporairement
+     * fermée.
+     */
     private function event(string $eventSlug): EventConfig
     {
         $event = EventConfig::where('event_slug', $eventSlug)->where('is_active', true)->firstOrFail();
-        abort_unless($event->allowsPublicSubmission(), 404);
+        abort_unless($event->allow_public_submission, 404);
         return $event;
+    }
+
+    private function submissionBlockMessage(EventConfig $event): string
+    {
+        return match ($event->submissionStatus()) {
+            'not_open' => 'Le dépôt de projet n\'est pas encore ouvert. Il débutera le ' . $event->submission_open_at?->format('d/m/Y à H:i') . '.',
+            'closed'   => 'La période de dépôt est clôturée depuis le ' . $event->submission_close_at?->format('d/m/Y à H:i') . '. Aucun dépôt n\'est plus accepté.',
+            default    => 'Le dépôt de projet est actuellement fermé.',
+        };
     }
 
     // ── Étape 1 : identification ────────────────────────────────────────────
@@ -42,6 +58,15 @@ class ProjectSubmissionController extends Controller
     public function identify(string $eventSlug)
     {
         $event = $this->event($eventSlug);
+
+        if (!$event->isSubmissionOpen()) {
+            return view('public.project-submission-identify', [
+                'event' => $event,
+                'cycleOptions' => collect(),
+                'closedMessage' => $this->submissionBlockMessage($event),
+            ]);
+        }
+
         $cycleOptions = FormOption::forGroup('population_category')
             ->filter(fn ($o) => str_starts_with($o->value, 'etudiant_'));
 
@@ -51,6 +76,10 @@ class ProjectSubmissionController extends Controller
     public function verify(Request $request, string $eventSlug)
     {
         $event = $this->event($eventSlug);
+        if (!$event->isSubmissionOpen()) {
+            return redirect()->route('public.project-submission.identify', $eventSlug)
+                ->with('error', $this->submissionBlockMessage($event));
+        }
 
         $data = $request->validate([
             'profile_type'   => 'required|in:etudiant,personnel',
@@ -109,6 +138,10 @@ class ProjectSubmissionController extends Controller
     public function details(string $eventSlug)
     {
         $event = $this->event($eventSlug);
+        if (!$event->isSubmissionOpen()) {
+            return redirect()->route('public.project-submission.identify', $eventSlug)
+                ->with('error', $this->submissionBlockMessage($event));
+        }
         $identity = session(self::SESSION_IDENTITY_KEY);
         if (!$identity) {
             return redirect()->route('public.project-submission.identify', $eventSlug);
@@ -122,6 +155,10 @@ class ProjectSubmissionController extends Controller
     public function storeDetails(Request $request, string $eventSlug)
     {
         $event = $this->event($eventSlug);
+        if (!$event->isSubmissionOpen()) {
+            return redirect()->route('public.project-submission.identify', $eventSlug)
+                ->with('error', $this->submissionBlockMessage($event));
+        }
         $identity = session(self::SESSION_IDENTITY_KEY);
         if (!$identity) {
             return redirect()->route('public.project-submission.identify', $eventSlug);
@@ -219,6 +256,11 @@ class ProjectSubmissionController extends Controller
             return redirect()->route('public.project-submission.show', [$eventSlug, $assignment, $token]);
         }
 
+        if (!$event->isSubmissionOpen()) {
+            return redirect()->route('public.project-submission.identify', $eventSlug)
+                ->with('error', $this->submissionBlockMessage($event));
+        }
+
         $template = $project?->submission_template ?? ($request->query('template') === 'approfondi' ? 'approfondi' : 'standard');
 
         if ($project) {
@@ -238,12 +280,16 @@ class ProjectSubmissionController extends Controller
 
     public function save(Request $request, string $eventSlug, ProjectAssignment $assignment, string $token)
     {
-        $this->event($eventSlug);
+        $event = $this->event($eventSlug);
         $this->authorizeToken($assignment, $token);
 
         $project = $assignment->project;
         if ($project && $project->isSubmitted()) {
             return back()->with('error', 'Ce projet a déjà été soumis et ne peut plus être modifié.');
+        }
+
+        if (!$event->isSubmissionOpen()) {
+            return back()->with('error', $this->submissionBlockMessage($event));
         }
 
         $template = $project?->submission_template
@@ -274,13 +320,17 @@ class ProjectSubmissionController extends Controller
 
     public function submit(string $eventSlug, ProjectAssignment $assignment, string $token)
     {
-        $this->event($eventSlug);
+        $event = $this->event($eventSlug);
         $this->authorizeToken($assignment, $token);
 
         $project = $assignment->project;
         abort_if(!$project, 404);
         if ($project->isSubmitted()) {
             return back()->with('error', 'Ce projet est déjà soumis.');
+        }
+
+        if (!$event->isSubmissionOpen()) {
+            return back()->with('error', $this->submissionBlockMessage($event));
         }
 
         $project->update(['status' => 'submitted']);

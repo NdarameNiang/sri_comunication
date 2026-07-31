@@ -6,6 +6,15 @@
 
 @section('content')
 
+@if(isset($closedMessage))
+<div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-slate-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+    </svg>
+    <h3 class="font-bold text-slate-800 text-lg mb-1">Dépôt fermé</h3>
+    <p class="text-slate-600 text-sm">{{ $closedMessage }}</p>
+</div>
+@else
 <div class="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
     <div class="px-6 py-5 border-b border-gray-100 flex items-center gap-3">
         <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
@@ -106,5 +115,6 @@
     toggleProfile();
 </script>
 @endpush
+@endif
 
 @endsection
