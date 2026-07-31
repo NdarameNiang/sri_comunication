@@ -299,7 +299,7 @@
                 <p class="text-slate-600 text-sm leading-relaxed mb-5">
                     Vous n'avez pas encore de compte porteur ? Créez votre dossier directement — un espace vous est ouvert automatiquement.
                 </p>
-                <a href="{{ route('public.project-submission.show', $event->event_slug) }}"
+                <a href="{{ route('public.project-submission.identify', $event->event_slug) }}"
                    class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4
                           bg-blue-600 hover:bg-blue-500 active:bg-blue-800
                           text-white font-bold text-sm tracking-wide

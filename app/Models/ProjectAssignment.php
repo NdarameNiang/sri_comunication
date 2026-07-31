@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectAssignment extends Model
 {
-    protected $fillable = ['porteur_id', 'structure_id', 'title', 'status'];
+    protected $fillable = ['porteur_id', 'structure_id', 'title', 'status', 'public_token'];
 
     public function porteur()
     {

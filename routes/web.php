@@ -54,8 +54,15 @@ Route::prefix('event/{eventSlug}')->group(function () {
     Route::post('/inscription',    [PublicRegistrationController::class, 'store'])->name('public.registration.store');
     Route::get('/questionnaire',   [PublicQuestionnaireController::class, 'show'])->name('public.questionnaire.show');
     Route::post('/questionnaire',  [PublicQuestionnaireController::class, 'store'])->name('public.questionnaire.store');
-    Route::get('/soumission',      [PublicProjectSubmissionController::class, 'show'])->name('public.project-submission.show');
-    Route::post('/soumission',     [PublicProjectSubmissionController::class, 'store'])->name('public.project-submission.store');
+    // Dépôt de projet public (sans compte) : identification → informations → formulaire → soumission
+    Route::get('/soumission',                  [PublicProjectSubmissionController::class, 'identify'])->name('public.project-submission.identify');
+    Route::post('/soumission',                 [PublicProjectSubmissionController::class, 'verify'])->name('public.project-submission.verify');
+    Route::get('/soumission/informations',     [PublicProjectSubmissionController::class, 'details'])->name('public.project-submission.details');
+    Route::post('/soumission/informations',    [PublicProjectSubmissionController::class, 'storeDetails'])->name('public.project-submission.details.store');
+    Route::get('/soumission/{assignment}/{token}',          [PublicProjectSubmissionController::class, 'fill'])->name('public.project-submission.fill');
+    Route::post('/soumission/{assignment}/{token}',         [PublicProjectSubmissionController::class, 'save'])->name('public.project-submission.save');
+    Route::post('/soumission/{assignment}/{token}/valider', [PublicProjectSubmissionController::class, 'submit'])->name('public.project-submission.submit');
+    Route::get('/soumission/{assignment}/{token}/mon-dossier', [PublicProjectSubmissionController::class, 'show'])->name('public.project-submission.show');
     Route::get('/confirmation/{token}', [PublicRegistrationController::class, 'confirmation'])->name('public.registration.confirmation');
 });
 

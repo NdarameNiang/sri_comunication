@@ -1,14 +1,18 @@
 @php
     $adminMode   = $adminMode ?? false;
+    $publicMode  = $publicMode ?? false;
     $readonly    = $project?->isSubmitted() && !$adminMode;
     $assignment  = $assignment ?? $project?->assignment;
-    $backRoute   = $adminMode ? route('superadmin.projects.index') : route('porteur.dashboard');
+    $backRoute   = $adminMode ? route('superadmin.projects.index') : ($publicMode ? null : route('porteur.dashboard'));
 
     if ($adminMode) {
         $action = $adminAction ?? ($project
             ? route('superadmin.projects.update', $project)
             : route('superadmin.assignments.store-fill', $assignment));
         $method = $adminMethod ?? ($project ? 'PUT' : 'POST');
+    } elseif ($publicMode) {
+        $action = $publicAction;
+        $method = 'POST';
     } else {
         $action = $project
             ? route('porteur.projects.update', $project)
@@ -102,7 +106,7 @@
                     </div>
                     <div>
                         <label class="form-label">Email institutionnel <span class="text-red-500">*</span></label>
-                        <input type="email" name="contact_email" value="{{ old('contact_email', $project?->contact_email ?? auth()->user()->email) }}"
+                        <input type="email" name="contact_email" value="{{ old('contact_email', $project?->contact_email ?? auth()->user()?->email ?? $assignment->porteur?->email) }}"
                                class="form-input" {{ $readonly ? 'disabled' : '' }} required>
                         <p class="text-xs text-gray-400 mt-1">Adresse @ucad.edu.sn de connexion</p>
                         @error('contact_email') <p class="form-error">{{ $message }}</p> @enderror
@@ -116,7 +120,7 @@
                     </div>
                     <div>
                         <label class="form-label">Téléphone de contact</label>
-                        <input type="text" name="contact_phone" value="{{ old('contact_phone', $project?->contact_phone ?? auth()->user()->phone ?? '') }}"
+                        <input type="text" name="contact_phone" value="{{ old('contact_phone', $project?->contact_phone ?? auth()->user()?->phone ?? $assignment->porteur?->phone ?? '') }}"
                                class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="7X XXX XX XX">
                     </div>
                 </div>
@@ -464,6 +468,23 @@
                     Déjà soumis
                 </span>
                 @endif
+            @elseif($publicMode)
+                @if($project)
+                <form method="POST" action="{{ $publicSubmitAction }}"
+                      data-confirm="Soumettre définitivement votre projet ? Cette action est irréversible."
+                      data-confirm-title="Soumettre le projet" data-confirm-type="warning" class="inline">
+                    @csrf
+                    <button type="submit" class="btn-primary flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
+                        Soumettre définitivement
+                    </button>
+                </form>
+                @endif
+                <button type="submit" class="btn-secondary flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                    Sauvegarder le brouillon
+                </button>
+                <p class="text-xs text-gray-400 w-full mt-1">Conservez le lien de cette page pour revenir compléter votre dossier plus tard.</p>
             @else
                 @if($project)
                 <form method="POST" action="{{ route('porteur.projects.submit', $project) }}"
@@ -481,7 +502,9 @@
                     Sauvegarder le brouillon
                 </button>
             @endif
+            @if($backRoute)
             <a href="{{ $backRoute }}" class="btn-secondary">Retour</a>
+            @endif
         </div>
     </div>
     @endif
@@ -499,7 +522,7 @@
             Suivant →
         </button>
     </div>
-    @else
+    @elseif($backRoute)
     <div class="flex gap-3 mt-4">
         <a href="{{ $backRoute }}" class="btn-secondary">← Retour au tableau de bord</a>
     </div>
