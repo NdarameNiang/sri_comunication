@@ -30,7 +30,7 @@ class StudentSyncService
 
         do {
             try {
-                $response = Http::withHeaders(['X-Api-Token' => $token])
+                $response = Http::withToken($token)
                     ->timeout(30)
                     ->get($url, ['per_page' => $perPage, 'page' => $page]);
             } catch (\Throwable $e) {
