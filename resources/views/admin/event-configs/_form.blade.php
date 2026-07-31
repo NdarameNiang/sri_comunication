@@ -124,3 +124,23 @@
         </div>
     </div>
 </div>
+
+{{-- Public autorisé à l'inscription --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Public autorisé à s'inscrire</p>
+    <p class="text-xs text-gray-400 mb-3">Ne cochez rien pour laisser l'inscription ouverte à tous (comportement par défaut).</p>
+    @php
+        $selectedAudienceIds = old('audience_category_ids', isset($eventConfig) ? $eventConfig->audienceCategories->pluck('id')->all() : []);
+    @endphp
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        @forelse($audienceCategories as $opt)
+        <label class="flex items-center gap-2.5 p-2.5 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
+            <input type="checkbox" name="audience_category_ids[]" value="{{ $opt->id }}"
+                   {{ in_array($opt->id, $selectedAudienceIds) ? 'checked' : '' }} class="rounded">
+            <span class="text-sm text-gray-700">{{ $opt->label }}</span>
+        </label>
+        @empty
+        <p class="text-xs text-gray-400 italic">Aucune catégorie définie. Ajoutez-en dans Options formulaires → Catégories de population.</p>
+        @endforelse
+    </div>
+</div>

@@ -31,6 +31,24 @@ class EventConfig extends Model
     public function registrations() { return $this->hasMany(Registration::class); }
     public function questionnaires() { return $this->hasMany(Questionnaire::class); }
 
+    public function audienceCategories()
+    {
+        return $this->belongsToMany(FormOption::class, 'event_audience_categories');
+    }
+
+    /**
+     * Un pivot vide = inscription ouverte à tous (comportement historique, rétrocompatible).
+     */
+    public function isAudienceRestricted(): bool
+    {
+        return $this->audienceCategories()->exists();
+    }
+
+    public function allowedAudienceValues(): array
+    {
+        return $this->audienceCategories()->pluck('value')->all();
+    }
+
     public static function active(): ?self
     {
         return static::where('is_active', true)->first();

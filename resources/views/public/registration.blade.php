@@ -125,6 +125,22 @@
             @error('type_participant') <p class="form-error">{{ $message }}</p> @enderror
         </div>
 
+        @if($populationCategories->count())
+        {{-- Section : Catégorie de population --}}
+        <div>
+            <label class="form-label">Catégorie</label>
+            <select name="population_category" class="form-select @error('population_category') border-red-400 bg-red-50 @enderror">
+                <option value="">— Sélectionner votre catégorie —</option>
+                @foreach($populationCategories as $opt)
+                <option value="{{ $opt->value }}" {{ old('population_category') === $opt->value ? 'selected' : '' }}>
+                    {{ $opt->label }}
+                </option>
+                @endforeach
+            </select>
+            @error('population_category') <p class="form-error">{{ $message }}</p> @enderror
+        </div>
+        @endif
+
         {{-- Bouton --}}
         <div class="pt-2 border-t border-gray-100">
             <button type="submit"

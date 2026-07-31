@@ -8,6 +8,7 @@ use App\Models\FormOption;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class RegistrationController extends Controller
@@ -16,8 +17,11 @@ class RegistrationController extends Controller
     {
         $event = EventConfig::where('event_slug', $eventSlug)->where('is_active', true)->firstOrFail();
         $participantTypes = FormOption::forGroup('participant_type');
+        $populationCategories = $event->isAudienceRestricted()
+            ? $event->audienceCategories()->orderBy('sort_order')->get()
+            : FormOption::forGroup('population_category');
         $inscriptionClosed = !$event->isInscriptionOpen();
-        return view('public.registration', compact('event', 'participantTypes', 'inscriptionClosed'));
+        return view('public.registration', compact('event', 'participantTypes', 'populationCategories', 'inscriptionClosed'));
     }
 
     public function store(Request $request, string $eventSlug)
@@ -28,6 +32,10 @@ class RegistrationController extends Controller
             return back()->with('error', 'Les inscriptions sont actuellement fermées.');
         }
 
+        $allowedCategories = $event->isAudienceRestricted()
+            ? $event->allowedAudienceValues()
+            : FormOption::forGroup('population_category')->pluck('value')->all();
+
         $data = $request->validate([
             'nom'              => 'required|string|max:255',
             'prenom'           => 'required|string|max:255',
@@ -37,8 +45,10 @@ class RegistrationController extends Controller
             'institution'      => 'nullable|string|max:255',
             'fonction'         => 'nullable|string|max:255',
             'type_participant' => 'nullable|string|max:100',
+            'population_category' => ['nullable', Rule::in($allowedCategories)],
         ], [
             'email.same' => 'Les deux adresses email ne correspondent pas.',
+            'population_category.in' => "Cette catégorie n'est pas ouverte à l'inscription pour cet événement.",
         ]);
 
         unset($data['email_confirmation']);

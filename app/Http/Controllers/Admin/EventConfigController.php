@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\EventConfig;
+use App\Models\FormOption;
 use Illuminate\Http\Request;
 
 class EventConfigController extends Controller
@@ -16,14 +17,16 @@ class EventConfigController extends Controller
 
     public function create()
     {
-        return view('admin.event-configs.create');
+        $audienceCategories = FormOption::forGroup('population_category');
+        return view('admin.event-configs.create', compact('audienceCategories'));
     }
 
     public function store(Request $request)
     {
         $data = $this->validate($request);
         $data['is_active'] = false;
-        EventConfig::create($data);
+        $eventConfig = EventConfig::create($data);
+        $eventConfig->audienceCategories()->sync($request->input('audience_category_ids', []));
         return redirect()->route('admin.event-configs.index')->with('success', 'Événement créé avec succès.');
     }
 
@@ -34,12 +37,15 @@ class EventConfigController extends Controller
 
     public function edit(EventConfig $eventConfig)
     {
-        return view('admin.event-configs.edit', compact('eventConfig'));
+        $audienceCategories = FormOption::forGroup('population_category');
+        $eventConfig->load('audienceCategories');
+        return view('admin.event-configs.edit', compact('eventConfig', 'audienceCategories'));
     }
 
     public function update(Request $request, EventConfig $eventConfig)
     {
         $eventConfig->update($this->validate($request));
+        $eventConfig->audienceCategories()->sync($request->input('audience_category_ids', []));
         return redirect()->route('admin.event-configs.index')->with('success', 'Événement mis à jour.');
     }
 

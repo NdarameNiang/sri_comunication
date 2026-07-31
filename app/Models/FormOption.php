@@ -46,6 +46,7 @@ class FormOption extends Model
             'impact_type'        => 'Types d\'impact',
             'presentation_format'=> 'Formats de présentation',
             'participant_type'   => 'Types de participant (inscription)',
+            'population_category'=> 'Catégories de population (ciblage inscription)',
             'collaborator_role'  => 'Rôles de collaborateur',
         ];
     }

@@ -32,6 +32,10 @@ class RegistrationController extends Controller
             $query->where('type_participant', $type);
         }
 
+        if ($category = $request->get('category')) {
+            $query->where('population_category', $category);
+        }
+
         if ($request->get('presence') === '1') {
             $query->where('presence_confirmee', true);
         } elseif ($request->get('presence') === '0') {
@@ -46,13 +50,20 @@ class RegistrationController extends Controller
                 ->distinct()->pluck('type_participant')->sort()->values()
             : collect();
 
+        $categoryLabels = \App\Models\FormOption::labelsForGroup('population_category');
+        $categories = $event
+            ? Registration::where('event_config_id', $event->id)
+                ->whereNotNull('population_category')
+                ->distinct()->pluck('population_category')->sort()->values()
+            : collect();
+
         $stats = $event ? [
             'total'    => Registration::where('event_config_id', $event->id)->count(),
             'presents' => Registration::where('event_config_id', $event->id)->where('presence_confirmee', true)->count(),
             'absents'  => Registration::where('event_config_id', $event->id)->where('presence_confirmee', false)->count(),
         ] : null;
 
-        return view('secretaire.inscriptions.index', compact('registrations', 'event', 'types', 'stats'));
+        return view('secretaire.inscriptions.index', compact('registrations', 'event', 'types', 'categories', 'categoryLabels', 'stats'));
     }
 
     public function show(Registration $registration)
@@ -86,7 +97,7 @@ class RegistrationController extends Controller
             fputs($fp, "\xEF\xBB\xBF"); // UTF-8 BOM pour Excel
             fputcsv($fp, [
                 'Nom', 'Prénom', 'Email', 'Téléphone',
-                'Institution', 'Fonction', 'Type participant',
+                'Institution', 'Fonction', 'Type participant', 'Catégorie',
                 'Présence confirmée', 'QR Code', 'Date inscription',
             ], ';');
             foreach ($registrations as $reg) {
@@ -98,6 +109,7 @@ class RegistrationController extends Controller
                     $reg->institution ?? '',
                     $reg->fonction ?? '',
                     $reg->type_participant ?? '',
+                    $reg->population_category ?? '',
                     $reg->presence_confirmee ? 'Oui' : 'Non',
                     $reg->qr_code ?? '',
                     $reg->created_at->format('d/m/Y H:i'),

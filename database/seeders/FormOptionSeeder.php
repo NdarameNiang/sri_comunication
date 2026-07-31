@@ -9,8 +9,6 @@ class FormOptionSeeder extends Seeder
 {
     public function run(): void
     {
-        FormOption::truncate();
-
         $options = [
             // Domaines scientifiques
             ['group' => 'scientific_domain', 'label' => 'Sciences et Technologies',          'value' => 'sciences_technologies',       'sort_order' => 1],
@@ -88,6 +86,13 @@ class FormOptionSeeder extends Seeder
             ['group' => 'participant_type', 'label' => 'Journaliste / Média',              'value' => 'media',       'sort_order' => 4],
             ['group' => 'participant_type', 'label' => 'Grand public',                     'value' => 'public',      'sort_order' => 5],
 
+            // Catégories de population (ciblage d'audience à l'inscription)
+            ['group' => 'population_category', 'label' => 'PER — Personnel Enseignant-Chercheur',     'value' => 'per',                'sort_order' => 1],
+            ['group' => 'population_category', 'label' => 'PATS — Personnel Administratif, Technique et de Service', 'value' => 'pats', 'sort_order' => 2],
+            ['group' => 'population_category', 'label' => 'Étudiant — Licence',                        'value' => 'etudiant_licence',   'sort_order' => 3],
+            ['group' => 'population_category', 'label' => 'Étudiant — Master',                         'value' => 'etudiant_master',    'sort_order' => 4],
+            ['group' => 'population_category', 'label' => 'Étudiant — Doctorat',                       'value' => 'etudiant_doctorat',  'sort_order' => 5],
+
             // Rôles de collaborateur
             ['group' => 'collaborator_role', 'label' => 'Co-auteur',       'value' => 'co_auteur',   'sort_order' => 1],
             ['group' => 'collaborator_role', 'label' => 'Chercheur',       'value' => 'chercheur',   'sort_order' => 2],
@@ -97,12 +102,19 @@ class FormOptionSeeder extends Seeder
             ['group' => 'collaborator_role', 'label' => 'Partenaire',      'value' => 'partenaire',  'sort_order' => 6],
         ];
 
-        FormOption::insert(array_map(fn($o) => array_merge([
-            'is_active' => true,
-            'is_other'  => false,
-        ], $o, [
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]), $options));
+        // upsert (pas insert/truncate) : idempotent et ne détruit pas les options
+        // ajoutées depuis l'admin ou les lignes référencées par une FK ailleurs
+        // (ex: event_audience_categories.form_option_id).
+        FormOption::upsert(
+            array_map(fn($o) => array_merge([
+                'is_active' => true,
+                'is_other'  => false,
+            ], $o, [
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]), $options),
+            ['group', 'value'],
+            ['label', 'sort_order', 'is_active', 'is_other', 'updated_at']
+        );
     }
 }

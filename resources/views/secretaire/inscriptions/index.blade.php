@@ -58,6 +58,15 @@
                 </select>
             </div>
             <div>
+                <label class="block text-xs text-gray-500 mb-1">Catégorie</label>
+                <select name="category" class="input-field text-sm">
+                    <option value="">Toutes les catégories</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat }}" {{ request('category') === $cat ? 'selected' : '' }}>{{ $categoryLabels[$cat] ?? $cat }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
                 <label class="block text-xs text-gray-500 mb-1">Présence</label>
                 <select name="presence" class="input-field text-sm">
                     <option value="">Tous</option>
@@ -111,7 +120,7 @@
         <div class="px-4 py-3 border-b border-gray-100 flex items-center justify-between">
             <p class="text-sm font-medium text-gray-700">
                 {{ $registrations->total() }} inscription(s)
-                @if(request()->hasAny(['search','type','presence']))
+                @if(request()->hasAny(['search','type','category','presence']))
                     <span class="text-xs text-gray-400 ml-1">(filtrés)</span>
                 @endif
             </p>
@@ -125,6 +134,7 @@
                         <th class="text-left py-3 px-4 text-xs text-gray-500 font-semibold">Email</th>
                         <th class="text-left py-3 px-4 text-xs text-gray-500 font-semibold">Institution</th>
                         <th class="text-left py-3 px-4 text-xs text-gray-500 font-semibold">Type</th>
+                        <th class="text-left py-3 px-4 text-xs text-gray-500 font-semibold">Catégorie</th>
                         <th class="text-left py-3 px-4 text-xs text-gray-500 font-semibold">Date inscription</th>
                         <th class="text-center py-3 px-4 text-xs text-gray-500 font-semibold">Présence</th>
                         <th class="text-left py-3 px-4 text-xs text-gray-500 font-semibold">Actions</th>
@@ -142,6 +152,13 @@
                         <td class="py-3 px-4">
                             @if($reg->type_participant)
                                 <span class="text-xs px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-medium">{{ $reg->type_participant }}</span>
+                            @else
+                                <span class="text-gray-400 text-xs">–</span>
+                            @endif
+                        </td>
+                        <td class="py-3 px-4">
+                            @if($reg->population_category)
+                                <span class="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-medium">{{ $categoryLabels[$reg->population_category] ?? $reg->population_category }}</span>
                             @else
                                 <span class="text-gray-400 text-xs">–</span>
                             @endif
@@ -203,7 +220,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="py-12 text-center">
+                        <td colspan="9" class="py-12 text-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-gray-200 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                             <p class="text-gray-400 text-sm">Aucune inscription trouvée.</p>
                         </td>
