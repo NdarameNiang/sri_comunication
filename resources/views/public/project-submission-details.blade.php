@@ -64,10 +64,13 @@
                     <select name="structure_id" required class="form-select @error('structure_id') border-red-400 bg-red-50 @enderror">
                         <option value="">— Sélectionner la structure —</option>
                         @foreach($structures as $s)
-                        <option value="{{ $s->id }}" {{ old('structure_id') == $s->id ? 'selected' : '' }}>{{ $s->name }}{{ $s->acronym ? ' ('.$s->acronym.')' : '' }}</option>
+                        <option value="{{ $s->id }}" {{ old('structure_id', $suggestedStructureId) == $s->id ? 'selected' : '' }}>{{ $s->name }}{{ $s->acronym ? ' ('.$s->acronym.')' : '' }}</option>
                         @endforeach
                     </select>
                     @error('structure_id') <p class="form-error">{{ $message }}</p> @enderror
+                    @if($suggestedStructureId && !old('structure_id'))
+                    <p class="text-xs text-emerald-600 mt-1">Pré-remplie à partir de votre structure déclarée — modifiable si besoin.</p>
+                    @endif
                 </div>
             </div>
         </div>

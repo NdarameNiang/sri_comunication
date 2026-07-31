@@ -148,8 +148,31 @@ class ProjectSubmissionController extends Controller
         }
 
         $structures = Structure::orderBy('name')->get();
+        $suggestedStructureId = $this->matchStructureId($identity['structure_label'] ?? null, $structures);
 
-        return view('public.project-submission-details', compact('event', 'identity', 'structures'));
+        return view('public.project-submission-details', compact('event', 'identity', 'structures', 'suggestedStructureId'));
+    }
+
+    /**
+     * Fait correspondre le libellé de structure renvoyé par StudentCenter/Personnel (texte
+     * libre, orthographe/accents pas toujours alignés avec la table `structures`) à une
+     * structure existante, pour pré-remplir le menu déroulant plutôt que de faire ressaisir
+     * une information déjà connue.
+     */
+    private function matchStructureId(?string $label, $structures): ?int
+    {
+        if (!$label) {
+            return null;
+        }
+
+        $normalized = Str::of($label)->ascii()->lower()->trim()->toString();
+
+        $match = $structures->first(function ($s) use ($normalized) {
+            return Str::of($s->name)->ascii()->lower()->trim()->toString() === $normalized
+                || Str::of($s->acronym ?? '')->ascii()->lower()->trim()->toString() === $normalized;
+        });
+
+        return $match?->id;
     }
 
     public function storeDetails(Request $request, string $eventSlug)
