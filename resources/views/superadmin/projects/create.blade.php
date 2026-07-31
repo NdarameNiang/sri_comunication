@@ -28,7 +28,7 @@
                     </select>
                     @error('porteur_id') <p class="form-error">{{ $message }}</p> @enderror
                     @if($porteurs->isEmpty())
-                    <p class="text-amber-600 text-xs mt-1">Aucun porteur de projet n'existe encore.</p>
+                    <p class="text-indigo-600 text-xs mt-1">Aucun porteur de projet n'existe encore.</p>
                     @endif
                 </div>
 

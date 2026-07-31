@@ -42,7 +42,7 @@
            padding: 2px 8px; border-radius: 10px; margin: 2px; border: 1px solid #bfdbfe; }
     .tag-purple { background: #f5f3ff; color: #7c3aed; border-color: #ddd6fe; }
     .tag-green  { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
-    .tag-amber  { background: #fffbeb; color: #d97706; border-color: #fde68a; }
+    .tag-indigo { background: #eef2ff; color: #4f46e5; border-color: #c7d2fe; }
 
     .footer { background: #f8fafc; border-top: 1px solid #e2e8f0; padding: 14px 36px;
               text-align: center; color: #94a3b8; font-size: 10px; }
@@ -180,7 +180,7 @@
                 <td class="label">Format présentation</td>
                 <td class="value">
                     @foreach($project->presentation_formats as $t)
-                        <span class="tag tag-amber">{{ \App\Models\Project::presentationLabels()[$t] ?? $t }}</span>
+                        <span class="tag tag-indigo">{{ \App\Models\Project::presentationLabels()[$t] ?? $t }}</span>
                     @endforeach
                 </td>
             </tr>

@@ -28,11 +28,11 @@
             </div>
         </div>
         <div class="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+            <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
             </div>
             <div>
-                <p class="text-2xl font-extrabold text-amber-600">{{ $stats['absents'] }}</p>
+                <p class="text-2xl font-extrabold text-indigo-600">{{ $stats['absents'] }}</p>
                 <p class="text-xs text-gray-500">Non confirmés</p>
             </div>
         </div>

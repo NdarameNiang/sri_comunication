@@ -60,8 +60,8 @@
             @forelse($porteur->projectAssignments as $assignment)
             <div class="px-6 py-4">
                 <div class="flex items-start gap-3">
-                    <div class="w-8 h-8 rounded-full {{ $assignment->status === 'submitted' ? 'bg-emerald-100' : 'bg-amber-100' }} flex items-center justify-center shrink-0 mt-0.5">
-                        <span class="text-xs font-bold {{ $assignment->status === 'submitted' ? 'text-emerald-700' : 'text-amber-700' }}">P{{ $loop->iteration }}</span>
+                    <div class="w-8 h-8 rounded-full {{ $assignment->status === 'submitted' ? 'bg-emerald-100' : 'bg-indigo-100' }} flex items-center justify-center shrink-0 mt-0.5">
+                        <span class="text-xs font-bold {{ $assignment->status === 'submitted' ? 'text-emerald-700' : 'text-indigo-700' }}">P{{ $loop->iteration }}</span>
                     </div>
                     <div class="flex-1">
                         <p class="font-medium text-gray-900 text-sm">{{ $assignment->title }}</p>

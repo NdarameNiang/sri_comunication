@@ -35,8 +35,8 @@
                padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; letter-spacing: .02em; }
 
         /* Notice */
-        .notice { background: #fffbeb; border-left: 3px solid #d97706; border-radius: 4px; padding: 12px 16px; margin-top: 20px; }
-        .notice p { font-size: 13px; color: #92400e; margin: 0; line-height: 1.6; }
+        .notice { background: #eef2ff; border-left: 3px solid #4f46e5; border-radius: 4px; padding: 12px 16px; margin-top: 20px; }
+        .notice p { font-size: 13px; color: #3730a3; margin: 0; line-height: 1.6; }
 
         /* Footer */
         .footer { padding: 20px 36px; text-align: center; }

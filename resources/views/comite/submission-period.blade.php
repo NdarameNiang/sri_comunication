@@ -11,7 +11,7 @@
         $status = $event->submissionStatus();
         $statusConfig = [
             'open'     => ['bg' => 'bg-emerald-50', 'border' => 'border-emerald-200', 'text' => 'text-emerald-800', 'sub' => 'text-emerald-600', 'dot' => 'bg-emerald-500', 'label' => 'Soumissions ouvertes'],
-            'not_open' => ['bg' => 'bg-amber-50',   'border' => 'border-amber-200',   'text' => 'text-amber-800',   'sub' => 'text-amber-600',   'dot' => 'bg-amber-500',   'label' => 'Pas encore ouvertes'],
+            'not_open' => ['bg' => 'bg-indigo-50',   'border' => 'border-indigo-200',   'text' => 'text-indigo-800',   'sub' => 'text-indigo-600',   'dot' => 'bg-indigo-500',   'label' => 'Pas encore ouvertes'],
             'closed'   => ['bg' => 'bg-red-50',     'border' => 'border-red-200',     'text' => 'text-red-800',     'sub' => 'text-red-600',     'dot' => 'bg-red-500',     'label' => 'Soumissions clôturées'],
         ][$status];
     @endphp

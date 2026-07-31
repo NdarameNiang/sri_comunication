@@ -30,13 +30,13 @@
         @foreach(['organisation' => 'Organisation', 'contenu' => 'Contenu'] as $k => $label)
         @php $mv = $moyennes[$k] ?? 0; @endphp
         <div class="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg {{ $mv >= 4 ? 'bg-emerald-50' : ($mv >= 3 ? 'bg-amber-50' : 'bg-red-50') }} flex items-center justify-center shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ $mv >= 4 ? 'text-emerald-500' : ($mv >= 3 ? 'text-amber-400' : 'text-red-400') }}" viewBox="0 0 24 24" fill="currentColor">
+            <div class="w-9 h-9 rounded-lg {{ $mv >= 4 ? 'bg-emerald-50' : ($mv >= 3 ? 'bg-indigo-50' : 'bg-red-50') }} flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 {{ $mv >= 4 ? 'text-emerald-500' : ($mv >= 3 ? 'text-indigo-400' : 'text-red-400') }}" viewBox="0 0 24 24" fill="currentColor">
                     <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005z" clip-rule="evenodd"/>
                 </svg>
             </div>
             <div>
-                <p class="text-2xl font-extrabold {{ $mv >= 4 ? 'text-emerald-600' : ($mv >= 3 ? 'text-amber-600' : 'text-red-500') }}">{{ $mv }}<span class="text-sm font-normal text-gray-400">/5</span></p>
+                <p class="text-2xl font-extrabold {{ $mv >= 4 ? 'text-emerald-600' : ($mv >= 3 ? 'text-indigo-600' : 'text-red-500') }}">{{ $mv }}<span class="text-sm font-normal text-gray-400">/5</span></p>
                 <p class="text-xs text-gray-500">Moy. {{ $label }}</p>
             </div>
         </div>
@@ -54,10 +54,10 @@
             <div>
                 <div class="flex justify-between text-xs mb-1">
                     <span class="text-gray-600">{{ $label }}</span>
-                    <span class="font-bold {{ $val >= 4 ? 'text-emerald-600' : ($val >= 3 ? 'text-amber-600' : 'text-red-500') }}">{{ $val }}/5</span>
+                    <span class="font-bold {{ $val >= 4 ? 'text-emerald-600' : ($val >= 3 ? 'text-indigo-600' : 'text-red-500') }}">{{ $val }}/5</span>
                 </div>
                 <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full {{ $val >= 4 ? 'bg-emerald-500' : ($val >= 3 ? 'bg-amber-400' : 'bg-red-400') }}"
+                    <div class="h-full rounded-full {{ $val >= 4 ? 'bg-emerald-500' : ($val >= 3 ? 'bg-indigo-400' : 'bg-red-400') }}"
                          style="width: {{ ($val / 5) * 100 }}%"></div>
                 </div>
             </div>
@@ -149,7 +149,7 @@
                 <tbody class="divide-y divide-gray-50">
                     @forelse($questionnaires as $i => $q)
                     @php
-                        $noteColor = fn($n) => $n >= 4 ? 'text-emerald-600 font-bold' : ($n >= 3 ? 'text-amber-600 font-semibold' : 'text-red-500 font-semibold');
+                        $noteColor = fn($n) => $n >= 4 ? 'text-emerald-600 font-bold' : ($n >= 3 ? 'text-indigo-600 font-semibold' : 'text-red-500 font-semibold');
                     @endphp
                     <tr class="hover:bg-gray-50/70 transition-colors">
                         <td class="py-3 px-4 text-gray-400 text-xs">{{ $questionnaires->firstItem() + $i }}</td>
@@ -167,7 +167,7 @@
                         <td class="py-3 px-3 text-center text-sm {{ $noteColor($q->note_logistique) }}">{{ $q->note_logistique }}/5</td>
                         <td class="py-3 px-3 text-center">
                             <span class="inline-flex items-center justify-center w-10 h-7 rounded-lg text-sm font-bold
-                                {{ $q->note_globale >= 4 ? 'bg-emerald-100 text-emerald-700' : ($q->note_globale >= 3 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-600') }}">
+                                {{ $q->note_globale >= 4 ? 'bg-emerald-100 text-emerald-700' : ($q->note_globale >= 3 ? 'bg-indigo-100 text-indigo-700' : 'bg-red-100 text-red-600') }}">
                                 {{ $q->note_globale }}/5
                             </span>
                         </td>
@@ -175,7 +175,7 @@
                             @if($q->recommanderait)
                                 <span class="inline-flex gap-0.5" title="Recommanderait">
                                     @for($s = 0; $s < 5; $s++)
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-amber-400" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005z" clip-rule="evenodd"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-indigo-400" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.005z" clip-rule="evenodd"/></svg>
                                     @endfor
                                 </span>
                             @else

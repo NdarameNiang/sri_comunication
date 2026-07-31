@@ -27,7 +27,7 @@
                 'label' => 'Structures',
                 'value' => $stats['structures'],
                 'icon'  => 'M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21',
-                'bg'    => 'bg-amber-100', 'fg' => 'text-amber-600',
+                'bg'    => 'bg-indigo-100', 'fg' => 'text-indigo-600',
             ],
             [
                 'label' => 'Projets',
@@ -104,7 +104,7 @@
                 @foreach([
                     ['route' => 'superadmin.users.create',       'label' => 'Nouvel utilisateur', 'sub' => 'Créer un compte',         'bg' => 'bg-blue-100',   'fg' => 'text-blue-600',   'hbg' => 'group-hover:bg-blue-200'],
                     ['route' => 'direction.porteurs.create',     'label' => 'Nouveau porteur',    'sub' => 'Compte porteur de projet', 'bg' => 'bg-emerald-100','fg' => 'text-emerald-600','hbg' => 'group-hover:bg-emerald-200'],
-                    ['route' => 'direction.point-focaux.create', 'label' => 'Observateur',        'sub' => 'Affecter un observateur',  'bg' => 'bg-amber-100',  'fg' => 'text-amber-600',  'hbg' => 'group-hover:bg-amber-200'],
+                    ['route' => 'direction.point-focaux.create', 'label' => 'Observateur',        'sub' => 'Affecter un observateur',  'bg' => 'bg-indigo-100',  'fg' => 'text-indigo-600',  'hbg' => 'group-hover:bg-indigo-200'],
                     ['route' => 'direction.comite.create',       'label' => 'Membre comité',      'sub' => 'Ajouter un évaluateur',   'bg' => 'bg-purple-100', 'fg' => 'text-purple-600', 'hbg' => 'group-hover:bg-purple-200'],
                     ['route' => 'direction.secretaires.create',  'label' => 'Secrétaire',         'sub' => 'Ajouter une secrétaire',  'bg' => 'bg-rose-100',   'fg' => 'text-rose-600',   'hbg' => 'group-hover:bg-rose-200'],
                 ] as $action)

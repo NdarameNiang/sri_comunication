@@ -37,7 +37,7 @@
              'icon'  => 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'],
             ['label' => 'Non entamés',    'val' => $tabCounts['pending'],   'bg' => 'bg-red-50',     'fg' => 'text-red-500',    'ring' => 'text-red-400',
              'icon'  => 'M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z'],
-            ['label' => 'En cours',       'val' => $tabCounts['draft'],     'bg' => 'bg-amber-50',   'fg' => 'text-amber-600',  'ring' => 'text-amber-400',
+            ['label' => 'En cours',       'val' => $tabCounts['draft'],     'bg' => 'bg-indigo-50',   'fg' => 'text-indigo-600',  'ring' => 'text-indigo-400',
              'icon'  => 'M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125'],
             ['label' => 'Soumis',         'val' => $tabCounts['submitted'], 'bg' => 'bg-emerald-50', 'fg' => 'text-emerald-600','ring' => 'text-emerald-400',
              'icon'  => 'M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
@@ -150,7 +150,7 @@
                     <tr class="border-b border-gray-50 hover:bg-gray-50/70 transition-colors">
                         <td class="py-3 px-5">
                             <span class="inline-flex w-6 h-6 rounded-lg items-center justify-center text-xs font-bold
-                                {{ $isSubmitted ? 'bg-emerald-100 text-emerald-700' : ($isDraft ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500') }}">
+                                {{ $isSubmitted ? 'bg-emerald-100 text-emerald-700' : ($isDraft ? 'bg-indigo-100 text-indigo-700' : 'bg-gray-100 text-gray-500') }}">
                                 {{ $i + 1 }}
                             </span>
                         </td>
@@ -174,7 +174,7 @@
                                     Soumis
                                 </span>
                             @elseif($isDraft)
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700">En cours</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700">En cours</span>
                             @else
                                 <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-500">Non entamé</span>
                             @endif

@@ -365,7 +365,7 @@
                             $roleColors = [
                                 'superadmin'          => 'bg-purple-500/30 text-purple-200 border-purple-400/40',
                                 'direction_recherche' => 'bg-blue-500/30 text-blue-200 border-blue-400/40',
-                                'point_focal'         => 'bg-amber-500/30 text-amber-200 border-amber-400/40',
+                                'point_focal'         => 'bg-indigo-500/30 text-indigo-200 border-indigo-400/40',
                                 'porteur_projet'      => 'bg-emerald-500/30 text-emerald-200 border-emerald-400/40',
                                 'comite_scientifique' => 'bg-rose-500/30 text-rose-200 border-rose-400/40',
                                 'secretaire'          => 'bg-slate-500/30 text-slate-200 border-slate-400/40',
@@ -418,8 +418,8 @@
                 </div>
             @endif
             @if(session('warning'))
-                <div class="flex items-start gap-3 p-4 rounded-lg text-sm bg-amber-50 text-amber-800 border border-amber-200 mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div class="flex items-start gap-3 p-4 rounded-lg text-sm bg-indigo-50 text-indigo-800 border border-indigo-200 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     <span>{{ session('warning') }}</span>
                 </div>
             @endif
@@ -573,7 +573,7 @@
 
     const ICONS = {
         danger: { bg:'#fee2e2', color:'#dc2626', svg:'<svg xmlns="http://www.w3.org/2000/svg" style="width:1.1rem;height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>' },
-        warning:{ bg:'#fef3c7', color:'#d97706', svg:'<svg xmlns="http://www.w3.org/2000/svg" style="width:1.1rem;height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' },
+        warning:{ bg:'#e0e7ff', color:'#4f46e5', svg:'<svg xmlns="http://www.w3.org/2000/svg" style="width:1.1rem;height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>' },
         info:   { bg:'#dbeafe', color:'#2563eb', svg:'<svg xmlns="http://www.w3.org/2000/svg" style="width:1.1rem;height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>' },
     };
 

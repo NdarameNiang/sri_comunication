@@ -9,7 +9,7 @@ $palette = [
     'superadmin'          => ['dot' => 'bg-purple-500', 'pill' => 'bg-purple-50 text-purple-700 border-purple-200',  'row' => 'border-purple-100'],
     'direction_recherche' => ['dot' => 'bg-blue-500',   'pill' => 'bg-blue-50 text-blue-700 border-blue-200',        'row' => 'border-blue-100'],
     'comite_scientifique' => ['dot' => 'bg-emerald-500','pill' => 'bg-emerald-50 text-emerald-700 border-emerald-200','row' => 'border-emerald-100'],
-    'secretaire'          => ['dot' => 'bg-amber-500',  'pill' => 'bg-amber-50 text-amber-700 border-amber-200',     'row' => 'border-amber-100'],
+    'secretaire'          => ['dot' => 'bg-indigo-500',  'pill' => 'bg-indigo-50 text-indigo-700 border-indigo-200',     'row' => 'border-indigo-100'],
     'point_focal'         => ['dot' => 'bg-sky-500',    'pill' => 'bg-sky-50 text-sky-700 border-sky-200',           'row' => 'border-sky-100'],
     'porteur_projet'      => ['dot' => 'bg-rose-500',   'pill' => 'bg-rose-50 text-rose-700 border-rose-200',        'row' => 'border-rose-100'],
 ];

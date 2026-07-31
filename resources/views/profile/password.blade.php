@@ -134,7 +134,7 @@ function checkStrength(val) {
     const levels = [
         { w: '20%',  color: 'bg-red-400',    text: 'Très faible', cls: 'text-red-500'    },
         { w: '40%',  color: 'bg-orange-400',  text: 'Faible',      cls: 'text-orange-500' },
-        { w: '60%',  color: 'bg-yellow-400',  text: 'Moyen',       cls: 'text-yellow-600' },
+        { w: '60%',  color: 'bg-indigo-400',  text: 'Moyen',       cls: 'text-indigo-600' },
         { w: '80%',  color: 'bg-blue-400',    text: 'Fort',        cls: 'text-blue-600'   },
         { w: '100%', color: 'bg-emerald-500', text: 'Très fort',   cls: 'text-emerald-600'},
     ];

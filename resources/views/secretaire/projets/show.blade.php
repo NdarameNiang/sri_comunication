@@ -60,7 +60,7 @@
     @php
     $sections = [
         ['num' => '01', 'label' => 'Résumé',           'field' => 'summary',     'color' => 'border-indigo-300'],
-        ['num' => '02', 'label' => 'Problématique',    'field' => 'problematic', 'color' => 'border-amber-300'],
+        ['num' => '02', 'label' => 'Problématique',    'field' => 'problematic', 'color' => 'border-indigo-300'],
         ['num' => '03', 'label' => 'Solution proposée','field' => 'solution',    'color' => 'border-emerald-300'],
         ['num' => '04', 'label' => 'Résultats attendus','field' => 'results',    'color' => 'border-blue-300'],
     ];
@@ -87,7 +87,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
             @foreach([
-                ['Protection IP', $project->protection_types, $protectionLabels, 'bg-amber-50 text-amber-700', $project->protection_autres],
+                ['Protection IP', $project->protection_types, $protectionLabels, 'bg-indigo-50 text-indigo-700', $project->protection_autres],
                 ['Valorisation',  $project->valorisation_types, $valorisationLabels, 'bg-purple-50 text-purple-700', $project->valorisation_autres],
                 ['Impact',        $project->impact_types, $impactLabels, 'bg-emerald-50 text-emerald-700', null],
                 ['Présentation',  $project->presentation_formats, $presentationLabels, 'bg-blue-50 text-blue-700', $project->presentation_autres],

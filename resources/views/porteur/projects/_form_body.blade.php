@@ -333,10 +333,10 @@
                     @endphp
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1">
                         @foreach($formatOptions as $opt)
-                        <label class="flex items-center gap-2 p-3 rounded-xl border {{ in_array($opt->value, $selectedFormats) ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
+                        <label class="flex items-center gap-2 p-3 rounded-xl border {{ in_array($opt->value, $selectedFormats) ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
                             <input type="checkbox" name="presentation_formats[]" value="{{ $opt->value }}"
                                    {{ in_array($opt->value, $selectedFormats) ? 'checked' : '' }} {{ $readonly ? 'disabled' : '' }}
-                                   class="w-4 h-4 rounded text-amber-600">
+                                   class="w-4 h-4 rounded text-indigo-600">
                             <span class="text-sm font-medium text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach

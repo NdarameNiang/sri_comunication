@@ -57,7 +57,7 @@
                             <form method="POST" action="{{ route('admin.form-options.toggle-other', $opt) }}">
                                 @csrf @method('PATCH')
                                 <button type="submit" class="text-xs px-2 py-1 rounded-full font-medium
-                                    {{ $opt->is_other ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200' }}">
+                                    {{ $opt->is_other ? 'bg-indigo-100 text-indigo-700 hover:bg-indigo-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200' }}">
                                     {{ $opt->is_other ? 'Oui' : 'Non' }}
                                 </button>
                             </form>

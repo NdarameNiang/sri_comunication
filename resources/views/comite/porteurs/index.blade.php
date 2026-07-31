@@ -27,11 +27,11 @@
             </div>
         </div>
         <div class="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div>
-                <p class="text-xl font-extrabold text-amber-600 leading-none">{{ $porteurs->getCollection()->filter(fn($p) => $p->projectAssignments->where('project', null)->count() > 0)->count() }}</p>
+                <p class="text-xl font-extrabold text-indigo-600 leading-none">{{ $porteurs->getCollection()->filter(fn($p) => $p->projectAssignments->where('project', null)->count() > 0)->count() }}</p>
                 <p class="text-xs text-gray-500 mt-0.5">En attente</p>
             </div>
         </div>
@@ -137,7 +137,7 @@
                                 </span>
                                 @endif
                                 @if($nbDraft > 0)
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700" title="Brouillon">
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-700" title="Brouillon">
                                     {{ $nbDraft }} brouillon
                                 </span>
                                 @endif

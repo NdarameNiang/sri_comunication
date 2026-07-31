@@ -68,7 +68,7 @@
     }
 
     .badge-yellow {
-        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800;
+        @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800;
     }
 
     .badge-red {
@@ -162,7 +162,7 @@
     }
 
     .alert-warning {
-        @apply flex items-start gap-3 p-4 rounded-xl text-sm bg-amber-50 text-amber-800 border border-amber-200;
+        @apply flex items-start gap-3 p-4 rounded-xl text-sm bg-indigo-50 text-indigo-800 border border-indigo-200;
     }
 
     /* ── Input field alias ─────────────────────────────────────────── */

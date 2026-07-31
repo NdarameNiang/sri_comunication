@@ -51,7 +51,7 @@
                 <h2 class="text-base font-bold text-gray-900 leading-snug">{{ $project->assignment?->title ?? 'Projet sans titre' }}</h2>
                 <p class="text-sm text-gray-400 mt-0.5">{{ $project->structure?->name ?? '–' }}</p>
                 <div class="flex flex-wrap gap-2 mt-3">
-                    <span class="{{ $project->status === 'submitted' ? 'inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200' : 'inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200' }}">
+                    <span class="{{ $project->status === 'submitted' ? 'inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200' : 'inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200' }}">
                         {{ $project->status === 'submitted' ? 'Soumis' : 'Brouillon' }}
                     </span>
                     @foreach($project->project_types ?? [] as $type)
@@ -81,7 +81,7 @@
     @php
     $sections = [
         ['num' => '01', 'label' => 'Résumé',            'field' => 'summary',     'color' => 'border-indigo-300'],
-        ['num' => '02', 'label' => 'Problématique',     'field' => 'problematic', 'color' => 'border-amber-300'],
+        ['num' => '02', 'label' => 'Problématique',     'field' => 'problematic', 'color' => 'border-indigo-300'],
         ['num' => '03', 'label' => 'Solution / Innovation','field' => 'solution', 'color' => 'border-emerald-300'],
         ['num' => '04', 'label' => 'Résultats attendus', 'field' => 'results',    'color' => 'border-blue-300'],
     ];
@@ -108,7 +108,7 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 divide-y sm:divide-y-0 sm:divide-x divide-gray-100">
             @foreach([
-                ['Protection', $project->protection_types, \App\Models\Project::protectionLabels(), 'bg-amber-50 text-amber-700', $project->protection_autres],
+                ['Protection', $project->protection_types, \App\Models\Project::protectionLabels(), 'bg-indigo-50 text-indigo-700', $project->protection_autres],
                 ['Valorisation', $project->valorisation_types, \App\Models\Project::valorisationLabels(), 'bg-purple-50 text-purple-700', $project->valorisation_autres],
                 ['Impact', $project->impact_types, \App\Models\Project::impactLabels(), 'bg-emerald-50 text-emerald-700', null],
                 ['Présentation', $project->presentation_formats, \App\Models\Project::presentationLabels(), 'bg-blue-50 text-blue-700', $project->presentation_autres],

@@ -9,7 +9,7 @@
     $statusMeta = [
         'included'     => ['Inclus',              'bg-emerald-50 text-emerald-700 border-emerald-200'],
         'excluded'     => ['Exclu',                'bg-gray-50 text-gray-500 border-gray-200'],
-        'tied_pending' => ['Ex-æquo — en attente', 'bg-amber-50 text-amber-700 border-amber-200'],
+        'tied_pending' => ['Ex-æquo — en attente', 'bg-indigo-50 text-indigo-700 border-indigo-200'],
         'pending'      => ['Non classé',           'bg-gray-50 text-gray-400 border-gray-200'],
     ];
 @endphp
@@ -22,7 +22,7 @@
             ['Notés', $stats['scored'], 'text-blue-600'],
             ['Inclus', $stats['included'], 'text-emerald-600'],
             ['Exclus', $stats['excluded'], 'text-gray-500'],
-            ['Ex-æquo en attente', $stats['tied_pending'], 'text-amber-600'],
+            ['Ex-æquo en attente', $stats['tied_pending'], 'text-indigo-600'],
         ] as [$label, $value, $cls])
         <div class="bg-white rounded-xl border border-gray-200 p-4">
             <p class="text-xs text-gray-400">{{ $label }}</p>
@@ -32,7 +32,7 @@
     </div>
 
     @if($stats['tied_pending'] > 0)
-    <div class="flex items-center gap-2.5 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+    <div class="flex items-center gap-2.5 p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-sm text-indigo-800">
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
         <span><strong>{{ $stats['tied_pending'] }} projet(s)</strong> strictement à égalité à la limite du quota — décision manuelle requise (voir tableau ci-dessous).</span>
     </div>
@@ -86,7 +86,7 @@
             <tbody class="divide-y divide-gray-50">
                 @forelse($projects as $project)
                 @php [$label, $cls] = $statusMeta[$project->evaluation_status] ?? $statusMeta['pending']; @endphp
-                <tr class="{{ $project->isEvaluationTiedPending() ? 'bg-amber-50/40' : '' }}">
+                <tr class="{{ $project->isEvaluationTiedPending() ? 'bg-indigo-50/40' : '' }}">
                     <td class="px-5 py-3 font-mono text-gray-500">{{ $project->rank_position ?? '–' }}</td>
                     <td class="px-5 py-3">
                         <p class="font-medium text-gray-900">{{ $project->assignment?->title ?? 'Projet sans titre' }}</p>

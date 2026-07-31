@@ -1,8 +1,8 @@
 @extends('errors.layout')
 @section('title', '419 – Session expirée')
 @section('content')
-<div class="icon-wrap" style="background:#fef3c7;">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="1.5">
+<div class="icon-wrap" style="background:#e0e7ff;">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#4f46e5" stroke-width="1.5">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
     </svg>
 </div>

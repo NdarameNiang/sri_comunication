@@ -32,11 +32,11 @@
             </div>
         </div>
         <div class="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center gap-3">
-            <div class="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            <div class="w-9 h-9 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
             </div>
             <div>
-                <p class="text-2xl font-extrabold text-amber-600">{{ $nbDraft }}</p>
+                <p class="text-2xl font-extrabold text-indigo-600">{{ $nbDraft }}</p>
                 <p class="text-xs text-gray-500">Brouillons</p>
             </div>
         </div>
@@ -124,7 +124,7 @@
                         $pstatus = $a->project?->status ?? 'pending';
                         $badges  = [
                             'submitted' => ['label'=>'Soumis',     'class'=>'bg-emerald-100 text-emerald-700'],
-                            'draft'     => ['label'=>'Brouillon',  'class'=>'bg-amber-100 text-amber-700'],
+                            'draft'     => ['label'=>'Brouillon',  'class'=>'bg-indigo-100 text-indigo-700'],
                             'pending'   => ['label'=>'En attente', 'class'=>'bg-gray-100 text-gray-500'],
                         ];
                         $badge = $badges[$pstatus] ?? $badges['pending'];
