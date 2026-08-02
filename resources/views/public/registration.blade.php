@@ -42,7 +42,8 @@
     <form method="POST" action="{{ route('public.registration.store', $event->event_slug) }}" class="p-6 space-y-6">
         @csrf
 
-        {{-- Section : Vérification --}}
+        @if(!empty($profileTypes))
+        {{-- Section : Vérification (uniquement si l'admin a activé au moins un profil) --}}
         <div>
             <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
                 @if($requireVerification)
@@ -64,6 +65,7 @@
                 @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
             </div>
         </div>
+        @endif
 
         {{-- Section : Identité --}}
         <div>

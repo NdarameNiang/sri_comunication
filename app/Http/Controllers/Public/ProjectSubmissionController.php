@@ -71,8 +71,9 @@ class ProjectSubmissionController extends Controller
             ->filter(fn ($o) => str_starts_with($o->value, 'etudiant_'));
 
         $requireVerification = $event->requiresIdentityVerification();
+        $profileTypes = $event->enabledProfileTypes();
 
-        return view('public.project-submission-identify', compact('event', 'cycleOptions', 'requireVerification'));
+        return view('public.project-submission-identify', compact('event', 'cycleOptions', 'requireVerification', 'profileTypes'));
     }
 
     public function verify(Request $request, string $eventSlug)
@@ -84,21 +85,46 @@ class ProjectSubmissionController extends Controller
         }
 
         $requireVerification = $event->requiresIdentityVerification();
+        $profileTypes = $event->enabledProfileTypes();
+
+        // Sans profil paramétré par l'admin, le formulaire est libre : un seul bloc
+        // nom/prénom/email/institution, sans notion de carte ni de matricule.
+        if (empty($profileTypes)) {
+            $data = $request->validate([
+                'nom'         => 'required|string|max:255',
+                'prenom'      => 'required|string|max:255',
+                'institution' => 'nullable|string|max:255',
+            ]);
+
+            session([self::SESSION_IDENTITY_KEY => [
+                'type'                => 'autre',
+                'nom'                 => $data['nom'],
+                'prenom'              => $data['prenom'],
+                'structure_label'     => $data['institution'] ?? null,
+                'population_category' => null,
+            ]]);
+
+            return redirect()->route('public.project-submission.details', $eventSlug);
+        }
 
         $data = $request->validate([
-            'profile_type'   => 'required|in:etudiant,personnel',
+            'profile_type'   => ['required', \Illuminate\Validation\Rule::in($profileTypes)],
             'cycle'          => 'required_if:profile_type,etudiant|nullable|in:etudiant_licence,etudiant_master,etudiant_doctorat',
             'cin'            => 'nullable|string|max:50',
             'numero_carte'   => $requireVerification ? 'required_if:profile_type,etudiant|nullable|string|max:50' : 'nullable|string|max:50',
             'categorie'      => 'required_if:profile_type,personnel|nullable|in:per,pats',
-            'matricule'      => $requireVerification ? 'required_if:profile_type,personnel|nullable|string|max:50' : 'nullable|string|max:50',
-            'nom'            => $requireVerification ? 'nullable|string|max:255' : 'required|string|max:255',
-            'prenom'         => $requireVerification ? 'nullable|string|max:255' : 'required|string|max:255',
+            'matricule'      => 'required_if:profile_type,personnel|nullable|string|max:50',
+            'email_institutionnel' => 'nullable|email|max:255',
+            'nom'            => 'required_if:profile_type,autre|nullable|string|max:255',
+            'prenom'         => 'required_if:profile_type,autre|nullable|string|max:255',
+            'institution'    => 'nullable|string|max:255',
         ], [
             'cycle.required_if'        => 'Veuillez indiquer votre cycle.',
             'numero_carte.required_if' => 'Le numéro de carte étudiant est requis.',
             'categorie.required_if'    => 'Veuillez indiquer si vous êtes PER ou PATS.',
             'matricule.required_if'    => 'Le matricule est requis.',
+            'nom.required_if'          => 'Le nom est requis.',
+            'prenom.required_if'       => 'Le prénom est requis.',
         ]);
 
         if ($data['profile_type'] === 'etudiant') {
@@ -114,17 +140,18 @@ class ProjectSubmissionController extends Controller
 
             session([self::SESSION_IDENTITY_KEY => [
                 'type'                 => 'etudiant',
-                'nom'                  => $student->nom ?? $data['nom'],
-                'prenom'               => $student->prenom ?? $data['prenom'],
+                'nom'                  => $student->nom ?? $data['nom'] ?? null,
+                'prenom'               => $student->prenom ?? $data['prenom'] ?? null,
                 'structure_label'      => $student->structure ?? null,
                 'population_category'  => $student?->populationCategoryValue() ?? $data['cycle'],
                 'numero_carte'         => $data['numero_carte'] ?? null,
                 'cin'                  => $data['cin'] ?? null,
             ]]);
-        } else {
-            $personnel = !empty($data['matricule'])
-                ? Personnel::where('matricule', $data['matricule'])->first()
-                : null;
+        } elseif ($data['profile_type'] === 'personnel') {
+            // Le matricule est la clé de recherche obligatoire (l'email institutionnel n'est
+            // qu'une donnée de contact optionnelle, pas encore branchée à une vraie API
+            // Personnel — table de test en attendant, comme pour Student/StudentCenter).
+            $personnel = Personnel::where('matricule', $data['matricule'])->first();
 
             if (!$personnel && $requireVerification) {
                 return back()->withInput()->withErrors([
@@ -134,11 +161,20 @@ class ProjectSubmissionController extends Controller
 
             session([self::SESSION_IDENTITY_KEY => [
                 'type'                 => 'personnel',
-                'nom'                  => $personnel->nom ?? $data['nom'],
-                'prenom'               => $personnel->prenom ?? $data['prenom'],
+                'nom'                  => $personnel->nom ?? $data['nom'] ?? null,
+                'prenom'               => $personnel->prenom ?? $data['prenom'] ?? null,
                 'structure_label'      => $personnel->structure ?? null,
                 'population_category'  => $personnel->categorie ?? $data['categorie'],
-                'matricule'            => $data['matricule'] ?? null,
+                'matricule'            => $data['matricule'],
+                'email_institutionnel' => $data['email_institutionnel'] ?? null,
+            ]]);
+        } else {
+            session([self::SESSION_IDENTITY_KEY => [
+                'type'                 => 'autre',
+                'nom'                  => $data['nom'],
+                'prenom'               => $data['prenom'],
+                'structure_label'      => $data['institution'] ?? null,
+                'population_category'  => null,
             ]]);
         }
 

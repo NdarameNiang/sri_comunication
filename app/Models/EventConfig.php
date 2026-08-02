@@ -13,7 +13,7 @@ class EventConfig extends Model
         'inscription_open_at', 'inscription_close_at',
         'is_active', 'show_questionnaire', 'max_projects_per_structure',
         'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
-        'allow_public_submission', 'require_identity_verification',
+        'allow_public_submission', 'require_identity_verification', 'enabled_profile_types',
         'logo_path', 'logo_white_path', 'hero_image_path', 'primary_color',
     ];
 
@@ -32,6 +32,7 @@ class EventConfig extends Model
             'show_questionnaire'   => 'boolean',
             'allow_public_submission' => 'boolean',
             'require_identity_verification' => 'boolean',
+            'enabled_profile_types' => 'array',
         ];
     }
 
@@ -135,6 +136,21 @@ class EventConfig extends Model
     public function requiresIdentityVerification(): bool
     {
         return $this->require_identity_verification;
+    }
+
+    /**
+     * Profils d'identification proposés sur l'inscription/le dépôt public (étudiant, personnel,
+     * autre), configurés par l'admin. Aucun profil coché = formulaire libre sans sélecteur de
+     * profil (comportement historique).
+     */
+    public function enabledProfileTypes(): array
+    {
+        return $this->enabled_profile_types ?? [];
+    }
+
+    public function hasProfileTypeSelection(): bool
+    {
+        return count($this->enabledProfileTypes()) > 0;
     }
 
     public function submissionStatus(): string

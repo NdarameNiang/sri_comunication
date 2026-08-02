@@ -24,7 +24,8 @@ class RegistrationController extends Controller
             : FormOption::forGroup('population_category');
         $inscriptionClosed = !$event->isInscriptionOpen();
         $requireVerification = $event->requiresIdentityVerification();
-        return view('public.registration', compact('event', 'participantTypes', 'populationCategories', 'inscriptionClosed', 'requireVerification'));
+        $profileTypes = $event->enabledProfileTypes();
+        return view('public.registration', compact('event', 'participantTypes', 'populationCategories', 'inscriptionClosed', 'requireVerification', 'profileTypes'));
     }
 
     /**
@@ -102,7 +103,8 @@ class RegistrationController extends Controller
         // l'événement l'exige, le numéro doit correspondre à une fiche connue, sinon
         // l'inscription est refusée. Sinon (événement en mode libre), la correspondance est
         // seulement utilisée pour réaligner la catégorie quand elle existe, sans jamais bloquer.
-        if (!empty($data['numero_carte'])) {
+        // Si l'admin n'a activé aucun profil, le champ n'est même pas affiché côté formulaire.
+        if (!empty($event->enabledProfileTypes()) && !empty($data['numero_carte'])) {
             $student = Student::where('numero_carte', $data['numero_carte'])->first();
             $personnel = $student ? null : Personnel::where('matricule', $data['numero_carte'])->first();
             $match = $student ?? $personnel;

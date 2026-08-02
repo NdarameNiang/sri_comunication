@@ -31,7 +31,8 @@
     <form method="POST" action="{{ route('public.project-submission.verify', $event->event_slug) }}" class="p-6 space-y-6">
         @csrf
 
-        @unless($requireVerification)
+        @if(empty($profileTypes))
+        {{-- Aucun profil paramétré par l'admin : formulaire libre, pas de sélecteur --}}
         <div>
             <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Identité</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -49,28 +50,43 @@
                            placeholder="Votre nom de famille">
                     @error('nom') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
+                <div class="sm:col-span-2">
+                    <label class="form-label">Institution <span class="text-gray-400 font-normal">(optionnel)</span></label>
+                    <input type="text" name="institution" value="{{ old('institution') }}" class="form-input" placeholder="UCAD, ISED, autre…">
+                </div>
             </div>
-            <p class="text-xs text-gray-400 mt-2">Le numéro de carte / matricule ci-dessous reste optionnel.</p>
         </div>
-        @endunless
+        @else
 
         <div>
             <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Vous êtes</p>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 {{ count($profileTypes) >= 3 ? 'sm:grid-cols-3' : 'sm:grid-cols-2' }} gap-4">
+                @if(in_array('etudiant', $profileTypes))
                 <label class="relative flex flex-col p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-blue-300 transition-all has-[:checked]:border-blue-500 has-[:checked]:bg-blue-50">
-                    <input type="radio" name="profile_type" value="etudiant" class="absolute top-4 right-4" onchange="toggleProfile()" {{ old('profile_type', 'etudiant') === 'etudiant' ? 'checked' : '' }}>
+                    <input type="radio" name="profile_type" value="etudiant" class="absolute top-4 right-4" onchange="toggleProfile()" {{ old('profile_type', $profileTypes[0]) === 'etudiant' ? 'checked' : '' }}>
                     <span class="text-sm font-bold text-gray-900 mb-1">Étudiant</span>
                     <span class="text-xs text-gray-500 leading-relaxed pr-6">Vérification via votre numéro de carte d'étudiant (StudentCenter)</span>
                 </label>
+                @endif
+                @if(in_array('personnel', $profileTypes))
                 <label class="relative flex flex-col p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-indigo-300 transition-all has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
-                    <input type="radio" name="profile_type" value="personnel" class="absolute top-4 right-4" onchange="toggleProfile()" {{ old('profile_type') === 'personnel' ? 'checked' : '' }}>
+                    <input type="radio" name="profile_type" value="personnel" class="absolute top-4 right-4" onchange="toggleProfile()" {{ old('profile_type', $profileTypes[0]) === 'personnel' ? 'checked' : '' }}>
                     <span class="text-sm font-bold text-gray-900 mb-1">Personnel (PER / PATS)</span>
                     <span class="text-xs text-gray-500 leading-relaxed pr-6">Vérification via votre matricule</span>
                 </label>
+                @endif
+                @if(in_array('autre', $profileTypes))
+                <label class="relative flex flex-col p-4 rounded-xl border-2 border-gray-200 cursor-pointer hover:border-slate-300 transition-all has-[:checked]:border-slate-500 has-[:checked]:bg-slate-50">
+                    <input type="radio" name="profile_type" value="autre" class="absolute top-4 right-4" onchange="toggleProfile()" {{ old('profile_type', $profileTypes[0]) === 'autre' ? 'checked' : '' }}>
+                    <span class="text-sm font-bold text-gray-900 mb-1">Autre</span>
+                    <span class="text-xs text-gray-500 leading-relaxed pr-6">Visiteur, partenaire… — aucune vérification requise</span>
+                </label>
+                @endif
             </div>
         </div>
 
         {{-- Bloc étudiant --}}
+        @if(in_array('etudiant', $profileTypes))
         <div id="bloc-etudiant" class="space-y-4">
             <div>
                 <label class="form-label">Cycle <span class="text-red-500">*</span></label>
@@ -96,12 +112,28 @@
                        placeholder="Ex : 1995000VG">
                 @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
             </div>
+            @unless($requireVerification)
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Prénom <span class="text-red-500">*</span></label>
+                    <input type="text" name="prenom" value="{{ old('prenom') }}" class="form-input @error('prenom') border-red-400 bg-red-50 @enderror" placeholder="Votre prénom">
+                    @error('prenom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="form-label">Nom <span class="text-red-500">*</span></label>
+                    <input type="text" name="nom" value="{{ old('nom') }}" class="form-input @error('nom') border-red-400 bg-red-50 @enderror" placeholder="Votre nom de famille">
+                    @error('nom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+            </div>
+            @endunless
         </div>
+        @endif
 
         {{-- Bloc personnel --}}
+        @if(in_array('personnel', $profileTypes))
         <div id="bloc-personnel" class="space-y-4 hidden">
             <div>
-                <label class="form-label">Catégorie @if($requireVerification)<span class="text-red-500">*</span>@endif</label>
+                <label class="form-label">Catégorie <span class="text-red-500">*</span></label>
                 <select name="categorie" class="form-select @error('categorie') border-red-400 bg-red-50 @enderror">
                     <option value="">— Sélectionner —</option>
                     <option value="per" {{ old('categorie') === 'per' ? 'selected' : '' }}>PER (Personnel Enseignant et de Recherche)</option>
@@ -110,16 +142,58 @@
                 @error('categorie') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">
-                    Matricule
-                    @if($requireVerification)<span class="text-red-500">*</span>@else <span class="text-gray-400 font-normal">(optionnel)</span>@endif
-                </label>
+                <label class="form-label">Matricule <span class="text-red-500">*</span></label>
                 <input type="text" name="matricule" value="{{ old('matricule') }}"
                        class="form-input @error('matricule') border-red-400 bg-red-50 @enderror"
                        placeholder="Ex : PER-0001">
                 @error('matricule') <p class="form-error">{{ $message }}</p> @enderror
             </div>
+            <div>
+                <label class="form-label">Email institutionnel <span class="text-gray-400 font-normal">(optionnel)</span></label>
+                <input type="email" name="email_institutionnel" value="{{ old('email_institutionnel') }}"
+                       class="form-input @error('email_institutionnel') border-red-400 bg-red-50 @enderror"
+                       placeholder="prenom.nom@ucad.edu.sn">
+                @error('email_institutionnel') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
+            @unless($requireVerification)
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Prénom <span class="text-red-500">*</span></label>
+                    <input type="text" name="prenom" value="{{ old('prenom') }}" class="form-input @error('prenom') border-red-400 bg-red-50 @enderror" placeholder="Votre prénom">
+                    @error('prenom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="form-label">Nom <span class="text-red-500">*</span></label>
+                    <input type="text" name="nom" value="{{ old('nom') }}" class="form-input @error('nom') border-red-400 bg-red-50 @enderror" placeholder="Votre nom de famille">
+                    @error('nom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+            </div>
+            @endunless
         </div>
+        @endif
+
+        {{-- Bloc autre --}}
+        @if(in_array('autre', $profileTypes))
+        <div id="bloc-autre" class="space-y-4 hidden">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Prénom <span class="text-red-500">*</span></label>
+                    <input type="text" name="prenom" value="{{ old('prenom') }}" class="form-input @error('prenom') border-red-400 bg-red-50 @enderror" placeholder="Votre prénom">
+                    @error('prenom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="form-label">Nom <span class="text-red-500">*</span></label>
+                    <input type="text" name="nom" value="{{ old('nom') }}" class="form-input @error('nom') border-red-400 bg-red-50 @enderror" placeholder="Votre nom de famille">
+                    @error('nom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="form-label">Institution <span class="text-gray-400 font-normal">(optionnel)</span></label>
+                    <input type="text" name="institution" value="{{ old('institution') }}" class="form-input" placeholder="Organisation, entreprise, structure externe…">
+                </div>
+            </div>
+        </div>
+        @endif
+        @endif
 
         <div class="pt-2 border-t border-gray-100">
             <button type="submit"
@@ -128,7 +202,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
                 </svg>
-                Vérifier mon identité et continuer
+                Continuer
             </button>
         </div>
     </form>
@@ -138,8 +212,9 @@
 <script>
     function toggleProfile() {
         const type = document.querySelector('input[name="profile_type"]:checked')?.value;
-        document.getElementById('bloc-etudiant').classList.toggle('hidden', type !== 'etudiant');
-        document.getElementById('bloc-personnel').classList.toggle('hidden', type !== 'personnel');
+        document.getElementById('bloc-etudiant')?.classList.toggle('hidden', type !== 'etudiant');
+        document.getElementById('bloc-personnel')?.classList.toggle('hidden', type !== 'personnel');
+        document.getElementById('bloc-autre')?.classList.toggle('hidden', type !== 'autre');
     }
     toggleProfile();
 </script>

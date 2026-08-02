@@ -144,6 +144,32 @@
     </label>
 </div>
 
+{{-- Profils d'identification --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Profils proposés à l'inscription et au dépôt public</p>
+    <p class="text-xs text-gray-400 mb-3">Ne cochez rien pour un formulaire libre (nom/prénom uniquement, sans sélecteur de profil). Cochez un ou plusieurs profils pour proposer un choix à l'identification.</p>
+    @php
+        $selectedProfileTypes = old('enabled_profile_types', $eventConfig->enabled_profile_types ?? []);
+        $profileTypeOptions = [
+            'etudiant'  => ['label' => 'Étudiant', 'help' => 'Vérification via numéro de carte (base StudentCenter)'],
+            'personnel' => ['label' => 'Personnel (PER / PATS)', 'help' => 'Vérification via matricule (base Personnel)'],
+            'autre'     => ['label' => 'Autre', 'help' => 'Aucune vérification — identité saisie librement (visiteur externe, partenaire…)'],
+        ];
+    @endphp
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        @foreach($profileTypeOptions as $value => $opt)
+        <label class="flex items-start gap-2.5 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50">
+            <input type="checkbox" name="enabled_profile_types[]" value="{{ $value }}"
+                   {{ in_array($value, $selectedProfileTypes) ? 'checked' : '' }} class="rounded mt-0.5">
+            <span>
+                <span class="block text-sm font-medium text-gray-800">{{ $opt['label'] }}</span>
+                <span class="block text-xs text-gray-400 mt-0.5">{{ $opt['help'] }}</span>
+            </span>
+        </label>
+        @endforeach
+    </div>
+</div>
+
 {{-- Branding --}}
 <div>
     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Image de marque de l'événement</p>

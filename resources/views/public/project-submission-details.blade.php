@@ -14,8 +14,13 @@
             </svg>
         </div>
         <div>
-            <h2 class="font-bold text-gray-900 text-base leading-tight">Identité vérifiée</h2>
-            <p class="text-xs text-gray-400 mt-0.5">{{ $identity['type'] === 'etudiant' ? 'Étudiant confirmé via StudentCenter' : 'Personnel confirmé via matricule' }}</p>
+            <h2 class="font-bold text-gray-900 text-base leading-tight">Identité confirmée</h2>
+            <p class="text-xs text-gray-400 mt-0.5">
+                @if($identity['type'] === 'etudiant') Étudiant confirmé via StudentCenter
+                @elseif($identity['type'] === 'personnel') Personnel confirmé via matricule
+                @else Identité saisie librement
+                @endif
+            </p>
         </div>
     </div>
 
@@ -31,10 +36,12 @@
                 <p class="font-medium text-gray-800">{{ $identity['structure_label'] }}</p>
             </div>
             @endif
+            @if(!empty($identity['numero_carte']) || !empty($identity['matricule']))
             <div>
                 <p class="text-xs text-gray-400 mb-0.5">{{ $identity['type'] === 'etudiant' ? 'N° carte étudiant' : 'Matricule' }}</p>
                 <p class="font-medium text-gray-800">{{ $identity['numero_carte'] ?? $identity['matricule'] }}</p>
             </div>
+            @endif
         </div>
     </div>
 
