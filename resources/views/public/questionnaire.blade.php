@@ -111,7 +111,7 @@
 
         <button type="submit"
                 class="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-white font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 hover:opacity-95"
-                style="background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);">
+                style="background: linear-gradient(135deg, var(--brand-primary, #1d4ed8) 0%, color-mix(in srgb, var(--brand-primary, #1d4ed8), black 25%) 100%);">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/>
             </svg>

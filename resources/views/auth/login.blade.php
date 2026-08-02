@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion – SRI 2026 | UCAD</title>
+    <title>Connexion – {{ $event?->event_name ?? 'SRI 2026' }}</title>
     <link rel="icon" type="image/png" href="/favicon-ucad.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        :root { --brand-primary: {{ $event?->primaryColor() ?? '#2563eb' }}; }
         /* ---- Diaporama ---- */
         .bg-slide {
             position: absolute;
@@ -37,7 +38,7 @@
             transition: all 0.4s ease;
         }
         .slide-dot.active {
-            background: #2563eb;
+            background: var(--brand-primary);
             width: 22px;
         }
 
@@ -67,8 +68,8 @@
         .glass-input:focus {
             outline: none;
             background: #fff;
-            border-color: rgba(245,158,11,0.8);
-            box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-primary) 20%, transparent);
         }
         .glass-input.error {
             border-color: rgba(239,68,68,0.7);
@@ -84,7 +85,7 @@
 
     {{-- Slide 1 --}}
     <div class="bg-slide active" id="slide-0"
-         style="background-image: url('{{ asset('images/ucad_bg_1.jpg') }}');"></div>
+         style="background-image: url('{{ $event?->hero_image_url ?? asset('images/ucad_bg_1.jpg') }}');"></div>
 
     {{-- Slide 2 --}}
     <div class="bg-slide" id="slide-1"
@@ -108,8 +109,8 @@
 
         {{-- Logo --}}
         <div class="flex items-center gap-4">
-            <img src="{{ asset('images/logo_ucad.png') }}"
-                 alt="Logo UCAD"
+            <img src="{{ $event?->logo_url ?? asset('images/logo_ucad.png') }}"
+                 alt="Logo"
                  class="h-14 w-auto object-contain drop-shadow-lg"
                  onerror="this.style.display='none'">
             <div class="border-l border-white/20 pl-4">
@@ -125,12 +126,14 @@
             {{-- Badge --}}
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2 mb-7">
                 <span class="pulse-dot w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
-                <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">Appel à contribution</span>
+                <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">
+                    {{ \App\Models\ContentBlock::resolve('landing.badge_text', $event)?->content ?? 'Appel à contribution' }}
+                </span>
             </div>
 
             {{-- Titre --}}
             @php
-                $eventName = $event->event_name ?? 'SRI 2026';
+                $eventName = $event?->event_name ?? 'SRI 2026';
                 $parts = preg_split('/(\d+)/', $eventName, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
             @endphp
             <h1 class="text-6xl font-extrabold text-white tracking-tight drop-shadow-2xl leading-none mb-2">
@@ -143,10 +146,10 @@
                 @endforeach
             </h1>
 
-            {{-- Définition SRI mise en avant --}}
+            {{-- Organisateur mis en avant --}}
             <div class="inline-block mb-5 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
                 <p class="text-lg sm:text-xl font-bold text-white tracking-wide">
-                    <span class="text-blue-300">SRI</span> — Semaine de la Recherche et de l'Innovation
+                    {{ $event?->organizer ?? 'Direction de la Recherche et de l\'Innovation – UCAD' }}
                 </p>
             </div>
 
@@ -165,11 +168,18 @@
 
             {{-- Texte institutionnel --}}
             <div class="max-w-md space-y-4">
+                @php $introBlock = \App\Models\ContentBlock::resolve('landing.intro', $event); @endphp
+                @if($event?->event_description)
+                <p class="text-sm text-white/90 leading-relaxed">{{ $event->event_description }}</p>
+                @elseif($introBlock)
+                <p class="text-sm text-white/90 leading-relaxed">{{ $introBlock->content }}</p>
+                @else
                 <p class="text-sm text-white/90 leading-relaxed">
                     Dans le cadre de l'organisation de la <span class="text-white font-medium">{{ $eventName }}</span>,
                     la Direction de la Recherche et de l'Innovation (<span class="text-blue-300 font-semibold">DRI</span>)
                     lance un appel à contribution à l'ensemble des structures académiques, scientifiques et pédagogiques de l'UCAD.
                 </p>
+                @endif
 
                 {{-- Objectifs --}}
                 <div class="space-y-2">
@@ -200,7 +210,7 @@
                 <button class="slide-dot"        onclick="goToSlide(1)"></button>
             </div>
             <p class="text-white/45 text-xs tracking-wide">
-                © {{ date('Y') }} Direction de la Recherche · UCAD · Dakar, Sénégal
+                © {{ date('Y') }} {{ \App\Models\ContentBlock::resolve('landing.footer', $event)?->content ?? 'Direction de la Recherche · UCAD · Dakar, Sénégal' }}
             </p>
         </div>
     </div>
@@ -212,11 +222,11 @@
 
             {{-- Header mobile --}}
             <div class="lg:hidden text-center mb-7">
-                <img src="{{ asset('images/logo_ucad.png') }}"
-                     alt="Logo UCAD"
+                <img src="{{ $event?->logo_url ?? asset('images/logo_ucad.png') }}"
+                     alt="Logo"
                      class="h-14 mx-auto mb-3 object-contain drop-shadow"
                      onerror="this.style.display='none'">
-                <p class="text-slate-900 font-bold text-lg">{{ $eventName }} · UCAD</p>
+                <p class="text-slate-900 font-bold text-lg">{{ $eventName }}</p>
                 <p class="text-slate-500 text-xs mt-0.5">Appel à Communication</p>
             </div>
 
@@ -331,14 +341,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 <p class="text-slate-500 text-xs leading-relaxed">
-                    Accès réservé aux utilisateurs enregistrés. Contactez la
-                    <span class="text-slate-700 font-medium">Direction de la Recherche</span>
+                    Accès réservé aux utilisateurs enregistrés. Contactez
+                    <span class="text-slate-700 font-medium">{{ $event?->organizer ?? 'la Direction de la Recherche' }}</span>
                     pour tout problème de connexion.
                 </p>
             </div>
 
             <p class="text-center text-slate-400 text-xs mt-6">
-                © {{ date('Y') }} SRI · Université Cheikh Anta Diop · Dakar
+                © {{ date('Y') }} {{ \App\Models\ContentBlock::resolve('landing.footer', $event)?->content ?? 'Université Cheikh Anta Diop · Dakar' }}
             </p>
         </div>
     </div>

@@ -15,6 +15,7 @@ class ScoringController extends Controller
     public function index()
     {
         $projects = Project::where('status', 'submitted')
+            ->forEvent(EventConfig::active())
             ->with(['porteur', 'structure', 'assignment'])
             ->latest()
             ->paginate(20);

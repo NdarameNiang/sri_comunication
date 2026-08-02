@@ -19,7 +19,7 @@ class EvaluationService
         $event = $event ?? EventConfig::active();
         $quota = $event?->selection_quota;
 
-        $projects = Project::where('status', 'submitted')->with('scores.details')->get();
+        $projects = Project::where('status', 'submitted')->forEvent($event)->with('scores.details')->get();
 
         foreach ($projects as $project) {
             $submitted = $project->scores->where('status', 'submitted');

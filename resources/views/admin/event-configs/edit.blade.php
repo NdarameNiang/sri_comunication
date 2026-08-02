@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('admin.event-configs.update', $eventConfig) }}" class="space-y-6">
+            <form method="POST" action="{{ route('admin.event-configs.update', $eventConfig) }}" enctype="multipart/form-data" class="space-y-6">
                 @csrf @method('PUT')
                 @include('admin.event-configs._form')
                 <div class="flex items-center justify-end gap-3 pt-2 border-t border-gray-100">

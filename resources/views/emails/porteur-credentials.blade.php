@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vos identifiants – SRI 2026</title>
+    <title>Vos identifiants – {{ $event?->event_name ?? 'SRI 2026' }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, Helvetica, sans-serif; background: #f1f5f9; padding: 32px 16px; color: #334155; }
@@ -50,15 +50,15 @@
     <div class="header">
         <div class="header-logo">Université Cheikh Anta Diop de Dakar</div>
         <h1>Vos identifiants de connexion</h1>
-        <p>Semaine de la Recherche et de l'Innovation 2026</p>
+        <p>{{ $event?->event_name ?? 'SRI 2026' }}</p>
     </div>
 
     <div class="body">
         <p>Bonjour <strong>{{ $porteur->name }}</strong>,</p>
 
         <p>
-            Dans le cadre de l'organisation de la <strong>SRI 2026</strong>, vous avez été enregistré(e)
-            en tant que porteur de projet par la Direction de la Recherche et de l'Innovation.
+            Dans le cadre de l'organisation de la <strong>{{ $event?->event_name ?? 'SRI 2026' }}</strong>, vous avez été enregistré(e)
+            en tant que porteur de projet par {{ $event?->organizer ?? 'la Direction de la Recherche et de l\'Innovation' }}.
             Voici vos identifiants pour accéder à votre espace de dépôt :
         </p>
 
@@ -96,7 +96,7 @@
     </div>
 
     <div class="footer">
-        <p>Direction de la Recherche et de l'Innovation · UCAD Dakar</p>
+        <p>{{ $event?->organizer ?? 'Direction de la Recherche et de l\'Innovation · UCAD Dakar' }}</p>
         <p>Cet email a été envoyé automatiquement — merci de ne pas y répondre directement.</p>
     </div>
 

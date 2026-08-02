@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sélection SRI 2026</title>
+    <title>Sélection – {{ $event?->event_name ?? 'SRI 2026' }}</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
         .container { max-width: 620px; margin: 0 auto; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,.1); }
@@ -23,7 +23,7 @@
 <div class="container">
     <div class="header">
         <h1>🎉 Félicitations !</h1>
-        <p>Semaine de la Recherche et de l'Innovation – UCAD 2026</p>
+        <p>{{ $event?->event_name ?? 'SRI 2026' }} – Université Cheikh Anta Diop</p>
     </div>
 
     <div class="body">
@@ -32,7 +32,7 @@
         <p>
             Nous avons l'honneur de vous informer que votre projet a été <strong>sélectionné</strong>
             par le Comité Scientifique pour être présenté lors de la
-            <strong>Semaine de la Recherche et de l'Innovation (SRI) 2026</strong>
+            <strong>{{ $event?->event_name ?? 'SRI 2026' }}</strong>
             de l'Université Cheikh Anta Diop de Dakar.
         </p>
 
@@ -68,12 +68,12 @@
 
         <p>
             <strong>Le Comité Scientifique</strong><br>
-            <span style="color:#666">SRI 2026 – UCAD</span>
+            <span style="color:#666">{{ $event?->event_name ?? 'SRI 2026' }}</span>
         </p>
     </div>
 
     <div class="footer">
-        <p>Université Cheikh Anta Diop de Dakar · Direction de la Recherche</p>
+        <p>{{ \App\Models\ContentBlock::resolve('landing.footer', $event)?->content ?? 'Université Cheikh Anta Diop de Dakar · Direction de la Recherche' }}</p>
         <p>Cet email a été envoyé automatiquement – Merci de ne pas y répondre directement.</p>
     </div>
 </div>

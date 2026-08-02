@@ -192,7 +192,7 @@
 </div>
 
 <div class="footer">
-    Document généré automatiquement le {{ now()->format('d/m/Y à H:i') }} · {{ config('app.name') }} · Université Cheikh Anta Diop de Dakar
+    Document généré automatiquement le {{ now()->format('d/m/Y à H:i') }} · {{ \App\Models\ContentBlock::resolve('landing.footer', $event ?? null)?->content ?? (config('app.name') . ' · Université Cheikh Anta Diop de Dakar') }}
 </div>
 
 </body>

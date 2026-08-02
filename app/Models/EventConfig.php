@@ -14,6 +14,7 @@ class EventConfig extends Model
         'is_active', 'show_questionnaire', 'max_projects_per_structure',
         'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
         'allow_public_submission',
+        'logo_path', 'logo_white_path', 'hero_image_path', 'primary_color',
     ];
 
     protected function casts(): array
@@ -35,6 +36,32 @@ class EventConfig extends Model
 
     public function registrations() { return $this->hasMany(Registration::class); }
     public function questionnaires() { return $this->hasMany(Questionnaire::class); }
+    public function projectAssignments() { return $this->hasMany(ProjectAssignment::class); }
+
+    /**
+     * Branding par événement : chaque champ est nullable avec un repli sur l'apparence UCAD
+     * actuelle, pour qu'un événement sans branding renseigné garde exactement le rendu
+     * d'aujourd'hui. Même principe que ContentBlock::getImageUrlAttribute().
+     */
+    public function getLogoUrlAttribute(): string
+    {
+        return $this->logo_path ? \Illuminate\Support\Facades\Storage::url($this->logo_path) : asset('images/logo_ucad.png');
+    }
+
+    public function getLogoWhiteUrlAttribute(): string
+    {
+        return $this->logo_white_path ? \Illuminate\Support\Facades\Storage::url($this->logo_white_path) : asset('images/logo_ucad_white.png');
+    }
+
+    public function getHeroImageUrlAttribute(): string
+    {
+        return $this->hero_image_path ? \Illuminate\Support\Facades\Storage::url($this->hero_image_path) : asset('images/ucad_bg_1.jpg');
+    }
+
+    public function primaryColor(): string
+    {
+        return $this->primary_color ?: '#2563eb';
+    }
 
     public function evaluationRubrics()
     {

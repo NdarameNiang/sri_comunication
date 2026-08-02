@@ -94,6 +94,20 @@ class Project extends Model
     public function isSelected(): bool  { return (bool) $this->selected; }
 
     /**
+     * Un projet n'a pas de event_config_id direct (il hérite de son affectation) — ce scope
+     * évite de répéter la jointure whereHas('assignment', ...) dans chaque contrôleur qui
+     * liste des projets soumis (classement, évaluation, listes admin). Sans événement fourni,
+     * ne filtre pas (comportement historique, plutôt qu'un filtre qui ne matcherait jamais rien).
+     */
+    public function scopeForEvent($query, ?EventConfig $event)
+    {
+        if (!$event) {
+            return $query;
+        }
+        return $query->whereHas('assignment', fn ($q) => $q->where('event_config_id', $event->id));
+    }
+
+    /**
      * These delegate to FormOption::labelsForGroup() so every read view (show pages, PDF
      * recap, selection emails) sources labels from the same place as the submission form,
      * instead of a separate hardcoded copy that can drift from the live FormOption data.

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\DirectionRecherche;
 
 use App\Http\Controllers\Controller;
+use App\Models\EventConfig;
 use App\Models\Project;
 use App\Models\ProjectAssignment;
 use App\Models\Structure;
@@ -14,22 +15,25 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        $event = EventConfig::active();
+
         $stats = [
             'porteurs'     => User::where('role', 'porteur_projet')->count(),
             'point_focaux' => User::where('role', 'point_focal')->count(),
             'comite'       => User::where('role', 'comite_scientifique')->count(),
             'secretaires'  => User::where('role', 'secretaire')->count(),
-            'assignments'  => ProjectAssignment::count(),
-            'submitted'    => Project::where('status', 'submitted')->count(),
+            'assignments'  => ProjectAssignment::when($event, fn($q) => $q->where('event_config_id', $event->id))->count(),
+            'submitted'    => Project::where('status', 'submitted')->forEvent($event)->count(),
         ];
 
         $tab    = $request->input('tab', 'tous');
         $search = trim($request->input('search', ''));
 
-        // Toutes les structures avec compteurs
+        // Toutes les structures avec compteurs, limités à l'événement actif
         $all = Structure::withCount([
-            'projectAssignments',
-            'projectAssignments as submitted_count' => fn($q) => $q->where('status', 'submitted'),
+            'projectAssignments' => fn($q) => $q->when($event, fn($qq) => $qq->where('event_config_id', $event->id)),
+            'projectAssignments as submitted_count' => fn($q) => $q->where('status', 'submitted')
+                ->when($event, fn($qq) => $qq->where('event_config_id', $event->id)),
         ])->orderBy('name')->get();
 
         // Filtre recherche

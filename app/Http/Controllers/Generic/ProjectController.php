@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Generic;
 
 use App\Http\Controllers\Controller;
+use App\Models\EventConfig;
 use App\Models\Project;
 
 class ProjectController extends Controller
@@ -15,6 +16,7 @@ class ProjectController extends Controller
     public function index()
     {
         $query = Project::where('status', 'submitted')
+            ->forEvent(EventConfig::active())
             ->with(['porteur', 'structure', 'assignment'])
             ->latest();
 

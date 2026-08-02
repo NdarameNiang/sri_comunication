@@ -245,11 +245,12 @@ class ProjectSubmissionController extends Controller
         }
 
         $assignment = ProjectAssignment::create([
-            'porteur_id'   => $user->id,
-            'structure_id' => $structure->id,
-            'title'        => trim($data['title']),
-            'status'       => 'pending',
-            'public_token' => (string) Str::uuid(),
+            'porteur_id'      => $user->id,
+            'structure_id'    => $structure->id,
+            'event_config_id' => $event->id,
+            'title'           => trim($data['title']),
+            'status'          => 'pending',
+            'public_token'    => (string) Str::uuid(),
         ]);
 
         session()->forget(self::SESSION_IDENTITY_KEY);

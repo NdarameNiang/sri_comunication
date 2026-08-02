@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\EventConfig;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -13,15 +14,21 @@ class PorteurCredentialsMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public ?EventConfig $event;
+
     public function __construct(
         public User   $porteur,
         public string $plainPassword,
-    ) {}
+    ) {
+        $this->event = EventConfig::active();
+    }
 
     public function envelope(): Envelope
     {
+        $eventName = $this->event?->event_name ?? 'SRI 2026';
+
         return new Envelope(
-            subject: 'SRI 2026 – Vos identifiants de connexion',
+            subject: "{$eventName} – Vos identifiants de connexion",
         );
     }
 
@@ -29,6 +36,7 @@ class PorteurCredentialsMail extends Mailable
     {
         return new Content(
             view: 'emails.porteur-credentials',
+            with: ['event' => $this->event],
         );
     }
 

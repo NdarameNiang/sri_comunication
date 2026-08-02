@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $event->event_name }} – UCAD</title>
+    <title>{{ $event->event_name }}</title>
     <link rel="icon" type="image/png" href="/favicon-ucad.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        :root { --brand-primary: {{ $event->primaryColor() }}; }
         /* ---- Diaporama ---- */
         .bg-slide {
             position: absolute; inset: 0;
@@ -35,7 +36,7 @@
             cursor: pointer;
             transition: all 0.4s ease;
         }
-        .slide-dot.active { background: #2563eb; width: 22px; }
+        .slide-dot.active { background: var(--brand-primary); width: 22px; }
 
         /* ---- Pulse ---- */
         @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:.3} }
@@ -65,7 +66,7 @@
         /* ---- Onglets ---- */
         .tab-btn { color: #64748b; }
         .tab-btn.active {
-            background: #2563eb;
+            background: var(--brand-primary);
             color: #fff;
             box-shadow: 0 1px 4px rgba(0,0,0,0.15);
         }
@@ -98,7 +99,7 @@
 {{-- ===== FOND DIAPORAMA ===== --}}
 <div class="fixed inset-0 z-0">
     <div class="bg-slide active" id="slide-0"
-         style="background-image: url('{{ asset('images/ucad_bg_1.jpg') }}');"></div>
+         style="background-image: url('{{ $event->hero_image_url }}');"></div>
     <div class="bg-slide" id="slide-1"
          style="background-image: url('{{ asset('images/ucad_bg.2.jpg') }}');"></div>
     <div class="absolute inset-0"
@@ -115,7 +116,7 @@
 
         {{-- Logo --}}
         <div class="flex items-center gap-4">
-            <img src="{{ asset('images/logo_ucad.png') }}" alt="Logo UCAD"
+            <img src="{{ $event->logo_url }}" alt="Logo"
                  class="h-14 w-auto object-contain drop-shadow-lg"
                  onerror="this.style.display='none'">
             <div class="border-l border-white/20 pl-4">
@@ -149,7 +150,7 @@
             </h1>
             <div class="inline-block mb-5 px-5 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-lg">
                 <p class="text-lg sm:text-xl font-bold text-white tracking-wide">
-                    <span class="text-blue-300">SRI</span> — Semaine de la Recherche et de l'Innovation
+                    {{ $event->organizer ?? 'Direction de la Recherche et de l\'Innovation – UCAD' }}
                 </p>
             </div>
 
@@ -209,10 +210,10 @@
 
             {{-- Header mobile --}}
             <div class="lg:hidden text-center mb-7">
-                <img src="{{ asset('images/logo_ucad.png') }}" alt="Logo UCAD"
+                <img src="{{ $event->logo_url }}" alt="Logo"
                      class="h-14 mx-auto mb-3 object-contain drop-shadow"
                      onerror="this.style.display='none'">
-                <p class="text-slate-900 font-bold text-lg">{{ $event->event_name }} · UCAD</p>
+                <p class="text-slate-900 font-bold text-lg">{{ $event->event_name }}</p>
                 <p class="text-slate-500 text-xs mt-0.5">Appel à Communication</p>
             </div>
 
@@ -220,7 +221,7 @@
             <div class="mb-5">
                 <p class="text-slate-900 font-bold text-lg leading-tight">{{ $event->event_name }}</p>
                 <p class="text-slate-500 text-xs mt-0.5 mb-1.5">
-                    <span class="text-blue-600 font-semibold">SRI</span> — Semaine de la Recherche et de l'Innovation
+                    {{ $event->organizer ?? 'Direction de la Recherche et de l\'Innovation – UCAD' }}
                 </p>
                 @if($event->event_start_date)
                 <p class="text-blue-600 text-sm font-semibold tracking-wide">
@@ -267,7 +268,7 @@
                 </p>
                 <a href="{{ route('public.registration.show', $event->event_slug) }}"
                    class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4
-                          bg-blue-600 hover:bg-blue-500 active:bg-blue-800
+                          bg-[var(--brand-primary)] hover:opacity-90 active:opacity-80
                           text-white font-bold text-sm tracking-wide
                           transition-all duration-200 shadow-lg hover:shadow-blue-600/30 active:scale-[.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -301,7 +302,7 @@
                 </p>
                 <a href="{{ route('public.project-submission.identify', $event->event_slug) }}"
                    class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4
-                          bg-blue-600 hover:bg-blue-500 active:bg-blue-800
+                          bg-[var(--brand-primary)] hover:opacity-90 active:opacity-80
                           text-white font-bold text-sm tracking-wide
                           transition-all duration-200 shadow-lg hover:shadow-blue-600/30 active:scale-[.98]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -333,7 +334,7 @@
             </div>
 
             <p class="text-center text-slate-400 text-xs mt-6">
-                © {{ date('Y') }} SRI · Université Cheikh Anta Diop · Dakar
+                © {{ date('Y') }} {{ \App\Models\ContentBlock::resolve('landing.footer', $event)?->content ?? 'Université Cheikh Anta Diop · Dakar' }}
             </p>
         </div>
     </div>
@@ -392,7 +393,7 @@
 
         <div class="reveal text-center mt-14">
             <a href="{{ route('public.registration.show', $event->event_slug) }}"
-               class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm tracking-wide shadow-lg hover:shadow-blue-600/30 transition-all active:scale-[.98]">
+               class="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[var(--brand-primary)] hover:opacity-90 text-white font-bold text-sm tracking-wide shadow-lg transition-all active:scale-[.98]">
                 Je participe à l'appel
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5-5m5 5H6"/></svg>
             </a>

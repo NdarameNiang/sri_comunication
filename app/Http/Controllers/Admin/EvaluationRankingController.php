@@ -16,6 +16,7 @@ class EvaluationRankingController extends Controller
         $event = EventConfig::active();
 
         $projects = Project::where('status', 'submitted')
+            ->forEvent($event)
             ->with(['porteur', 'structure', 'assignment'])
             ->orderByRaw('rank_position IS NULL, rank_position ASC')
             ->get();
@@ -86,6 +87,7 @@ class EvaluationRankingController extends Controller
     public function applyToSelection()
     {
         $projects = Project::where('status', 'submitted')
+            ->forEvent(EventConfig::active())
             ->whereIn('evaluation_status', ['included', 'excluded'])
             ->whereNull('email_sent_at')
             ->get();

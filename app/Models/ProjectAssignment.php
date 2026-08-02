@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectAssignment extends Model
 {
-    protected $fillable = ['porteur_id', 'structure_id', 'title', 'status', 'public_token'];
+    protected $fillable = ['porteur_id', 'structure_id', 'event_config_id', 'title', 'status', 'public_token'];
 
     public function porteur()
     {
@@ -16,6 +16,11 @@ class ProjectAssignment extends Model
     public function structure()
     {
         return $this->belongsTo(Structure::class);
+    }
+
+    public function eventConfig()
+    {
+        return $this->belongsTo(EventConfig::class);
     }
 
     public function project()

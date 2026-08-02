@@ -116,7 +116,7 @@
   {{-- Footer --}}
   <tr>
     <td style="background:#f8fafc;padding:20px 36px;border-top:1px solid #e2e8f0;text-align:center;">
-      <p style="color:#94a3b8;font-size:12px;margin:0;">{{ config('app.name') }} · Université Cheikh Anta Diop de Dakar</p>
+      <p style="color:#94a3b8;font-size:12px;margin:0;">{{ \App\Models\ContentBlock::resolve('landing.footer', $event ?? null)?->content ?? (config('app.name') . ' · Université Cheikh Anta Diop de Dakar') }}</p>
     </td>
   </tr>
 

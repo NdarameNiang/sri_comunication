@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\ComiteScientifique;
 
 use App\Http\Controllers\Controller;
+use App\Models\EventConfig;
 use App\Models\Project;
 use App\Models\Structure;
 
@@ -10,7 +11,10 @@ class DashboardController extends Controller
 {
     public function index()
     {
+        $event = EventConfig::active();
+
         $query = Project::where('status', 'submitted')
+            ->forEvent($event)
             ->with(['porteur', 'structure', 'assignment'])
             ->latest();
 
@@ -33,14 +37,14 @@ class DashboardController extends Controller
         $projects = $query->paginate(20)->withQueryString();
 
         $stats = [
-            'total'    => Project::where('status', 'submitted')->count(),
-            'selected' => Project::where('selected', true)->count(),
-            'sent'     => Project::whereNotNull('email_sent_at')->count(),
+            'total'    => Project::where('status', 'submitted')->forEvent($event)->count(),
+            'selected' => Project::where('selected', true)->forEvent($event)->count(),
+            'sent'     => Project::whereNotNull('email_sent_at')->forEvent($event)->count(),
         ];
 
         $structures = Structure::withCount([
-            'projects as submitted_count' => fn($q) => $q->where('status', 'submitted'),
-            'projects as selected_count'  => fn($q) => $q->where('selected', true),
+            'projects as submitted_count' => fn($q) => $q->where('status', 'submitted')->forEvent($event),
+            'projects as selected_count'  => fn($q) => $q->where('selected', true)->forEvent($event),
         ])->having('submitted_count', '>', 0)->get();
 
         return view('comite.dashboard', compact('projects', 'stats', 'structures'));

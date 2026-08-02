@@ -1,14 +1,16 @@
+@php $event = $event ?? \App\Models\EventConfig::active(); @endphp
 <!DOCTYPE html>
 <html lang="fr" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'SRI 2026') – Appel à Communication · UCAD</title>
+    <title>@yield('title', $event?->event_name ?? 'SRI 2026') – Appel à Communication</title>
     <link rel="icon" type="image/png" href="/favicon-ucad.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;1,14..32,400&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        :root { --brand-primary: {{ $event?->primaryColor() ?? '#2563eb' }}; }
         @keyframes kenburns-pub {
             from { transform: scale(1); }
             to   { transform: scale(1.06); }
@@ -30,9 +32,9 @@
 {{-- ═══ HERO PHOTO ════════════════════════════════════════════════════════════ --}}
 <div class="relative overflow-hidden" style="min-height: 320px; max-height: 380px;">
 
-    {{-- Photo UCAD en fond avec effet Ken Burns --}}
-    <img src="{{ asset('images/ucad_bg_1.jpg') }}"
-         alt="Campus UCAD"
+    {{-- Photo de fond avec effet Ken Burns --}}
+    <img src="{{ $event?->hero_image_url ?? asset('images/ucad_bg_1.jpg') }}"
+         alt="Photo de couverture"
          class="hero-photo absolute inset-0 w-full h-full object-cover"
          onerror="this.style.background='linear-gradient(135deg,#1e3a8a,#312e81)'; this.style.display='block';">
 
@@ -68,11 +70,11 @@
     {{-- Contenu hero --}}
     <div class="relative z-10 flex flex-col items-center justify-center text-center px-4 py-14 h-full" style="min-height: 320px;">
 
-        {{-- Logo UCAD --}}
+        {{-- Logo --}}
         <div class="fadein-up mb-5">
             <div class="w-16 h-16 rounded-full bg-white mx-auto flex items-center justify-center shadow-lg p-1">
-                <img src="{{ asset('images/logo_ucad_white.png') }}"
-                     alt="Logo UCAD"
+                <img src="{{ $event?->logo_white_url ?? asset('images/logo_ucad_white.png') }}"
+                     alt="Logo"
                      class="w-full h-full object-contain"
                      onerror="this.parentElement.style.display='none'">
             </div>
@@ -128,11 +130,11 @@
 
     {{-- Footer --}}
     <div class="mt-10 pb-6 text-center space-y-1">
-        <img src="{{ asset('images/logo_ucad.png') }}"
-             alt="UCAD"
+        <img src="{{ $event?->logo_url ?? asset('images/logo_ucad.png') }}"
+             alt="Logo"
              class="h-8 w-auto object-contain mx-auto opacity-25 grayscale"
              onerror="this.style.display='none'">
-        <p class="text-xs text-gray-400 mt-2">© {{ date('Y') }} Université Cheikh Anta Diop de Dakar · Tous droits réservés</p>
+        <p class="text-xs text-gray-400 mt-2">© {{ date('Y') }} {{ \App\Models\ContentBlock::resolve('landing.footer', $event)?->content ?? 'Université Cheikh Anta Diop de Dakar · Tous droits réservés' }}</p>
     </div>
 </div>
 

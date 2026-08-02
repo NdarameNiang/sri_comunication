@@ -11,8 +11,11 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
+        $event = EventConfig::active();
+
         $query = Project::with(['porteur', 'structure', 'assignment', 'collaborators'])
-            ->where('status', 'submitted');
+            ->where('status', 'submitted')
+            ->forEvent($event);
 
         if ($search = $request->get('search')) {
             $query->where(function ($q) use ($search) {
@@ -37,6 +40,7 @@ class ProjectController extends Controller
         $projects = $query->latest()->paginate(20)->withQueryString();
 
         $domains = Project::where('status', 'submitted')
+            ->forEvent($event)
             ->whereNotNull('scientific_domain')
             ->distinct()->pluck('scientific_domain')->sort()->values();
 
@@ -53,6 +57,7 @@ class ProjectController extends Controller
     {
         $projects = Project::with(['porteur', 'structure', 'collaborators'])
             ->where('status', 'submitted')
+            ->forEvent(EventConfig::active())
             ->latest()->get();
 
         $filename = 'projets-soumis-' . now()->format('Y-m-d') . '.csv';

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Mail\SubmissionConfirmationMail;
+use App\Models\EventConfig;
 use App\Models\FormOption;
 use App\Models\Project;
 use App\Models\ProjectApprofondiDetail;
@@ -17,7 +18,11 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $query = ProjectAssignment::with('porteur', 'structure', 'project')->latest();
+        $event = EventConfig::active();
+
+        $query = ProjectAssignment::with('porteur', 'structure', 'project')
+            ->when($event, fn ($q) => $q->where('event_config_id', $event->id))
+            ->latest();
 
         if ($search = request('search')) {
             $query->where(function ($q) use ($search) {
@@ -60,6 +65,11 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+        $event = EventConfig::active();
+        if (!$event) {
+            return back()->withErrors(['title' => 'Aucun événement actif — impossible de créer une affectation de projet.'])->withInput();
+        }
+
         $data = $request->validate([
             'porteur_id'   => 'required|exists:users,id',
             'structure_id' => 'required|exists:structures,id',
@@ -67,10 +77,11 @@ class ProjectController extends Controller
         ]);
 
         ProjectAssignment::create([
-            'porteur_id'   => $data['porteur_id'],
-            'structure_id' => $data['structure_id'],
-            'title'        => $data['title'],
-            'status'       => 'pending',
+            'porteur_id'      => $data['porteur_id'],
+            'structure_id'    => $data['structure_id'],
+            'event_config_id' => $event->id,
+            'title'           => $data['title'],
+            'status'          => 'pending',
         ]);
 
         return redirect()->route('superadmin.projects.index')

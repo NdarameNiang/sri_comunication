@@ -124,6 +124,52 @@
     </label>
 </div>
 
+{{-- Branding --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Image de marque de l'événement</p>
+    <p class="text-xs text-gray-400 mb-3">Facultatif — sans rien renseigner, l'événement garde l'apparence UCAD par défaut (logo, photo, couleur bleue).</p>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+        @foreach([
+            ['field' => 'logo', 'label' => 'Logo (couleur)', 'current' => $eventConfig->logo_path ?? null, 'url' => $eventConfig->logo_url ?? null],
+            ['field' => 'logo_white', 'label' => 'Logo (blanc, fonds sombres)', 'current' => $eventConfig->logo_white_path ?? null, 'url' => $eventConfig->logo_white_url ?? null],
+            ['field' => 'hero_image', 'label' => 'Photo de fond (pages publiques)', 'current' => $eventConfig->hero_image_path ?? null, 'url' => $eventConfig->hero_image_url ?? null],
+        ] as $img)
+        <div>
+            <label class="form-label">{{ $img['label'] }}</label>
+            @if($img['current'])
+            <div class="mb-2 rounded-lg overflow-hidden border border-gray-200 {{ $img['field'] === 'logo_white' ? 'bg-slate-800' : '' }}">
+                <img src="{{ $img['url'] }}" alt="{{ $img['label'] }}" class="w-full h-20 object-contain">
+            </div>
+            <label class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                <input type="checkbox" name="remove_{{ $img['field'] }}" value="1" class="rounded">
+                Supprimer l'image actuelle
+            </label>
+            @endif
+            <input type="file" name="{{ $img['field'] }}" accept="image/*" class="form-input text-xs">
+            @error($img['field']) <p class="form-error">{{ $message }}</p> @enderror
+        </div>
+        @endforeach
+    </div>
+
+    <div class="sm:w-1/3">
+        <label class="form-label">Couleur principale</label>
+        <div class="flex items-center gap-2">
+            <input type="color" name="primary_color_picker"
+                   value="{{ old('primary_color', $eventConfig->primary_color ?? '#2563eb') }}"
+                   class="h-10 w-14 rounded border border-gray-200 cursor-pointer"
+                   onchange="document.getElementById('primary_color_hex').value = this.value">
+            <input type="text" id="primary_color_hex" name="primary_color"
+                   value="{{ old('primary_color', $eventConfig->primary_color ?? '#2563eb') }}"
+                   class="form-input font-mono text-sm @error('primary_color') border-red-400 @enderror"
+                   pattern="^#[0-9a-fA-F]{6}$" placeholder="#2563eb"
+                   oninput="this.previousElementSibling.value = /^#[0-9a-fA-F]{6}$/.test(this.value) ? this.value : this.previousElementSibling.value">
+        </div>
+        <p class="text-xs text-gray-400 mt-1">Utilisée sur les pages publiques (boutons, onglets actifs) — pas dans les tableaux de bord internes.</p>
+        @error('primary_color') <p class="form-error">{{ $message }}</p> @enderror
+    </div>
+</div>
+
 {{-- Période d'inscription --}}
 <div>
     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Période d'inscription des participants</p>

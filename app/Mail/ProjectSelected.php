@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\EventConfig;
 use App\Models\Project;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -13,12 +14,21 @@ class ProjectSelected extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Project $project) {}
+    public Project $project;
+    public ?EventConfig $event;
+
+    public function __construct(Project $project)
+    {
+        $this->project = $project;
+        $this->event = EventConfig::active();
+    }
 
     public function envelope(): Envelope
     {
+        $eventName = $this->event?->event_name ?? 'SRI 2026';
+
         return new Envelope(
-            subject: 'Félicitations – Votre projet a été sélectionné pour la SRI 2026',
+            subject: "Félicitations – Votre projet a été sélectionné pour la {$eventName}",
         );
     }
 
@@ -26,6 +36,7 @@ class ProjectSelected extends Mailable
     {
         return new Content(
             view: 'emails.project-selected',
+            with: ['event' => $this->event],
         );
     }
 }

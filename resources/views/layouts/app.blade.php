@@ -58,8 +58,8 @@
         {{-- Logo --}}
         @php $activeEvent = \App\Models\EventConfig::active(); @endphp
         <div class="flex items-center gap-3 px-4 py-4 border-b border-white/10">
-            <img src="{{ asset('images/logo_ucad.png') }}"
-                 alt="Logo UCAD"
+            <img src="{{ $activeEvent?->logo_url ?? asset('images/logo_ucad.png') }}"
+                 alt="Logo"
                  class="h-10 w-auto object-contain shrink-0 drop-shadow"
                  onerror="this.style.display='none'">
             <div class="flex-1 min-w-0 border-l border-white/15 pl-3">
@@ -324,7 +324,7 @@
 
             {{-- Bandeau photo UCAD --}}
             <div class="relative overflow-hidden" style="height: 52px;">
-                <img src="{{ asset('images/ucad_bg.2.jpg') }}"
+                <img src="{{ $activeEvent?->hero_image_url ?? asset('images/ucad_bg.2.jpg') }}"
                      alt=""
                      class="absolute inset-0 w-full h-full object-cover object-center scale-105"
                      onerror="this.style.display='none'">
@@ -341,9 +341,9 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
                         </button>
 
-                        {{-- Logo UCAD --}}
-                        <img src="{{ asset('images/logo_ucad.png') }}"
-                             alt="UCAD"
+                        {{-- Logo --}}
+                        <img src="{{ $activeEvent?->logo_url ?? asset('images/logo_ucad.png') }}"
+                             alt="Logo"
                              class="h-8 w-auto object-contain drop-shadow brightness-0 invert opacity-90"
                              onerror="this.style.display='none'">
 

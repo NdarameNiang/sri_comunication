@@ -4,6 +4,7 @@ namespace App\Http\Controllers\ComiteScientifique;
 
 use App\Http\Controllers\Controller;
 use App\Mail\PorteurCredentialsMail;
+use App\Models\EventConfig;
 use App\Models\ProjectAssignment;
 use App\Models\Structure;
 use App\Models\User;
@@ -46,6 +47,11 @@ class PorteurController extends Controller
 
     public function store(Request $request)
     {
+        $event = EventConfig::active();
+        if (!$event) {
+            return back()->withErrors(['titles' => 'Aucun événement actif — impossible de créer une affectation de projet.'])->withInput();
+        }
+
         $maxProjects = Structure::maxProjectsPerStructure();
 
         $data = $request->validate([
@@ -81,10 +87,11 @@ class PorteurController extends Controller
 
         foreach ($titles as $title) {
             ProjectAssignment::create([
-                'porteur_id'   => $user->id,
-                'structure_id' => $data['structure_id'],
-                'title'        => $title,
-                'status'       => 'pending',
+                'porteur_id'      => $user->id,
+                'structure_id'    => $data['structure_id'],
+                'event_config_id' => $event->id,
+                'title'           => $title,
+                'status'          => 'pending',
             ]);
         }
 

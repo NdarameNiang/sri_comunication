@@ -153,7 +153,7 @@
         <div class="pt-2 border-t border-gray-100">
             <button type="submit"
                     class="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-white font-bold text-base shadow-md hover:shadow-lg transition-all duration-200 hover:opacity-95 active:scale-[.99]"
-                    style="background: linear-gradient(135deg, #1d4ed8 0%, #4338ca 100%);">
+                    style="background: linear-gradient(135deg, var(--brand-primary, #1d4ed8) 0%, color-mix(in srgb, var(--brand-primary, #1d4ed8), black 25%) 100%);">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>

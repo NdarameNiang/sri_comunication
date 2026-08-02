@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\EventConfig;
 use App\Models\Project;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -16,10 +17,14 @@ class SubmissionConfirmationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public ?EventConfig $event;
+
     public function __construct(
         public User    $porteur,
         public Project $project,
-    ) {}
+    ) {
+        $this->event = EventConfig::active();
+    }
 
     public function envelope(): Envelope
     {
@@ -32,6 +37,7 @@ class SubmissionConfirmationMail extends Mailable
     {
         return new Content(
             view: 'emails.submission-confirmation',
+            with: ['event' => $this->event],
         );
     }
 
@@ -40,6 +46,7 @@ class SubmissionConfirmationMail extends Mailable
         $pdf = Pdf::loadView('pdf.submission-recap', [
             'project' => $this->project,
             'porteur' => $this->porteur,
+            'event'   => $this->event,
         ])
         ->setPaper('a4', 'portrait')
         ->setOptions(['defaultFont' => 'DejaVu Sans', 'isRemoteEnabled' => false]);
