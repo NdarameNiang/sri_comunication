@@ -31,6 +31,29 @@
     <form method="POST" action="{{ route('public.project-submission.verify', $event->event_slug) }}" class="p-6 space-y-6">
         @csrf
 
+        @unless($requireVerification)
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Identité</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="form-label">Prénom <span class="text-red-500">*</span></label>
+                    <input type="text" name="prenom" value="{{ old('prenom') }}" required
+                           class="form-input @error('prenom') border-red-400 bg-red-50 @enderror"
+                           placeholder="Votre prénom">
+                    @error('prenom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+                <div>
+                    <label class="form-label">Nom <span class="text-red-500">*</span></label>
+                    <input type="text" name="nom" value="{{ old('nom') }}" required
+                           class="form-input @error('nom') border-red-400 bg-red-50 @enderror"
+                           placeholder="Votre nom de famille">
+                    @error('nom') <p class="form-error">{{ $message }}</p> @enderror
+                </div>
+            </div>
+            <p class="text-xs text-gray-400 mt-2">Le numéro de carte / matricule ci-dessous reste optionnel.</p>
+        </div>
+        @endunless
+
         <div>
             <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Vous êtes</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -64,7 +87,10 @@
                 <input type="text" name="cin" value="{{ old('cin') }}" class="form-input" placeholder="Numéro de la carte d'identité nationale">
             </div>
             <div>
-                <label class="form-label">Numéro de carte étudiant <span class="text-red-500">*</span></label>
+                <label class="form-label">
+                    Numéro de carte étudiant
+                    @if($requireVerification)<span class="text-red-500">*</span>@else <span class="text-gray-400 font-normal">(optionnel)</span>@endif
+                </label>
                 <input type="text" name="numero_carte" value="{{ old('numero_carte') }}"
                        class="form-input @error('numero_carte') border-red-400 bg-red-50 @enderror"
                        placeholder="Ex : 1995000VG">
@@ -75,7 +101,7 @@
         {{-- Bloc personnel --}}
         <div id="bloc-personnel" class="space-y-4 hidden">
             <div>
-                <label class="form-label">Catégorie <span class="text-red-500">*</span></label>
+                <label class="form-label">Catégorie @if($requireVerification)<span class="text-red-500">*</span>@endif</label>
                 <select name="categorie" class="form-select @error('categorie') border-red-400 bg-red-50 @enderror">
                     <option value="">— Sélectionner —</option>
                     <option value="per" {{ old('categorie') === 'per' ? 'selected' : '' }}>PER (Personnel Enseignant et de Recherche)</option>
@@ -84,7 +110,10 @@
                 @error('categorie') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">Matricule <span class="text-red-500">*</span></label>
+                <label class="form-label">
+                    Matricule
+                    @if($requireVerification)<span class="text-red-500">*</span>@else <span class="text-gray-400 font-normal">(optionnel)</span>@endif
+                </label>
                 <input type="text" name="matricule" value="{{ old('matricule') }}"
                        class="form-input @error('matricule') border-red-400 bg-red-50 @enderror"
                        placeholder="Ex : PER-0001">

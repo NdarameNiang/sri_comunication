@@ -70,7 +70,9 @@ class ProjectSubmissionController extends Controller
         $cycleOptions = FormOption::forGroup('population_category')
             ->filter(fn ($o) => str_starts_with($o->value, 'etudiant_'));
 
-        return view('public.project-submission-identify', compact('event', 'cycleOptions'));
+        $requireVerification = $event->requiresIdentityVerification();
+
+        return view('public.project-submission-identify', compact('event', 'cycleOptions', 'requireVerification'));
     }
 
     public function verify(Request $request, string $eventSlug)
@@ -81,13 +83,17 @@ class ProjectSubmissionController extends Controller
                 ->with('error', $this->submissionBlockMessage($event));
         }
 
+        $requireVerification = $event->requiresIdentityVerification();
+
         $data = $request->validate([
             'profile_type'   => 'required|in:etudiant,personnel',
             'cycle'          => 'required_if:profile_type,etudiant|nullable|in:etudiant_licence,etudiant_master,etudiant_doctorat',
             'cin'            => 'nullable|string|max:50',
-            'numero_carte'   => 'required_if:profile_type,etudiant|nullable|string|max:50',
+            'numero_carte'   => $requireVerification ? 'required_if:profile_type,etudiant|nullable|string|max:50' : 'nullable|string|max:50',
             'categorie'      => 'required_if:profile_type,personnel|nullable|in:per,pats',
-            'matricule'      => 'required_if:profile_type,personnel|nullable|string|max:50',
+            'matricule'      => $requireVerification ? 'required_if:profile_type,personnel|nullable|string|max:50' : 'nullable|string|max:50',
+            'nom'            => $requireVerification ? 'nullable|string|max:255' : 'required|string|max:255',
+            'prenom'         => $requireVerification ? 'nullable|string|max:255' : 'required|string|max:255',
         ], [
             'cycle.required_if'        => 'Veuillez indiquer votre cycle.',
             'numero_carte.required_if' => 'Le numéro de carte étudiant est requis.',
@@ -96,8 +102,11 @@ class ProjectSubmissionController extends Controller
         ]);
 
         if ($data['profile_type'] === 'etudiant') {
-            $student = Student::where('numero_carte', $data['numero_carte'])->first();
-            if (!$student) {
+            $student = !empty($data['numero_carte'])
+                ? Student::where('numero_carte', $data['numero_carte'])->first()
+                : null;
+
+            if (!$student && $requireVerification) {
                 return back()->withInput()->withErrors([
                     'numero_carte' => "Ce numéro de carte n'a pas été trouvé dans la base StudentCenter. Vérifiez votre saisie ou contactez l'organisation.",
                 ]);
@@ -105,16 +114,19 @@ class ProjectSubmissionController extends Controller
 
             session([self::SESSION_IDENTITY_KEY => [
                 'type'                 => 'etudiant',
-                'nom'                  => $student->nom,
-                'prenom'               => $student->prenom,
-                'structure_label'      => $student->structure,
-                'population_category'  => $student->populationCategoryValue() ?? $data['cycle'],
-                'numero_carte'         => $data['numero_carte'],
+                'nom'                  => $student->nom ?? $data['nom'],
+                'prenom'               => $student->prenom ?? $data['prenom'],
+                'structure_label'      => $student->structure ?? null,
+                'population_category'  => $student?->populationCategoryValue() ?? $data['cycle'],
+                'numero_carte'         => $data['numero_carte'] ?? null,
                 'cin'                  => $data['cin'] ?? null,
             ]]);
         } else {
-            $personnel = Personnel::where('matricule', $data['matricule'])->first();
-            if (!$personnel) {
+            $personnel = !empty($data['matricule'])
+                ? Personnel::where('matricule', $data['matricule'])->first()
+                : null;
+
+            if (!$personnel && $requireVerification) {
                 return back()->withInput()->withErrors([
                     'matricule' => "Ce matricule n'a pas été trouvé. Vérifiez votre saisie ou contactez l'organisation.",
                 ]);
@@ -122,11 +134,11 @@ class ProjectSubmissionController extends Controller
 
             session([self::SESSION_IDENTITY_KEY => [
                 'type'                 => 'personnel',
-                'nom'                  => $personnel->nom,
-                'prenom'               => $personnel->prenom,
-                'structure_label'      => $personnel->structure,
-                'population_category'  => $personnel->categorie,
-                'matricule'            => $data['matricule'],
+                'nom'                  => $personnel->nom ?? $data['nom'],
+                'prenom'               => $personnel->prenom ?? $data['prenom'],
+                'structure_label'      => $personnel->structure ?? null,
+                'population_category'  => $personnel->categorie ?? $data['categorie'],
+                'matricule'            => $data['matricule'] ?? null,
             ]]);
         }
 

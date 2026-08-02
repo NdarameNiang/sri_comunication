@@ -52,6 +52,7 @@ Route::prefix('event/{eventSlug}')->group(function () {
     Route::get('/',                [PublicLandingController::class, 'show'])->name('public.landing');
     Route::get('/inscription',     [PublicRegistrationController::class, 'show'])->name('public.registration.show');
     Route::post('/inscription',    [PublicRegistrationController::class, 'store'])->name('public.registration.store');
+    Route::get('/inscription/lookup', [PublicRegistrationController::class, 'lookup'])->name('public.registration.lookup');
     Route::get('/questionnaire',   [PublicQuestionnaireController::class, 'show'])->name('public.questionnaire.show');
     Route::post('/questionnaire',  [PublicQuestionnaireController::class, 'store'])->name('public.questionnaire.store');
     // Dépôt de projet public (sans compte) : identification → informations → formulaire → soumission

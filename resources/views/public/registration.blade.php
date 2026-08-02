@@ -42,20 +42,43 @@
     <form method="POST" action="{{ route('public.registration.store', $event->event_slug) }}" class="p-6 space-y-6">
         @csrf
 
+        {{-- Section : Vérification --}}
+        <div>
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">
+                @if($requireVerification)
+                    Vérification de votre identité
+                @else
+                    Numéro de carte étudiant / matricule <span class="text-gray-400 font-normal normal-case">(optionnel)</span>
+                @endif
+            </p>
+            <div>
+                <label class="form-label">
+                    Numéro de carte étudiant ou matricule
+                    @if($requireVerification)<span class="text-red-500">*</span>@endif
+                </label>
+                <input type="text" name="numero_carte" id="numero_carte" value="{{ old('numero_carte') }}"
+                       {{ $requireVerification ? 'required' : '' }}
+                       class="form-input @error('numero_carte') border-red-400 bg-red-50 @enderror"
+                       placeholder="Ex : 1995000VG" autocomplete="off">
+                <p id="lookup-status" class="text-xs mt-1"></p>
+                @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
+        </div>
+
         {{-- Section : Identité --}}
         <div>
             <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Identité</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="form-label">Prénom <span class="text-red-500">*</span></label>
-                    <input type="text" name="prenom" value="{{ old('prenom') }}" required
+                    <input type="text" name="prenom" id="prenom" value="{{ old('prenom') }}" required
                            class="form-input @error('prenom') border-red-400 bg-red-50 @enderror"
                            placeholder="Votre prénom">
                     @error('prenom') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="form-label">Nom <span class="text-red-500">*</span></label>
-                    <input type="text" name="nom" value="{{ old('nom') }}" required
+                    <input type="text" name="nom" id="nom" value="{{ old('nom') }}" required
                            class="form-input @error('nom') border-red-400 bg-red-50 @enderror"
                            placeholder="Votre nom de famille">
                     @error('nom') <p class="form-error">{{ $message }}</p> @enderror
@@ -100,7 +123,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="form-label">Institution / Établissement</label>
-                    <input type="text" name="institution" value="{{ old('institution') }}"
+                    <input type="text" name="institution" id="institution" value="{{ old('institution') }}"
                            class="form-input" placeholder="UCAD, ISED, autre…">
                 </div>
                 <div>
@@ -129,7 +152,7 @@
         {{-- Section : Catégorie de population --}}
         <div>
             <label class="form-label">Catégorie</label>
-            <select name="population_category" id="population_category" class="form-select @error('population_category') border-red-400 bg-red-50 @enderror" onchange="toggleNumeroCarte()">
+            <select name="population_category" id="population_category" class="form-select @error('population_category') border-red-400 bg-red-50 @enderror">
                 <option value="">— Sélectionner votre catégorie —</option>
                 @foreach($populationCategories as $opt)
                 <option value="{{ $opt->value }}" {{ old('population_category') === $opt->value ? 'selected' : '' }}>
@@ -138,14 +161,6 @@
                 @endforeach
             </select>
             @error('population_category') <p class="form-error">{{ $message }}</p> @enderror
-        </div>
-
-        <div id="numero-carte-field" class="hidden">
-            <label class="form-label">Numéro de carte étudiant <span class="text-red-500">*</span></label>
-            <input type="text" name="numero_carte" value="{{ old('numero_carte') }}"
-                   class="form-input @error('numero_carte') border-red-400 bg-red-50 @enderror"
-                   placeholder="Ex : 1995000VG">
-            @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
         </div>
         @endif
 
@@ -170,14 +185,49 @@
 
 @push('scripts')
 <script>
-    function toggleNumeroCarte() {
-        const select = document.getElementById('population_category');
-        const field  = document.getElementById('numero-carte-field');
-        if (!select || !field) return;
-        const isStudent = ['etudiant_licence', 'etudiant_master', 'etudiant_doctorat'].includes(select.value);
-        field.classList.toggle('hidden', !isStudent);
-    }
-    toggleNumeroCarte();
+    (function () {
+        const input  = document.getElementById('numero_carte');
+        const status = document.getElementById('lookup-status');
+        const prenom = document.getElementById('prenom');
+        const nom    = document.getElementById('nom');
+        const institution = document.getElementById('institution');
+        const category    = document.getElementById('population_category');
+        if (!input) return;
+
+        let lastLookup = '';
+
+        input.addEventListener('blur', function () {
+            const numero = input.value.trim();
+            if (!numero || numero === lastLookup) return;
+            lastLookup = numero;
+
+            status.textContent = 'Recherche…';
+            status.className = 'text-xs mt-1 text-gray-400';
+
+            fetch(`{{ route('public.registration.lookup', $event->event_slug) }}?numero_carte=${encodeURIComponent(numero)}`, {
+                headers: { 'Accept': 'application/json' },
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.found) {
+                        if (prenom && !prenom.value) prenom.value = data.prenom || '';
+                        if (nom && !nom.value) nom.value = data.nom || '';
+                        if (institution && !institution.value && data.institution) institution.value = data.institution;
+                        if (category && data.population_category) category.value = data.population_category;
+                        status.textContent = `Identité trouvée : ${data.prenom} ${data.nom}`;
+                        status.className = 'text-xs mt-1 text-emerald-600 font-medium';
+                    } else {
+                        status.textContent = @json($requireVerification)
+                            ? "Numéro introuvable — vérifiez votre saisie."
+                            : "Numéro introuvable — vous pouvez continuer en saisie libre.";
+                        status.className = 'text-xs mt-1 text-amber-600';
+                    }
+                })
+                .catch(() => {
+                    status.textContent = '';
+                });
+        });
+    })();
 </script>
 @endpush
 

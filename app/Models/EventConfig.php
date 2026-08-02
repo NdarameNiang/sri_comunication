@@ -13,7 +13,7 @@ class EventConfig extends Model
         'inscription_open_at', 'inscription_close_at',
         'is_active', 'show_questionnaire', 'max_projects_per_structure',
         'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
-        'allow_public_submission',
+        'allow_public_submission', 'require_identity_verification',
         'logo_path', 'logo_white_path', 'hero_image_path', 'primary_color',
     ];
 
@@ -31,6 +31,7 @@ class EventConfig extends Model
             'is_active'            => 'boolean',
             'show_questionnaire'   => 'boolean',
             'allow_public_submission' => 'boolean',
+            'require_identity_verification' => 'boolean',
         ];
     }
 
@@ -123,6 +124,17 @@ class EventConfig extends Model
     public function allowsPublicSubmission(): bool
     {
         return $this->allow_public_submission && $this->isSubmissionOpen();
+    }
+
+    /**
+     * Contrôle si l'inscription et la soumission publique de cet événement exigent une
+     * correspondance en base (StudentCenter / Personnel) avant d'accepter le dossier, ou si
+     * n'importe qui peut s'inscrire/soumettre en saisie libre. Par défaut à true pour ne rien
+     * changer au comportement historique (SRI 2026 reste filtré).
+     */
+    public function requiresIdentityVerification(): bool
+    {
+        return $this->require_identity_verification;
     }
 
     public function submissionStatus(): string

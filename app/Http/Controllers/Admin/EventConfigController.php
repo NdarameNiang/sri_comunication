@@ -80,12 +80,14 @@ class EventConfigController extends Controller
             'inscription_close_at' => 'nullable|date|after_or_equal:inscription_open_at',
             'show_questionnaire'   => 'nullable|boolean',
             'allow_public_submission' => 'nullable|boolean',
+            'require_identity_verification' => 'nullable|boolean',
             'max_projects_per_structure' => 'required|integer|min:1',
             'primary_color'       => 'nullable|regex:/^#[0-9a-fA-F]{6}$/',
         ]);
 
         $data['show_questionnaire']      = $request->boolean('show_questionnaire');
         $data['allow_public_submission'] = $request->boolean('allow_public_submission');
+        $data['require_identity_verification'] = $request->boolean('require_identity_verification');
 
         return $data;
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\EventConfig;
 use App\Models\FormOption;
+use App\Models\Personnel;
 use App\Models\Registration;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -22,7 +23,48 @@ class RegistrationController extends Controller
             ? $event->audienceCategories()->orderBy('sort_order')->get()
             : FormOption::forGroup('population_category');
         $inscriptionClosed = !$event->isInscriptionOpen();
-        return view('public.registration', compact('event', 'participantTypes', 'populationCategories', 'inscriptionClosed'));
+        $requireVerification = $event->requiresIdentityVerification();
+        return view('public.registration', compact('event', 'participantTypes', 'populationCategories', 'inscriptionClosed', 'requireVerification'));
+    }
+
+    /**
+     * Recherche AJAX par numéro de carte (étudiant) ou matricule (personnel), utilisée quand
+     * l'événement exige une vérification d'identité : le visiteur saisit son numéro en premier,
+     * et le formulaire se pré-remplit (nom, prénom, catégorie) sans qu'il ait à ressaisir des
+     * informations déjà connues en base.
+     */
+    public function lookup(Request $request, string $eventSlug)
+    {
+        $numero = trim((string) $request->query('numero_carte'));
+        if ($numero === '') {
+            return response()->json(['found' => false]);
+        }
+
+        $student = Student::where('numero_carte', $numero)->first();
+        if ($student) {
+            return response()->json([
+                'found'               => true,
+                'type'                => 'etudiant',
+                'nom'                 => $student->nom,
+                'prenom'              => $student->prenom,
+                'population_category' => $student->populationCategoryValue(),
+                'institution'         => $student->structure,
+            ]);
+        }
+
+        $personnel = Personnel::where('matricule', $numero)->first();
+        if ($personnel) {
+            return response()->json([
+                'found'               => true,
+                'type'                => 'personnel',
+                'nom'                 => $personnel->nom,
+                'prenom'              => $personnel->prenom,
+                'population_category' => $personnel->populationCategoryValue(),
+                'institution'         => $personnel->structure,
+            ]);
+        }
+
+        return response()->json(['found' => false]);
     }
 
     public function store(Request $request, string $eventSlug)
@@ -56,13 +98,23 @@ class RegistrationController extends Controller
 
         unset($data['email_confirmation']);
 
-        // Vérification du numéro de carte contre la base StudentCenter (si synchronisée) :
-        // ne bloque pas l'inscription si l'étudiant est introuvable (la synchro peut être en
-        // retard), mais réaligne la catégorie sur le cycle réel quand la correspondance existe.
+        // Vérification du numéro de carte contre la base StudentCenter/Personnel : si
+        // l'événement l'exige, le numéro doit correspondre à une fiche connue, sinon
+        // l'inscription est refusée. Sinon (événement en mode libre), la correspondance est
+        // seulement utilisée pour réaligner la catégorie quand elle existe, sans jamais bloquer.
         if (!empty($data['numero_carte'])) {
             $student = Student::where('numero_carte', $data['numero_carte'])->first();
-            if ($student && $student->populationCategoryValue()) {
-                $data['population_category'] = $student->populationCategoryValue();
+            $personnel = $student ? null : Personnel::where('matricule', $data['numero_carte'])->first();
+            $match = $student ?? $personnel;
+
+            if ($event->requiresIdentityVerification() && !$match) {
+                return back()->withInput()->withErrors([
+                    'numero_carte' => "Ce numéro n'a pas été trouvé dans la base StudentCenter/Personnel. Vérifiez votre saisie ou contactez l'organisation.",
+                ]);
+            }
+
+            if ($match && $match->populationCategoryValue()) {
+                $data['population_category'] = $match->populationCategoryValue();
             }
         }
 
