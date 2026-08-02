@@ -43,6 +43,17 @@
             </div>
             @endif
         </div>
+
+        @if($existingUser)
+        <div class="mt-3 flex items-start gap-2.5 bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <p class="text-xs text-emerald-800">
+                Vous avez déjà déposé un dossier avec cette identité — vos coordonnées ont été retrouvées et pré-remplies ci-dessous. Vérifiez qu'il s'agit bien de vous avant de continuer.
+            </p>
+        </div>
+        @endif
     </div>
 
     <form method="POST" action="{{ route('public.project-submission.details.store', $event->event_slug) }}" class="p-6 space-y-6">
@@ -53,7 +64,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="form-label">Email <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" value="{{ old('email') }}" required
+                    <input type="email" name="email" value="{{ old('email', $existingUser->email ?? '') }}" required
                            class="form-input @error('email') border-red-400 bg-red-50 @enderror"
                            placeholder="votre@email.com" autocomplete="email">
                     @error('email') <p class="form-error">{{ $message }}</p> @enderror
@@ -61,7 +72,7 @@
                 </div>
                 <div>
                     <label class="form-label">Téléphone <span class="text-gray-400 font-normal">(7X XXX XX XX)</span></label>
-                    <input type="text" name="phone" value="{{ old('phone') }}"
+                    <input type="text" name="phone" value="{{ old('phone', $existingUser->phone ?? '') }}"
                            class="form-input @error('phone') border-red-400 bg-red-50 @enderror"
                            placeholder="77 000 00 00" maxlength="9" inputmode="numeric">
                     @error('phone') <p class="form-error">{{ $message }}</p> @enderror

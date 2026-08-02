@@ -196,9 +196,21 @@ class ProjectSubmissionController extends Controller
         }
 
         $structures = Structure::orderBy('name')->get();
-        $suggestedStructureId = $this->matchStructureId($identity['structure_label'] ?? null, $structures);
 
-        return view('public.project-submission-details', compact('event', 'identity', 'structures', 'suggestedStructureId'));
+        // Un porteur déjà identifié lors d'un dépôt précédent (même numéro de carte / matricule)
+        // a déjà un compte technique avec email/téléphone/structure connus — les pré-remplir ici
+        // évite de les redemander, et confirme concrètement à la personne qu'on la reconnaît bien.
+        $existingUser = null;
+        if (!empty($identity['numero_carte'])) {
+            $existingUser = User::where('numero_carte', $identity['numero_carte'])->first();
+        } elseif (!empty($identity['matricule'])) {
+            $existingUser = User::where('matricule', $identity['matricule'])->first();
+        }
+
+        $suggestedStructureId = $existingUser?->structure_id
+            ?? $this->matchStructureId($identity['structure_label'] ?? null, $structures);
+
+        return view('public.project-submission-details', compact('event', 'identity', 'structures', 'suggestedStructureId', 'existingUser'));
     }
 
     /**
