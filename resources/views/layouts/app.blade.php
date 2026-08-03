@@ -120,9 +120,13 @@
                     @include('components.icon', ['name' => 'check-circle'])
                     <span>Grille d'évaluation</span>
                 </a>
+                <a href="{{ route('deliberation.scoring.index') }}" class="sidebar-link {{ request()->routeIs('deliberation.scoring.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'check-circle'])
+                    <span>Noter les projets</span>
+                </a>
                 <a href="{{ route('evaluation.ranking.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.ranking.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'star'])
-                    <span>Classement & sélection</span>
+                    <span>Classement & délibération</span>
                 </a>
                 <div class="border-t border-white/10 my-3"></div>
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Gestion</p>
