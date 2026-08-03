@@ -110,7 +110,7 @@
                 </a>
                 <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'users'])
-                    <span>Étudiants (StudentCenter)</span>
+                    <span>Synchronisation</span>
                 </a>
                 <a href="{{ route('superadmin.projects.index') }}" class="sidebar-link {{ request()->routeIs('superadmin.projects.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'briefcase'])
@@ -197,7 +197,7 @@
                 </a>
                 <a href="{{ route('admin.students.index') }}" class="sidebar-link {{ request()->routeIs('admin.students.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'users'])
-                    <span>Étudiants (StudentCenter)</span>
+                    <span>Synchronisation</span>
                 </a>
                 @if($activeEvent?->evaluationEnabled())
                 <a href="{{ route('evaluation.rubrics.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.rubrics.*') ? 'active' : '' }}">

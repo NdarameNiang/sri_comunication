@@ -135,9 +135,10 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::patch('content-blocks/sections/{section}/toggle', [ContentBlockController::class, 'toggleSection'])->name('content-blocks.sections.toggle');
             Route::post('content-blocks/sections/reorder', [ContentBlockController::class, 'reorderSections'])->name('content-blocks.sections.reorder');
 
-            // Base étudiants StudentCenter
+            // Synchronisation des bases externes (StudentCenter + Personnel PER/PATS)
             Route::get('students', [StudentSyncController::class, 'index'])->name('students.index');
             Route::post('students/sync', [StudentSyncController::class, 'sync'])->name('students.sync');
+            Route::post('students/sync-personnel', [StudentSyncController::class, 'syncPersonnel'])->name('students.sync-personnel');
         });
 
     // ── Direction de la Recherche ───────────────────────────────────────────

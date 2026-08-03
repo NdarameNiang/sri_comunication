@@ -40,4 +40,9 @@ return [
         'token' => env('STUDENTCENTER_API_TOKEN'),
     ],
 
+    'personnel' => [
+        'url'   => env('PERSONNEL_API_URL'),
+        'token' => env('PERSONNEL_API_TOKEN'),
+    ],
+
 ];
