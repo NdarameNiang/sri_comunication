@@ -249,6 +249,7 @@ Route::middleware(['auth', 'active'])->group(function () {
 
             Route::middleware('capability:evaluation.viewRanking')->group(function () {
                 Route::get('/ranking', [EvaluationRankingController::class, 'index'])->name('ranking.index');
+                Route::get('/ranking/export', [EvaluationRankingController::class, 'export'])->name('ranking.export');
             });
 
             Route::middleware('capability:evaluation.finalize')->group(function () {

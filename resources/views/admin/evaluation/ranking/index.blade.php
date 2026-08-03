@@ -31,6 +31,46 @@
         @endforeach
     </div>
 
+    {{-- Filtres --}}
+    <div class="bg-white rounded-2xl border border-gray-200 p-5">
+        <form method="GET" action="{{ route('evaluation.ranking.index') }}" class="flex flex-wrap items-end gap-3">
+            <div>
+                <label class="form-label">Structure</label>
+                <select name="structure" class="form-select w-48">
+                    <option value="">Toutes</option>
+                    @foreach($structures as $s)
+                    <option value="{{ $s->id }}" {{ ($filters['structure'] ?? '') == $s->id ? 'selected' : '' }}>{{ $s->acronym ?? $s->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Statut</label>
+                <select name="status" class="form-select w-44">
+                    <option value="">Tous</option>
+                    @foreach($statusMeta as $value => [$label, $cls])
+                    <option value="{{ $value }}" {{ ($filters['status'] ?? '') === $value ? 'selected' : '' }}>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div>
+                <label class="form-label">Note min</label>
+                <input type="number" step="0.01" name="score_min" value="{{ $filters['score_min'] ?? '' }}" class="form-input w-24">
+            </div>
+            <div>
+                <label class="form-label">Note max</label>
+                <input type="number" step="0.01" name="score_max" value="{{ $filters['score_max'] ?? '' }}" class="form-input w-24">
+            </div>
+            <button type="submit" class="btn-secondary text-sm">Filtrer</button>
+            @if(array_filter($filters))
+            <a href="{{ route('evaluation.ranking.index') }}" class="text-xs text-gray-400 hover:text-gray-600">Réinitialiser</a>
+            @endif
+            <a href="{{ route('evaluation.ranking.export', $filters) }}" class="btn-secondary text-sm inline-flex items-center gap-1.5 ml-auto">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                Exporter (CSV)
+            </a>
+        </form>
+    </div>
+
     @if($stats['tied_pending'] > 0)
     <div class="flex items-center gap-2.5 p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-sm text-indigo-800">
         <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
