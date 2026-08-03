@@ -4,7 +4,7 @@
 @section('page-subtitle', 'Configurer un nouvel événement SRI / MMA / autre')
 
 @section('content')
-<div class="max-w-2xl mx-auto">
+<div class="max-w-5xl mx-auto">
     <div class="card">
         <div class="card-header">
             <h3 class="section-title text-base">Nouvel événement</h3>

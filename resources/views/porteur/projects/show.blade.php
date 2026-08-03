@@ -12,7 +12,7 @@
     $impactLabels       = \App\Models\Project::impactLabels();
     $presentationLabels = \App\Models\Project::presentationLabels();
 @endphp
-<div class="max-w-3xl mx-auto space-y-5">
+<div class="max-w-6xl mx-auto space-y-5">
 
     {{-- ── En-tête : responsable + statuts ──────────────────────────── --}}
     <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden">

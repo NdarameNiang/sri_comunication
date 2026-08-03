@@ -8,7 +8,7 @@
     $locked = $score->isSubmitted();
     $totalMax = $rubric->totalPoints();
 @endphp
-<div class="max-w-3xl space-y-4">
+<div class="max-w-6xl space-y-4">
 
     <div class="bg-white rounded-2xl border border-gray-200 p-5">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">

@@ -4,7 +4,7 @@
 @section('page-subtitle', $eventConfig->event_name)
 
 @section('content')
-<div class="max-w-2xl mx-auto">
+<div class="max-w-5xl mx-auto">
     <div class="card">
         <div class="card-header">
             <div>
