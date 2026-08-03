@@ -82,6 +82,7 @@ class EventConfigController extends Controller
             'allow_public_submission' => 'nullable|boolean',
             'require_identity_verification' => 'nullable|boolean',
             'evaluation_enabled'      => 'nullable|boolean',
+            'deliberation_mode'       => 'nullable|in:individuelle,globale',
             'enabled_profile_types'   => 'nullable|array',
             'enabled_profile_types.*' => 'in:etudiant,personnel,autre',
             'max_projects_per_structure' => 'required|integer|min:1',

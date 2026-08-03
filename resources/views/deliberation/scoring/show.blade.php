@@ -22,7 +22,17 @@
         @endif
     </div>
 
-    @if($locked)
+    @if($isGlobal)
+    <div class="flex items-center gap-2.5 p-3 bg-indigo-50 border border-indigo-200 rounded-xl text-sm text-indigo-800">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <span>
+            Note unique partagée pour ce projet — modifiable par n'importe quel membre du comité.
+            @if($score->exists && $score->evaluator)
+                Dernière modification par <strong>{{ $score->evaluator->name }}</strong>.
+            @endif
+        </span>
+    </div>
+    @elseif($locked)
     <div class="alert-info">
         <svg class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <span>Votre notation a déjà été soumise. Vous pouvez encore la modifier ci-dessous si nécessaire.</span>

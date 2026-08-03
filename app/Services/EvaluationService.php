@@ -19,13 +19,21 @@ class EvaluationService
         $event = $event ?? EventConfig::active();
         $quota = $event?->selection_quota;
 
+        $isGlobal = $event?->isGlobalDeliberation() ?? false;
+
         $projects = Project::where('status', 'submitted')->forEvent($event)->with('scores.details')->get();
 
         foreach ($projects as $project) {
             $submitted = $project->scores->where('status', 'submitted');
-            $project->average_score = $submitted->isEmpty()
-                ? null
-                : round($submitted->map(fn ($s) => $s->totalPoints())->avg(), 2);
+            if ($submitted->isEmpty()) {
+                $project->average_score = null;
+            } elseif ($isGlobal) {
+                // Un seul ProjectScore partagé par projet en mode globale — sa note EST le
+                // score du projet, aucune moyenne à calculer entre plusieurs évaluateurs.
+                $project->average_score = round($submitted->first()->totalPoints(), 2);
+            } else {
+                $project->average_score = round($submitted->map(fn ($s) => $s->totalPoints())->avg(), 2);
+            }
         }
 
         $ranked = $projects->filter(fn ($p) => $p->average_score !== null)

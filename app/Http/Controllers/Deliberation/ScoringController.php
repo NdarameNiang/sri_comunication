@@ -22,21 +22,42 @@ class ScoringController extends Controller
         abort_unless(EventConfig::active()?->evaluationEnabled(), 404);
     }
 
+    /**
+     * En mode « individuelle », chaque évaluateur a son propre ProjectScore (clé project_id +
+     * evaluator_id). En mode « globale », un seul ProjectScore existe par projet — la clé de
+     * recherche omet l'évaluateur pour que tout membre du comité retrouve/modifie la même
+     * note partagée plutôt que d'en créer une nouvelle.
+     */
+    private function scoreKey(EventConfig $event, Project $project): array
+    {
+        $key = ['project_id' => $project->id];
+        if (!$event->isGlobalDeliberation()) {
+            $key['evaluator_id'] = Auth::id();
+        }
+        return $key;
+    }
+
     public function index()
     {
         $this->ensureEvaluationEnabled();
 
+        $event = EventConfig::active();
+
         $projects = Project::where('status', 'submitted')
-            ->forEvent(EventConfig::active())
+            ->forEvent($event)
             ->with(['porteur', 'structure', 'assignment'])
             ->latest()
             ->paginate(20);
 
-        $myScores = ProjectScore::where('evaluator_id', Auth::id())
-            ->get()
-            ->keyBy('project_id');
+        // En mode globale, "myScores" représente en réalité la note partagée du projet (il
+        // n'y en a qu'une), pas spécifiquement celle de l'évaluateur courant.
+        $myScores = $event->isGlobalDeliberation()
+            ? ProjectScore::with('evaluator')->get()->keyBy('project_id')
+            : ProjectScore::where('evaluator_id', Auth::id())->get()->keyBy('project_id');
 
-        return view('deliberation.scoring.index', compact('projects', 'myScores'));
+        $isGlobal = $event->isGlobalDeliberation();
+
+        return view('deliberation.scoring.index', compact('projects', 'myScores', 'isGlobal'));
     }
 
     public function show(Project $project)
@@ -55,14 +76,16 @@ class ScoringController extends Controller
             return back()->with('error', 'Aucune grille d\'évaluation n\'est configurée pour ce format de soumission.');
         }
 
-        $score = ProjectScore::with('details')
-            ->firstOrNew(['project_id' => $project->id, 'evaluator_id' => Auth::id()]);
+        $score = ProjectScore::with(['details', 'evaluator'])
+            ->firstOrNew($this->scoreKey($event, $project));
 
         $existingPoints = $score->exists
             ? $score->details->pluck('points', 'evaluation_criterion_id')
             : collect();
 
-        return view('deliberation.scoring.show', compact('project', 'rubric', 'score', 'existingPoints'));
+        $isGlobal = $event->isGlobalDeliberation();
+
+        return view('deliberation.scoring.show', compact('project', 'rubric', 'score', 'existingPoints', 'isGlobal'));
     }
 
     public function store(Request $request, Project $project)
@@ -86,10 +109,13 @@ class ScoringController extends Controller
 
         $submit = $request->input('action') === 'submit';
 
-        DB::transaction(function () use ($project, $data, $submit) {
+        DB::transaction(function () use ($event, $project, $data, $submit) {
+            // En mode globale, evaluator_id trace le dernier membre à avoir soumis/modifié la
+            // note partagée (utile à l'affichage), pas une note qui lui est propre.
             $score = ProjectScore::updateOrCreate(
-                ['project_id' => $project->id, 'evaluator_id' => Auth::id()],
+                $this->scoreKey($event, $project),
                 [
+                    'evaluator_id' => Auth::id(),
                     'status'       => $submit ? 'submitted' : 'draft',
                     'submitted_at' => $submit ? now() : null,
                 ]

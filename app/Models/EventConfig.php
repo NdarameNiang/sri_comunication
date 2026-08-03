@@ -14,7 +14,7 @@ class EventConfig extends Model
         'is_active', 'show_questionnaire', 'max_projects_per_structure', 'max_projects_per_porteur',
         'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
         'allow_public_submission', 'require_identity_verification', 'enabled_profile_types',
-        'evaluation_enabled',
+        'evaluation_enabled', 'deliberation_mode',
         'logo_path', 'logo_white_path', 'hero_image_path', 'primary_color',
     ];
 
@@ -138,6 +138,18 @@ class EventConfig extends Model
     public function evaluationEnabled(): bool
     {
         return (bool) $this->evaluation_enabled;
+    }
+
+    /**
+     * « individuelle » (défaut, historique) : chaque membre du comité note indépendamment,
+     * la moyenne des notes soumises fait le score du projet.
+     * « globale » : une seule note partagée par projet — le premier membre à la soumettre
+     * fait autorité, n'importe quel autre membre peut ensuite la consulter et la modifier ;
+     * pas de moyenne à calculer, sa note EST le score du projet.
+     */
+    public function isGlobalDeliberation(): bool
+    {
+        return $this->deliberation_mode === 'globale';
     }
 
     /**

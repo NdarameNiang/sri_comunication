@@ -92,6 +92,24 @@
             <p class="text-xs text-gray-400 mt-0.5">Désactivez pour un événement sans jury/notation (ex : simple inscription ou dépôt sans sélection) — masque la grille, la notation et le classement pour tous les rôles concernés.</p>
         </div>
     </label>
+
+    <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        @php $deliberationMode = old('deliberation_mode', $eventConfig->deliberation_mode ?? 'individuelle'); @endphp
+        <label class="flex items-start gap-2.5 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 has-[:checked]:border-blue-400 has-[:checked]:bg-blue-50">
+            <input type="radio" name="deliberation_mode" value="individuelle" {{ $deliberationMode === 'individuelle' ? 'checked' : '' }} class="mt-0.5">
+            <span>
+                <span class="block text-sm font-medium text-gray-800">Délibération individuelle</span>
+                <span class="block text-xs text-gray-400 mt-0.5">Chaque membre du comité note indépendamment — le score du projet est la moyenne des notes soumises.</span>
+            </span>
+        </label>
+        <label class="flex items-start gap-2.5 p-3 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 has-[:checked]:border-blue-400 has-[:checked]:bg-blue-50">
+            <input type="radio" name="deliberation_mode" value="globale" {{ $deliberationMode === 'globale' ? 'checked' : '' }} class="mt-0.5">
+            <span>
+                <span class="block text-sm font-medium text-gray-800">Délibération globale</span>
+                <span class="block text-xs text-gray-400 mt-0.5">Une seule note partagée par projet — le premier membre à la soumettre fait autorité, n'importe qui peut ensuite la modifier.</span>
+            </span>
+        </label>
+    </div>
 </div>
 
 {{-- Options publiques --}}
