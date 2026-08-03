@@ -72,6 +72,7 @@ class EventConfigController extends Controller
             'event_slug'          => 'required|string|max:100|alpha_dash',
             'event_description'   => 'nullable|string',
             'organizer'           => 'nullable|string|max:255',
+            'landing_subtitle'    => 'nullable|string|max:255',
             'event_start_date'    => 'nullable|date',
             'event_end_date'      => 'nullable|date|after_or_equal:event_start_date',
             'submission_open_at'   => 'nullable|date',

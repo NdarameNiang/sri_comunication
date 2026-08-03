@@ -152,7 +152,7 @@
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2 mb-7">
                 <span class="pulse-dot w-2 h-2 rounded-full bg-blue-400 inline-block"></span>
                 <span class="text-white/80 text-xs font-semibold tracking-widest uppercase">
-                    {{ \App\Models\ContentBlock::resolve('landing.badge_text', $event)?->content ?? 'Appel à contribution' }}
+                    {{ $event->landingSubtitle() ?? 'Appel à contribution' }}
                 </span>
             </div>
 

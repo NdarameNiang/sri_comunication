@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class EventConfig extends Model
 {
     protected $fillable = [
-        'event_name', 'event_slug', 'event_description', 'organizer',
+        'event_name', 'event_slug', 'event_description', 'organizer', 'landing_subtitle',
         'event_start_date', 'event_end_date',
         'submission_open_at', 'submission_close_at',
         'inscription_open_at', 'inscription_close_at',
@@ -65,6 +65,19 @@ class EventConfig extends Model
     public function primaryColor(): string
     {
         return $this->primary_color ?: '#2563eb';
+    }
+
+    /**
+     * Sous-titre affiché sous le nom de l'événement sur la page publique — configurable
+     * directement dans le formulaire événement plutôt que via le mécanisme ContentBlock
+     * séparé. Repli sur l'ancien bloc de contenu « landing.badge_text » pour les événements
+     * qui n'ont pas encore renseigné ce nouveau champ, afin de ne rien changer visuellement
+     * tant que l'admin n'a pas fait le choix explicite de le remplacer.
+     */
+    public function landingSubtitle(): ?string
+    {
+        return $this->landing_subtitle
+            ?: \App\Models\ContentBlock::resolve('landing.badge_text', $this)?->content;
     }
 
     public function evaluationRubrics()

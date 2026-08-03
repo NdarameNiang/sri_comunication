@@ -23,6 +23,13 @@
                class="form-input" placeholder="Ex : Direction de la Recherche – UCAD">
     </div>
 
+    <div>
+        <label class="form-label">Sous-titre (page publique)</label>
+        <input type="text" name="landing_subtitle" value="{{ old('landing_subtitle', $eventConfig->landing_subtitle ?? '') }}"
+               class="form-input" placeholder="Ex : Appel à candidatures" maxlength="255">
+        <p class="text-xs text-gray-400 mt-1">Affiché sous le nom de l'événement sur la page publique</p>
+    </div>
+
     <div class="sm:col-span-2">
         <label class="form-label">Description</label>
         <textarea name="event_description" rows="3"
