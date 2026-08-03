@@ -287,9 +287,25 @@
                     </div>
                 </div>
                 @else
-                <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                <p class="text-slate-600 text-sm leading-relaxed mb-3">
                     Remplissez le formulaire d'inscription pour participer à l'événement.
                 </p>
+                @if($event->inscription_open_at || $event->inscription_close_at)
+                <div class="flex items-center gap-2 mb-5 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                    </svg>
+                    <span class="text-slate-600 text-xs font-medium">
+                        @if($event->inscription_open_at && $event->inscription_close_at)
+                            Du {{ $event->inscription_open_at->translatedFormat('d F Y') }} au {{ $event->inscription_close_at->translatedFormat('d F Y') }}
+                        @elseif($event->inscription_open_at)
+                            À partir du {{ $event->inscription_open_at->translatedFormat('d F Y') }}
+                        @else
+                            Jusqu'au {{ $event->inscription_close_at->translatedFormat('d F Y') }}
+                        @endif
+                    </span>
+                </div>
+                @endif
                 <a href="{{ route('public.registration.show', $event->event_slug) }}"
                    class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4
                           bg-[var(--brand-primary)] hover:opacity-90 active:opacity-80
@@ -334,9 +350,25 @@
                     </div>
                 </div>
                 @else
-                <p class="text-slate-600 text-sm leading-relaxed mb-5">
+                <p class="text-slate-600 text-sm leading-relaxed mb-3">
                     Vous n'avez pas encore de compte porteur ? Créez votre dossier directement — un espace vous est ouvert automatiquement.
                 </p>
+                @if($event->submission_open_at || $event->submission_close_at)
+                <div class="flex items-center gap-2 mb-5 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                    </svg>
+                    <span class="text-slate-600 text-xs font-medium">
+                        @if($event->submission_open_at && $event->submission_close_at)
+                            Du {{ $event->submission_open_at->translatedFormat('d F Y') }} au {{ $event->submission_close_at->translatedFormat('d F Y') }}
+                        @elseif($event->submission_open_at)
+                            À partir du {{ $event->submission_open_at->translatedFormat('d F Y') }}
+                        @else
+                            Jusqu'au {{ $event->submission_close_at->translatedFormat('d F Y') }}
+                        @endif
+                    </span>
+                </div>
+                @endif
                 <a href="{{ route('public.project-submission.identify', $event->event_slug) }}"
                    class="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl mb-4
                           bg-[var(--brand-primary)] hover:opacity-90 active:opacity-80
