@@ -60,6 +60,7 @@ Route::prefix('event/{eventSlug}')->group(function () {
     Route::post('/soumission',                 [PublicProjectSubmissionController::class, 'verify'])->name('public.project-submission.verify');
     Route::get('/soumission/informations',     [PublicProjectSubmissionController::class, 'details'])->name('public.project-submission.details');
     Route::post('/soumission/informations',    [PublicProjectSubmissionController::class, 'storeDetails'])->name('public.project-submission.details.store');
+    Route::get('/soumission/mes-dossiers',     [PublicProjectSubmissionController::class, 'mine'])->name('public.project-submission.mine');
     Route::get('/soumission/{assignment}/{token}',          [PublicProjectSubmissionController::class, 'fill'])->name('public.project-submission.fill');
     Route::post('/soumission/{assignment}/{token}',         [PublicProjectSubmissionController::class, 'save'])->name('public.project-submission.save');
     Route::post('/soumission/{assignment}/{token}/valider', [PublicProjectSubmissionController::class, 'submit'])->name('public.project-submission.submit');

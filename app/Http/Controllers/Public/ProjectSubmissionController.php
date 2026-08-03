@@ -104,7 +104,7 @@ class ProjectSubmissionController extends Controller
                 'population_category' => null,
             ]]);
 
-            return redirect()->route('public.project-submission.details', $eventSlug);
+            return $this->afterIdentification($event, $eventSlug, null);
         }
 
         $data = $request->validate([
@@ -149,6 +149,8 @@ class ProjectSubmissionController extends Controller
                 'email'                => $student?->preferredEmail(),
                 'phone'                => $student->telephone ?? null,
             ]]);
+
+            return $this->afterIdentification($event, $eventSlug, $data['numero_carte'] ?? null, null);
         } elseif ($data['profile_type'] === 'personnel') {
             // Le matricule est la clé de recherche obligatoire (l'email institutionnel n'est
             // qu'une donnée de contact optionnelle, pas encore branchée à une vraie API
@@ -172,6 +174,8 @@ class ProjectSubmissionController extends Controller
                 'email'                => $data['email_institutionnel'] ?? $personnel?->preferredEmail(),
                 'phone'                => $personnel->telephone ?? null,
             ]]);
+
+            return $this->afterIdentification($event, $eventSlug, null, $data['matricule']);
         } else {
             session([self::SESSION_IDENTITY_KEY => [
                 'type'                 => 'autre',
@@ -180,9 +184,65 @@ class ProjectSubmissionController extends Controller
                 'structure_label'      => $data['institution'] ?? null,
                 'population_category'  => null,
             ]]);
+
+            return $this->afterIdentification($event, $eventSlug, null, null);
+        }
+    }
+
+    /**
+     * Si l'identité retrouvée a déjà au moins un dossier pour cet événement, on l'oriente vers
+     * la liste de ses dossiers plutôt que de lui faire créer silencieusement un doublon — il
+     * choisit lui-même de consulter l'existant ou d'en déposer un nouveau (dans la limite du
+     * quota par porteur s'il est configuré). Un « autre » sans carte/matricule n'a jamais de
+     * dossier retrouvable de cette façon et va donc toujours directement au formulaire.
+     */
+    private function afterIdentification(EventConfig $event, string $eventSlug, ?string $numeroCarte, ?string $matricule = null)
+    {
+        if (empty($numeroCarte) && empty($matricule)) {
+            return redirect()->route('public.project-submission.details', $eventSlug);
         }
 
-        return redirect()->route('public.project-submission.details', $eventSlug);
+        $user = $numeroCarte
+            ? User::where('numero_carte', $numeroCarte)->first()
+            : User::where('matricule', $matricule)->first();
+
+        $hasExisting = $user && $user->projectAssignments()->where('event_config_id', $event->id)->exists();
+
+        return redirect()->route(
+            $hasExisting ? 'public.project-submission.mine' : 'public.project-submission.details',
+            $eventSlug
+        );
+    }
+
+    /**
+     * Liste minimale des dossiers déjà déposés par la personne identifiée pour cet événement —
+     * volontairement réduite à « consulter » ou « déposer un nouveau », sans reproduire le
+     * tableau de bord complet (onglets, recherche, édition libre) réservé à l'espace porteur
+     * connecté.
+     */
+    public function mine(string $eventSlug)
+    {
+        $event = $this->event($eventSlug);
+        $identity = session(self::SESSION_IDENTITY_KEY);
+        if (!$identity) {
+            return redirect()->route('public.project-submission.identify', $eventSlug);
+        }
+
+        $user = $this->findExistingUser($identity);
+        if (!$user) {
+            return redirect()->route('public.project-submission.details', $eventSlug);
+        }
+
+        $assignments = $user->projectAssignments()
+            ->where('event_config_id', $event->id)
+            ->with('project')
+            ->latest()
+            ->get();
+
+        $canSubmitNew = $event->isSubmissionOpen()
+            && $user->canSubmitMoreProjects($event);
+
+        return view('public.project-submission-mine', compact('event', 'identity', 'assignments', 'canSubmitNew'));
     }
 
     // ── Étape 2 : informations essentielles + choix du template ────────────
