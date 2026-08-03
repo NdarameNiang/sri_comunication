@@ -102,7 +102,7 @@
 </div>
 
 {{-- ═══ CONTENU ════════════════════════════════════════════════════════════════ --}}
-<div class="max-w-2xl mx-auto px-4 py-8">
+<div class="@yield('content-width', 'max-w-2xl') mx-auto px-4 py-8">
 
     {{-- Alertes --}}
     @if(session('success'))

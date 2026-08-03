@@ -3,6 +3,7 @@
 @section('event-name', $event->event_name)
 @section('event-subtitle', $assignment->title)
 @section('event-badge', 'Étape 3 · ' . ($project ? 'Mon dossier' : 'Formulaire de dépôt'))
+@section('content-width', 'max-w-7xl')
 
 @push('scripts')
 {{-- Le formulaire est partagé avec le porteur connecté et l'admin (qui gardent le bleu UCAD

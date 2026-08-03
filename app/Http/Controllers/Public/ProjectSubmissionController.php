@@ -457,6 +457,12 @@ class ProjectSubmissionController extends Controller
         ]);
     }
 
+    /**
+     * Sur le dépôt public, il n'y a pas d'étape « brouillon » séparée : remplir le formulaire
+     * et le soumettre ne font qu'un seul geste (contrairement à l'espace porteur connecté, qui
+     * garde la sauvegarde de brouillon). save() crée/met à jour le projet puis le finalise
+     * directement via finalizeSubmission().
+     */
     public function save(Request $request, string $eventSlug, ProjectAssignment $assignment, string $token)
     {
         $event = $this->event($eventSlug);
@@ -493,8 +499,10 @@ class ProjectSubmissionController extends Controller
             $this->saveApprofondiDetails($project, $request);
         }
 
-        return redirect()->route('public.project-submission.fill', [$eventSlug, $assignment, $token])
-            ->with('success', 'Brouillon enregistré. Conservez ce lien pour revenir compléter votre dossier.');
+        $this->finalizeSubmission($assignment, $project);
+
+        return redirect()->route('public.project-submission.show', [$eventSlug, $assignment, $token])
+            ->with('success', 'Dossier soumis avec succès. Un email de confirmation vous a été envoyé.');
     }
 
     public function submit(string $eventSlug, ProjectAssignment $assignment, string $token)
@@ -512,6 +520,14 @@ class ProjectSubmissionController extends Controller
             return back()->with('error', $this->submissionBlockMessage($event));
         }
 
+        $this->finalizeSubmission($assignment, $project);
+
+        return redirect()->route('public.project-submission.show', [$eventSlug, $assignment, $token])
+            ->with('success', 'Dossier soumis avec succès. Un email de confirmation vous a été envoyé.');
+    }
+
+    private function finalizeSubmission(ProjectAssignment $assignment, Project $project): void
+    {
         $project->update(['status' => 'submitted']);
         $assignment->update(['status' => 'submitted']);
 
@@ -536,9 +552,6 @@ class ProjectSubmissionController extends Controller
 
             $mailer->send(new SubmissionConfirmationMail($project->porteur, $project));
         } catch (\Exception) {}
-
-        return redirect()->route('public.project-submission.show', [$eventSlug, $assignment, $token])
-            ->with('success', 'Dossier soumis avec succès. Un email de confirmation vous a été envoyé.');
     }
 
     public function show(string $eventSlug, ProjectAssignment $assignment, string $token)
