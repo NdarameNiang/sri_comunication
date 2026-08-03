@@ -110,27 +110,27 @@ class ProjectSubmissionController extends Controller
         $data = $request->validate([
             'profile_type'   => ['required', \Illuminate\Validation\Rule::in($profileTypes)],
             'cycle'          => 'required_if:profile_type,etudiant|nullable|in:etudiant_licence,etudiant_master,etudiant_doctorat',
-            'cin'            => 'nullable|string|max:50',
-            'numero_carte'   => $requireVerification ? 'required_if:profile_type,etudiant|nullable|string|max:50' : 'nullable|string|max:50',
+            'numero_carte'   => 'required_if:profile_type,etudiant|nullable|string|max:50',
+            'email_professionnel_etudiant' => 'required_if:profile_type,etudiant|nullable|email|max:255',
             'categorie'      => 'required_if:profile_type,personnel|nullable|in:per,pats',
             'matricule'      => 'required_if:profile_type,personnel|nullable|string|max:50',
-            'email_institutionnel' => 'nullable|email|max:255',
+            'email_institutionnel' => 'required_if:profile_type,personnel|nullable|email|max:255',
             'nom'            => 'required_if:profile_type,autre|nullable|string|max:255',
             'prenom'         => 'required_if:profile_type,autre|nullable|string|max:255',
             'institution'    => 'nullable|string|max:255',
         ], [
             'cycle.required_if'        => 'Veuillez indiquer votre cycle.',
             'numero_carte.required_if' => 'Le numéro de carte étudiant est requis.',
+            'email_professionnel_etudiant.required_if' => "L'email professionnel est requis.",
             'categorie.required_if'    => 'Veuillez indiquer si vous êtes PER ou PATS.',
             'matricule.required_if'    => 'Le matricule est requis.',
+            'email_institutionnel.required_if' => "L'email professionnel est requis.",
             'nom.required_if'          => 'Le nom est requis.',
             'prenom.required_if'       => 'Le prénom est requis.',
         ]);
 
         if ($data['profile_type'] === 'etudiant') {
-            $student = !empty($data['numero_carte'])
-                ? Student::where('numero_carte', $data['numero_carte'])->first()
-                : null;
+            $student = Student::where('numero_carte', $data['numero_carte'])->first();
 
             if (!$student && $requireVerification) {
                 return back()->withInput()->withErrors([
@@ -144,17 +144,15 @@ class ProjectSubmissionController extends Controller
                 'prenom'               => $student->prenom ?? $data['prenom'] ?? null,
                 'structure_label'      => $student->structure ?? null,
                 'population_category'  => $student?->populationCategoryValue() ?? $data['cycle'],
-                'numero_carte'         => $data['numero_carte'] ?? null,
-                'cin'                  => $data['cin'] ?? null,
-                'email'                => $student?->preferredEmail(),
+                'numero_carte'         => $data['numero_carte'],
+                'email'                => $data['email_professionnel_etudiant'],
                 'phone'                => $student->telephone ?? null,
             ]]);
 
-            return $this->afterIdentification($event, $eventSlug, $data['numero_carte'] ?? null, null);
+            return $this->afterIdentification($event, $eventSlug, $data['numero_carte'], null);
         } elseif ($data['profile_type'] === 'personnel') {
-            // Le matricule est la clé de recherche obligatoire (l'email institutionnel n'est
-            // qu'une donnée de contact optionnelle, pas encore branchée à une vraie API
-            // Personnel — table de test en attendant, comme pour Student/StudentCenter).
+            // Le matricule est la clé de recherche obligatoire ; pas encore branché à une
+            // vraie API Personnel — table de test en attendant, comme pour Student/StudentCenter.
             $personnel = Personnel::where('matricule', $data['matricule'])->first();
 
             if (!$personnel && $requireVerification) {
@@ -170,8 +168,8 @@ class ProjectSubmissionController extends Controller
                 'structure_label'      => $personnel->structure ?? null,
                 'population_category'  => $personnel->categorie ?? $data['categorie'],
                 'matricule'            => $data['matricule'],
-                'email_institutionnel' => $data['email_institutionnel'] ?? null,
-                'email'                => $data['email_institutionnel'] ?? $personnel?->preferredEmail(),
+                'email_institutionnel' => $data['email_institutionnel'],
+                'email'                => $data['email_institutionnel'],
                 'phone'                => $personnel->telephone ?? null,
             ]]);
 

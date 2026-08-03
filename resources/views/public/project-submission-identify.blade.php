@@ -99,18 +99,18 @@
                 @error('cycle') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">CIN <span class="text-gray-400 font-normal">(optionnel)</span></label>
-                <input type="text" name="cin" value="{{ old('cin') }}" class="form-input" placeholder="Numéro de la carte d'identité nationale">
-            </div>
-            <div>
-                <label class="form-label">
-                    Numéro de carte étudiant
-                    @if($requireVerification)<span class="text-red-500">*</span>@else <span class="text-gray-400 font-normal">(optionnel)</span>@endif
-                </label>
+                <label class="form-label">Numéro de carte étudiant <span class="text-red-500">*</span></label>
                 <input type="text" name="numero_carte" value="{{ old('numero_carte') }}"
                        class="form-input @error('numero_carte') border-red-400 bg-red-50 @enderror"
                        placeholder="Ex : 1995000VG">
                 @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="form-label">Email professionnel <span class="text-red-500">*</span></label>
+                <input type="email" name="email_professionnel_etudiant" value="{{ old('email_professionnel_etudiant') }}"
+                       class="form-input @error('email_professionnel_etudiant') border-red-400 bg-red-50 @enderror"
+                       placeholder="prenom.nom@ucad.edu.sn">
+                @error('email_professionnel_etudiant') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             @unless($requireVerification)
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -149,7 +149,7 @@
                 @error('matricule') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">Email institutionnel <span class="text-gray-400 font-normal">(optionnel)</span></label>
+                <label class="form-label">Email professionnel <span class="text-red-500">*</span></label>
                 <input type="email" name="email_institutionnel" value="{{ old('email_institutionnel') }}"
                        class="form-input @error('email_institutionnel') border-red-400 bg-red-50 @enderror"
                        placeholder="prenom.nom@ucad.edu.sn">

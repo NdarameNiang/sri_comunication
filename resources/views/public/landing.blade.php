@@ -232,8 +232,12 @@
             </div>
 
             {{-- ── Barre d'onglets ── --}}
-            @php $hasQuestionnaire = $event->show_questionnaire; @endphp
+            @php
+                $hasQuestionnaire = $event->show_questionnaire;
+                $hasInscription = $event->hasInscriptionPeriodConfigured();
+            @endphp
             <div class="flex gap-1 p-1 rounded-xl mb-5 bg-slate-100 border border-slate-200">
+                @if($hasInscription)
                 <button id="tab-btn-inscription" onclick="switchTab('inscription')"
                         class="tab-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -241,6 +245,7 @@
                     </svg>
                     S'inscrire
                 </button>
+                @endif
                 @if($hasQuestionnaire)
                 <button id="tab-btn-questionnaire" onclick="switchTab('questionnaire')"
                         class="tab-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200">
@@ -262,6 +267,7 @@
             </div>
 
             {{-- ── Panneau Inscription ── --}}
+            @if($hasInscription)
             <div id="tab-inscription">
                 <p class="text-slate-600 text-sm leading-relaxed mb-5">
                     Remplissez le formulaire d'inscription pour participer à l'événement.
@@ -277,6 +283,7 @@
                     Accéder au formulaire d'inscription
                 </a>
             </div>
+            @endif
 
             {{-- ── Panneau Questionnaire ── --}}
             @if($hasQuestionnaire)
@@ -419,8 +426,8 @@
             }
         });
     }
-    // Activer l'onglet inscription par défaut
-    switchTab('inscription');
+    // Activer le premier onglet disponible par défaut (inscription si présente, sinon le suivant)
+    switchTab(@json($hasInscription ? 'inscription' : ($hasQuestionnaire ? 'questionnaire' : 'soumission')));
 
     // ── Animation d'apparition au défilement ────────────────────────────────
     if ('IntersectionObserver' in window) {

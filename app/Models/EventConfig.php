@@ -108,6 +108,16 @@ class EventConfig extends Model
         return static::where('is_active', true)->first();
     }
 
+    /**
+     * Sans aucune date renseignée, l'inscription n'a jamais été activée pour cet événement —
+     * distinct de « fermée » (dates passées) : on masque alors le bouton d'inscription
+     * plutôt que de l'afficher comme si elle était ouverte en continu par défaut.
+     */
+    public function hasInscriptionPeriodConfigured(): bool
+    {
+        return $this->inscription_open_at !== null || $this->inscription_close_at !== null;
+    }
+
     public function isInscriptionOpen(): bool
     {
         $now = now();
