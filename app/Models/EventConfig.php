@@ -118,6 +118,11 @@ class EventConfig extends Model
         return $this->inscription_open_at !== null || $this->inscription_close_at !== null;
     }
 
+    public function hasSubmissionPeriodConfigured(): bool
+    {
+        return $this->submission_open_at !== null || $this->submission_close_at !== null;
+    }
+
     public function isInscriptionOpen(): bool
     {
         $now = now();
@@ -132,6 +137,23 @@ class EventConfig extends Model
         if ($this->submission_open_at  && $now->lt($this->submission_open_at))  return false;
         if ($this->submission_close_at && $now->gt($this->submission_close_at)) return false;
         return true;
+    }
+
+    /**
+     * 'not_configured' : aucune date renseignée — l'onglet ne doit même pas apparaître.
+     * 'not_open' : une date d'ouverture existe et n'est pas encore atteinte — masqué aussi,
+     * ce n'est pas encore le moment d'en parler publiquement.
+     * 'closed' : la période est/était configurée mais la clôture est dépassée — l'onglet reste
+     * visible pour indiquer que c'est terminé, sans bouton d'accès actif.
+     * 'open' : période en cours.
+     */
+    public function inscriptionStatus(): string
+    {
+        if (!$this->hasInscriptionPeriodConfigured()) return 'not_configured';
+        $now = now();
+        if ($this->inscription_open_at  && $now->lt($this->inscription_open_at))  return 'not_open';
+        if ($this->inscription_close_at && $now->gt($this->inscription_close_at)) return 'closed';
+        return 'open';
     }
 
     public function allowsPublicSubmission(): bool
@@ -188,8 +210,13 @@ class EventConfig extends Model
         return count($this->enabledProfileTypes()) > 0;
     }
 
+    /**
+     * Même sémantique que inscriptionStatus() : 'not_configured' et 'not_open' masquent
+     * l'onglet public, 'closed' l'affiche avec un message de clôture, 'open' avec le bouton.
+     */
     public function submissionStatus(): string
     {
+        if (!$this->hasSubmissionPeriodConfigured()) return 'not_configured';
         $now = now();
         if ($this->submission_open_at  && $now->lt($this->submission_open_at))  return 'not_open';
         if ($this->submission_close_at && $now->gt($this->submission_close_at)) return 'closed';

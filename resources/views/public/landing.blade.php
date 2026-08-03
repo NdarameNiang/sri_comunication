@@ -234,7 +234,12 @@
             {{-- ── Barre d'onglets ── --}}
             @php
                 $hasQuestionnaire = $event->show_questionnaire;
-                $hasInscription = $event->hasInscriptionPeriodConfigured();
+                $inscriptionStatus = $event->inscriptionStatus();
+                // Masqué si jamais configuré ou si la date d'ouverture n'est pas encore atteinte ;
+                // visible (avec message de clôture) si la période est passée.
+                $hasInscription = in_array($inscriptionStatus, ['open', 'closed']);
+                $submissionStatus = $event->allow_public_submission ? $event->submissionStatus() : 'not_configured';
+                $hasSubmission = $event->allow_public_submission && in_array($submissionStatus, ['open', 'closed']);
             @endphp
             <div class="flex gap-1 p-1 rounded-xl mb-5 bg-slate-100 border border-slate-200">
                 @if($hasInscription)
@@ -255,13 +260,13 @@
                     Questionnaire
                 </button>
                 @endif
-                @if($event->allow_public_submission)
+                @if($hasSubmission)
                 <button id="tab-btn-soumission" onclick="switchTab('soumission')"
                         class="tab-btn flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-semibold transition-all duration-200">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
                     </svg>
-                    Soumettre un projet
+                    Appel à projet
                 </button>
                 @endif
             </div>
@@ -269,6 +274,17 @@
             {{-- ── Panneau Inscription ── --}}
             @if($hasInscription)
             <div id="tab-inscription">
+                @if($inscriptionStatus === 'closed')
+                <div class="flex items-start gap-2.5 p-4 rounded-xl bg-slate-100 border border-slate-200 mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+                    </svg>
+                    <div>
+                        <p class="text-slate-700 text-sm font-semibold">Inscriptions closes</p>
+                        <p class="text-slate-500 text-xs mt-0.5">La période d'inscription s'est terminée le {{ $event->inscription_close_at->translatedFormat('d F Y à H:i') }}.</p>
+                    </div>
+                </div>
+                @else
                 <p class="text-slate-600 text-sm leading-relaxed mb-5">
                     Remplissez le formulaire d'inscription pour participer à l'événement.
                 </p>
@@ -282,6 +298,7 @@
                     </svg>
                     Accéder au formulaire d'inscription
                 </a>
+                @endif
             </div>
             @endif
 
@@ -302,8 +319,19 @@
             @endif
 
             {{-- ── Panneau Soumission de projet ── --}}
-            @if($event->allow_public_submission)
+            @if($hasSubmission)
             <div id="tab-soumission" style="display:none;">
+                @if($submissionStatus === 'closed')
+                <div class="flex items-start gap-2.5 p-4 rounded-xl bg-slate-100 border border-slate-200 mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-400 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+                    </svg>
+                    <div>
+                        <p class="text-slate-700 text-sm font-semibold">Dépôt clôturé</p>
+                        <p class="text-slate-500 text-xs mt-0.5">La période de dépôt s'est terminée le {{ $event->submission_close_at->translatedFormat('d F Y à H:i') }}.</p>
+                    </div>
+                </div>
+                @else
                 <p class="text-slate-600 text-sm leading-relaxed mb-5">
                     Vous n'avez pas encore de compte porteur ? Créez votre dossier directement — un espace vous est ouvert automatiquement.
                 </p>
@@ -317,6 +345,7 @@
                     </svg>
                     Créer mon dossier de soumission
                 </a>
+                @endif
             </div>
             @endif
 
