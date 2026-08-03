@@ -200,21 +200,31 @@ class ProjectSubmissionController extends Controller
         }
 
         $structures = Structure::orderBy('name')->get();
-
-        // Un porteur déjà identifié lors d'un dépôt précédent (même numéro de carte / matricule)
-        // a déjà un compte technique avec email/téléphone/structure connus — les pré-remplir ici
-        // évite de les redemander, et confirme concrètement à la personne qu'on la reconnaît bien.
-        $existingUser = null;
-        if (!empty($identity['numero_carte'])) {
-            $existingUser = User::where('numero_carte', $identity['numero_carte'])->first();
-        } elseif (!empty($identity['matricule'])) {
-            $existingUser = User::where('matricule', $identity['matricule'])->first();
-        }
-
-        $suggestedStructureId = $existingUser?->structure_id
-            ?? $this->matchStructureId($identity['structure_label'] ?? null, $structures);
+        $existingUser = $this->findExistingUser($identity);
+        $suggestedStructureId = $this->resolveStructureId($identity, $existingUser, $structures);
 
         return view('public.project-submission-details', compact('event', 'identity', 'structures', 'suggestedStructureId', 'existingUser'));
+    }
+
+    /**
+     * Un porteur déjà identifié lors d'un dépôt précédent (même numéro de carte / matricule) a
+     * déjà un compte technique avec email/téléphone/structure connus.
+     */
+    private function findExistingUser(array $identity): ?User
+    {
+        if (!empty($identity['numero_carte'])) {
+            return User::where('numero_carte', $identity['numero_carte'])->first();
+        }
+        if (!empty($identity['matricule'])) {
+            return User::where('matricule', $identity['matricule'])->first();
+        }
+        return null;
+    }
+
+    private function resolveStructureId(array $identity, ?User $existingUser, $structures): ?int
+    {
+        return $existingUser?->structure_id
+            ?? $this->matchStructureId($identity['structure_label'] ?? null, $structures);
     }
 
     /**
@@ -261,6 +271,17 @@ class ProjectSubmissionController extends Controller
             'phone.regex' => 'Le numéro doit commencer par 70, 71, 75, 76, 77 ou 78 et contenir exactement 9 chiffres.',
         ]);
 
+        // La structure est figée côté formulaire dès qu'elle est déterminée par l'identité
+        // déclarée (StudentCenter/Personnel/compte existant) — on l'impose ici aussi plutôt
+        // que de faire confiance au structure_id soumis, qui pourrait avoir été trafiqué
+        // côté client.
+        $structures = Structure::orderBy('name')->get();
+        $user = $this->findExistingUser($identity);
+        $suggestedStructureId = $this->resolveStructureId($identity, $user, $structures);
+        if ($suggestedStructureId) {
+            $data['structure_id'] = $suggestedStructureId;
+        }
+
         $structure = Structure::findOrFail($data['structure_id']);
         if (!$structure->canAddProjects(1)) {
             return back()->withInput()->withErrors([
@@ -268,18 +289,10 @@ class ProjectSubmissionController extends Controller
             ]);
         }
 
-        // Un porteur déjà identifié (numéro de carte / matricule déjà vu) retrouve son
-        // compte technique existant au lieu d'en dupliquer un nouveau à chaque dépôt. Si la
-        // carte/matricule ne donne rien (ex : identification via un autre canal) mais que
-        // l'email correspond à un compte déjà lié à la même carte/matricule (ou sans carte du
-        // tout, cas "autre"), c'est la même personne : on la retrouve plutôt que de bloquer.
-        $user = null;
-        if (!empty($identity['numero_carte'])) {
-            $user = User::where('numero_carte', $identity['numero_carte'])->first();
-        } elseif (!empty($identity['matricule'])) {
-            $user = User::where('matricule', $identity['matricule'])->first();
-        }
-
+        // Si la carte/matricule n'a donné aucun compte (ex : identification via un autre canal)
+        // mais que l'email correspond à un compte déjà lié à la même carte/matricule (ou sans
+        // carte du tout, cas "autre"), c'est la même personne : on la retrouve plutôt que de
+        // bloquer.
         if (!$user) {
             $emailMatch = User::where('email', $data['email'])->first();
             $sameCard = $emailMatch
