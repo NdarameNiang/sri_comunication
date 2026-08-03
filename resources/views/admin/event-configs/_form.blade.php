@@ -53,13 +53,24 @@
 {{-- Règles de dépôt --}}
 <div>
     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Règles de dépôt des projets</p>
-    <div class="sm:w-1/2 sm:pr-2">
-        <label class="form-label">Nombre maximum de projets par structure <span class="text-red-500">*</span></label>
-        <input type="number" min="1" name="max_projects_per_structure"
-               value="{{ old('max_projects_per_structure', $eventConfig->max_projects_per_structure ?? 500) }}"
-               class="form-input @error('max_projects_per_structure') border-red-400 @enderror" required>
-        <p class="text-xs text-gray-400 mt-1">Nombre de projets qu'une même structure peut soumettre au total pour cet événement</p>
-        @error('max_projects_per_structure') <p class="form-error">{{ $message }}</p> @enderror
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label class="form-label">Nombre maximum de projets par structure <span class="text-red-500">*</span></label>
+            <input type="number" min="1" name="max_projects_per_structure"
+                   value="{{ old('max_projects_per_structure', $eventConfig->max_projects_per_structure ?? 500) }}"
+                   class="form-input @error('max_projects_per_structure') border-red-400 @enderror" required>
+            <p class="text-xs text-gray-400 mt-1">Nombre de projets qu'une même structure peut soumettre au total pour cet événement</p>
+            @error('max_projects_per_structure') <p class="form-error">{{ $message }}</p> @enderror
+        </div>
+        <div>
+            <label class="form-label">Nombre maximum de projets par porteur <span class="text-gray-400 font-normal">(optionnel)</span></label>
+            <input type="number" min="1" name="max_projects_per_porteur"
+                   value="{{ old('max_projects_per_porteur', $eventConfig->max_projects_per_porteur ?? '') }}"
+                   class="form-input @error('max_projects_per_porteur') border-red-400 @enderror"
+                   placeholder="Illimité si vide">
+            <p class="text-xs text-gray-400 mt-1">Laissez vide pour un nombre illimité de dépôts par porteur</p>
+            @error('max_projects_per_porteur') <p class="form-error">{{ $message }}</p> @enderror
+        </div>
     </div>
 </div>
 

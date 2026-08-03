@@ -146,6 +146,8 @@ class ProjectSubmissionController extends Controller
                 'population_category'  => $student?->populationCategoryValue() ?? $data['cycle'],
                 'numero_carte'         => $data['numero_carte'] ?? null,
                 'cin'                  => $data['cin'] ?? null,
+                'email'                => $student?->preferredEmail(),
+                'phone'                => $student->telephone ?? null,
             ]]);
         } elseif ($data['profile_type'] === 'personnel') {
             // Le matricule est la clé de recherche obligatoire (l'email institutionnel n'est
@@ -167,6 +169,8 @@ class ProjectSubmissionController extends Controller
                 'population_category'  => $personnel->categorie ?? $data['categorie'],
                 'matricule'            => $data['matricule'],
                 'email_institutionnel' => $data['email_institutionnel'] ?? null,
+                'email'                => $data['email_institutionnel'] ?? $personnel?->preferredEmail(),
+                'phone'                => $personnel->telephone ?? null,
             ]]);
         } else {
             session([self::SESSION_IDENTITY_KEY => [
@@ -265,7 +269,10 @@ class ProjectSubmissionController extends Controller
         }
 
         // Un porteur déjà identifié (numéro de carte / matricule déjà vu) retrouve son
-        // compte technique existant au lieu d'en dupliquer un nouveau à chaque dépôt.
+        // compte technique existant au lieu d'en dupliquer un nouveau à chaque dépôt. Si la
+        // carte/matricule ne donne rien (ex : identification via un autre canal) mais que
+        // l'email correspond à un compte déjà lié à la même carte/matricule (ou sans carte du
+        // tout, cas "autre"), c'est la même personne : on la retrouve plutôt que de bloquer.
         $user = null;
         if (!empty($identity['numero_carte'])) {
             $user = User::where('numero_carte', $identity['numero_carte'])->first();
@@ -273,22 +280,37 @@ class ProjectSubmissionController extends Controller
             $user = User::where('matricule', $identity['matricule'])->first();
         }
 
-        if ($user) {
-            if ($user->email !== $data['email'] && User::where('email', $data['email'])->where('id', '!=', $user->id)->exists()) {
-                return back()->withInput()->withErrors(['email' => 'Cet email est déjà utilisé par un autre dossier.']);
+        if (!$user) {
+            $emailMatch = User::where('email', $data['email'])->first();
+            $sameCard = $emailMatch
+                && (empty($identity['numero_carte']) || $emailMatch->numero_carte === $identity['numero_carte'])
+                && (empty($identity['matricule']) || $emailMatch->matricule === $identity['matricule']);
+
+            if ($emailMatch && !$sameCard) {
+                return back()->withInput()->withErrors([
+                    'email' => 'Cet email est déjà utilisé par un autre dossier. Si vous avez déjà déposé un projet, ré-identifiez-vous avec le même numéro de carte / matricule.',
+                ]);
             }
+
+            $user = $emailMatch;
+        }
+
+        if ($user) {
+            if (!$user->canSubmitMoreProjects($event)) {
+                return back()->withInput()->withErrors([
+                    'title' => 'Vous avez atteint le nombre maximum de projets que vous pouvez déposer pour cet événement.',
+                ]);
+            }
+
             $user->update([
                 'name'         => trim($identity['prenom'] . ' ' . $identity['nom']),
                 'email'        => $data['email'],
                 'phone'        => $data['phone'] ?? $user->phone,
                 'structure_id' => $structure->id,
+                'numero_carte' => $identity['numero_carte'] ?? $user->numero_carte,
+                'matricule'    => $identity['matricule'] ?? $user->matricule,
             ]);
         } else {
-            if (User::where('email', $data['email'])->exists()) {
-                return back()->withInput()->withErrors([
-                    'email' => 'Cet email est déjà utilisé par un autre dossier. Si vous avez déjà déposé un projet, ré-identifiez-vous avec le même numéro de carte / matricule.',
-                ]);
-            }
             $user = User::create([
                 'name'                 => trim($identity['prenom'] . ' ' . $identity['nom']),
                 'email'                => $data['email'],

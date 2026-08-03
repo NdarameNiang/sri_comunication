@@ -15,6 +15,7 @@ class Personnel extends Model
 {
     protected $fillable = [
         'matricule', 'nom', 'prenom', 'categorie', 'structure', 'synced_at',
+        'email_ucad', 'email_personnel', 'telephone',
     ];
 
     protected function casts(): array
@@ -30,5 +31,10 @@ class Personnel extends Model
     public function populationCategoryValue(): ?string
     {
         return $this->categorie;
+    }
+
+    public function preferredEmail(): ?string
+    {
+        return trim($this->email_ucad ?? $this->email_personnel ?? '') ?: null;
     }
 }

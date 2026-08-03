@@ -94,14 +94,14 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <label class="form-label">Adresse email</label>
-                    <input type="email" name="email" value="{{ old('email') }}"
+                    <input type="email" name="email" id="email" value="{{ old('email') }}"
                            class="form-input @error('email') border-red-400 bg-red-50 @enderror"
                            placeholder="votre@email.com" autocomplete="email">
                     @error('email') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="form-label">Confirmer l'email</label>
-                    <input type="email" name="email_confirmation" value="{{ old('email_confirmation') }}"
+                    <input type="email" name="email_confirmation" id="email_confirmation" value="{{ old('email_confirmation') }}"
                            class="form-input @error('email_confirmation') border-red-400 bg-red-50 @enderror"
                            placeholder="votre@email.com" autocomplete="off">
                     @error('email_confirmation') <p class="form-error">{{ $message }}</p> @enderror
@@ -111,7 +111,7 @@
                         Téléphone
                         <span class="text-gray-400 font-normal ml-1">(7X XXX XX XX)</span>
                     </label>
-                    <input type="text" name="telephone" value="{{ old('telephone') }}"
+                    <input type="text" name="telephone" id="telephone" value="{{ old('telephone') }}"
                            class="form-input @error('telephone') border-red-400 bg-red-50 @enderror"
                            placeholder="77 000 00 00" maxlength="9" inputmode="numeric">
                     @error('telephone') <p class="form-error">{{ $message }}</p> @enderror
@@ -194,6 +194,9 @@
         const nom    = document.getElementById('nom');
         const institution = document.getElementById('institution');
         const category    = document.getElementById('population_category');
+        const email       = document.getElementById('email');
+        const emailConfirm = document.getElementById('email_confirmation');
+        const telephone   = document.getElementById('telephone');
         if (!input) return;
 
         let lastLookup = '';
@@ -216,6 +219,9 @@
                         if (nom && !nom.value) nom.value = data.nom || '';
                         if (institution && !institution.value && data.institution) institution.value = data.institution;
                         if (category && data.population_category) category.value = data.population_category;
+                        if (email && !email.value && data.email) email.value = data.email;
+                        if (emailConfirm && !emailConfirm.value && data.email) emailConfirm.value = data.email;
+                        if (telephone && !telephone.value && data.telephone) telephone.value = data.telephone;
                         status.textContent = `Identité trouvée : ${data.prenom} ${data.nom}`;
                         status.className = 'text-xs mt-1 text-emerald-600 font-medium';
                     } else {

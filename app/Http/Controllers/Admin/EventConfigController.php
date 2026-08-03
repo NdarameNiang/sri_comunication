@@ -84,6 +84,7 @@ class EventConfigController extends Controller
             'enabled_profile_types'   => 'nullable|array',
             'enabled_profile_types.*' => 'in:etudiant,personnel,autre',
             'max_projects_per_structure' => 'required|integer|min:1',
+            'max_projects_per_porteur' => 'nullable|integer|min:1',
             'primary_color'       => 'nullable|regex:/^#[0-9a-fA-F]{6}$/',
         ]);
 

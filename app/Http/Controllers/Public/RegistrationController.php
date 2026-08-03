@@ -50,6 +50,8 @@ class RegistrationController extends Controller
                 'prenom'              => $student->prenom,
                 'population_category' => $student->populationCategoryValue(),
                 'institution'         => $student->structure,
+                'email'               => $student->preferredEmail(),
+                'telephone'           => $student->telephone,
             ]);
         }
 
@@ -62,6 +64,8 @@ class RegistrationController extends Controller
                 'prenom'              => $personnel->prenom,
                 'population_category' => $personnel->populationCategoryValue(),
                 'institution'         => $personnel->structure,
+                'email'               => $personnel->preferredEmail(),
+                'telephone'           => $personnel->telephone,
             ]);
         }
 

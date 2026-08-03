@@ -11,7 +11,7 @@ class EventConfig extends Model
         'event_start_date', 'event_end_date',
         'submission_open_at', 'submission_close_at',
         'inscription_open_at', 'inscription_close_at',
-        'is_active', 'show_questionnaire', 'max_projects_per_structure',
+        'is_active', 'show_questionnaire', 'max_projects_per_structure', 'max_projects_per_porteur',
         'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
         'allow_public_submission', 'require_identity_verification', 'enabled_profile_types',
         'logo_path', 'logo_white_path', 'hero_image_path', 'primary_color',

@@ -56,14 +56,19 @@ class StudentSyncService
                 Student::updateOrCreate(
                     ['numero_carte' => $s['numero_carte']],
                     [
-                        'cin'       => $s['cin'] ?? null,
-                        'nom'       => $s['nom'] ?? '',
-                        'prenom'    => $s['prenom'] ?? '',
-                        'annee'     => $current['annee'] ?? null,
-                        'cycle'     => $current['cycle'] ?? null,
-                        'formation' => $current['formation'] ?? null,
-                        'structure' => $current['structure'] ?? null,
-                        'synced_at' => now(),
+                        'cin'             => $s['cin'] ?? null,
+                        'nom'             => $s['nom'] ?? '',
+                        'prenom'          => $s['prenom'] ?? '',
+                        'email_ucad'      => trim($s['email_ucad'] ?? '') ?: null,
+                        'email_personnel' => trim($s['email_personnel'] ?? '') ?: null,
+                        'telephone'       => $s['telephone'] ?? null,
+                        'sexe'            => $s['sexe'] ?? null,
+                        'adresse'         => $s['adresse'] ?? null,
+                        'annee'           => $current['annee'] ?? null,
+                        'cycle'           => $current['cycle'] ?? null,
+                        'formation'       => $current['formation'] ?? null,
+                        'structure'       => $current['structure'] ?? null,
+                        'synced_at'       => now(),
                     ]
                 );
                 $totalStudents++;

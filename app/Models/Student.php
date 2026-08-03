@@ -8,6 +8,7 @@ class Student extends Model
 {
     protected $fillable = [
         'numero_carte', 'cin', 'nom', 'prenom',
+        'email_ucad', 'email_personnel', 'telephone', 'sexe', 'adresse',
         'annee', 'cycle', 'formation', 'structure', 'synced_at',
     ];
 
@@ -19,6 +20,16 @@ class Student extends Model
     public function fullName(): string
     {
         return trim($this->prenom . ' ' . $this->nom);
+    }
+
+    /**
+     * Email institutionnel privilégié pour pré-remplir les formulaires publics — l'API
+     * StudentCenter renvoie parfois l'email personnel avec des espaces parasites en fin de
+     * chaîne, d'où le trim systématique.
+     */
+    public function preferredEmail(): ?string
+    {
+        return trim($this->email_ucad ?? $this->email_personnel ?? '') ?: null;
     }
 
     /**

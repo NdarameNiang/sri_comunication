@@ -48,6 +48,26 @@ class User extends Authenticatable
         return $this->hasMany(Project::class, 'porteur_id');
     }
 
+    /**
+     * Quota de dépôts par porteur, configuré par événement — null (non renseigné) = illimité,
+     * même principe que Structure::maxProjectsPerStructure() mais sans valeur par défaut
+     * puisque l'absence de configuration signifie explicitement "pas de limite".
+     */
+    public function canSubmitMoreProjects(?EventConfig $event = null): bool
+    {
+        $event ??= EventConfig::active();
+        $limit = $event?->max_projects_per_porteur;
+        if (!$limit) {
+            return true;
+        }
+
+        $count = $event
+            ? $this->projectAssignments()->where('event_config_id', $event->id)->count()
+            : $this->projectAssignments()->count();
+
+        return $count < $limit;
+    }
+
     public function isSuperAdmin(): bool        { return $this->role === 'superadmin'; }
     public function isDirectionRecherche(): bool { return $this->role === 'direction_recherche'; }
     public function isPointFocal(): bool         { return $this->role === 'point_focal'; }
