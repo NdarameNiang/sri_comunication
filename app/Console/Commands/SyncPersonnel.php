@@ -2,21 +2,21 @@
 
 namespace App\Console\Commands;
 
-use App\Services\StudentSyncService;
+use App\Services\PersonnelSyncService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
-class SyncStudents extends Command
+class SyncPersonnel extends Command
 {
-    public const PROGRESS_CACHE_KEY = 'sync_progress:students';
+    public const PROGRESS_CACHE_KEY = 'sync_progress:personnel';
 
-    protected $signature = 'students:sync {--max-pages= : Limiter le nombre de pages (tests)}';
+    protected $signature = 'personnel:sync {--max-pages= : Limiter le nombre de pages (tests)}';
 
-    protected $description = 'Synchronise les étudiants depuis l\'API StudentCenter UCAD vers la base locale';
+    protected $description = 'Synchronise le personnel PER/PATS depuis l\'API UCAD vers la base locale';
 
-    public function handle(StudentSyncService $service): int
+    public function handle(PersonnelSyncService $service): int
     {
-        $this->info('Synchronisation StudentCenter en cours…');
+        $this->info('Synchronisation Personnel en cours…');
 
         $maxPages = $this->option('max-pages') ? (int) $this->option('max-pages') : null;
 
@@ -45,7 +45,7 @@ class SyncStudents extends Command
             'status' => 'done', 'stats' => $stats,
         ], now()->addHours(2));
 
-        $this->info("Terminé : {$stats['students']} étudiant(s) synchronisé(s) sur {$stats['pages']} page(s), {$stats['errors']} erreur(s).");
+        $this->info("Terminé : {$stats['personnel']} personnel synchronisé sur {$stats['pages']} page(s), {$stats['errors']} erreur(s).");
 
         return $stats['errors'] > 0 ? self::FAILURE : self::SUCCESS;
     }

@@ -13,9 +13,10 @@ class PersonnelSyncService
      * locale `personnels`. Calqué sur StudentSyncService — pagine jusqu'au bout, à lancer
      * en tâche planifiée plutôt qu'en requête web.
      *
+     * @param  callable(array{page:int,last_page:?int,synced:int})|null  $onProgress  Appelé après chaque page.
      * @return array{pages: int, personnel: int, errors: int}
      */
-    public function syncAll(int $perPage = 500, ?int $maxPages = null): array
+    public function syncAll(int $perPage = 500, ?int $maxPages = null, ?callable $onProgress = null): array
     {
         $url   = config('services.personnel.url');
         $token = config('services.personnel.token');
@@ -69,6 +70,11 @@ class PersonnelSyncService
             }
 
             $lastPage = $json['last_page'] ?? $page;
+
+            if ($onProgress) {
+                $onProgress(['page' => $page, 'last_page' => $lastPage, 'synced' => $totalPersonnel]);
+            }
+
             $page++;
         } while ($page <= $lastPage && (!$maxPages || $page <= $maxPages));
 

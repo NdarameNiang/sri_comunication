@@ -139,6 +139,7 @@ Route::middleware(['auth', 'active'])->group(function () {
             Route::get('students', [StudentSyncController::class, 'index'])->name('students.index');
             Route::post('students/sync', [StudentSyncController::class, 'sync'])->name('students.sync');
             Route::post('students/sync-personnel', [StudentSyncController::class, 'syncPersonnel'])->name('students.sync-personnel');
+            Route::get('students/sync-status/{type}', [StudentSyncController::class, 'status'])->name('students.sync-status');
         });
 
     // ── Direction de la Recherche ───────────────────────────────────────────

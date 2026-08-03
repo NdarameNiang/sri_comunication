@@ -13,9 +13,10 @@ class StudentSyncService
      * table locale `students`. Pagine jusqu'au bout (~3000 pages à 500/page pour
      * ~156k étudiants côté API) — à lancer en tâche planifiée, pas en requête web.
      *
+     * @param  callable(array{page:int,last_page:?int,synced:int})|null  $onProgress  Appelé après chaque page.
      * @return array{pages: int, students: int, errors: int}
      */
-    public function syncAll(int $perPage = 500, ?int $maxPages = null): array
+    public function syncAll(int $perPage = 500, ?int $maxPages = null, ?callable $onProgress = null): array
     {
         $url   = config('services.studentcenter.url');
         $token = config('services.studentcenter.token');
@@ -75,6 +76,11 @@ class StudentSyncService
             }
 
             $lastPage = $json['last_page'] ?? $page;
+
+            if ($onProgress) {
+                $onProgress(['page' => $page, 'last_page' => $lastPage, 'synced' => $totalStudents]);
+            }
+
             $page++;
         } while ($page <= $lastPage && (!$maxPages || $page <= $maxPages));
 
