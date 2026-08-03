@@ -81,6 +81,7 @@ class EventConfigController extends Controller
             'show_questionnaire'   => 'nullable|boolean',
             'allow_public_submission' => 'nullable|boolean',
             'require_identity_verification' => 'nullable|boolean',
+            'evaluation_enabled'      => 'nullable|boolean',
             'enabled_profile_types'   => 'nullable|array',
             'enabled_profile_types.*' => 'in:etudiant,personnel,autre',
             'max_projects_per_structure' => 'required|integer|min:1',
@@ -91,6 +92,7 @@ class EventConfigController extends Controller
         $data['show_questionnaire']      = $request->boolean('show_questionnaire');
         $data['allow_public_submission'] = $request->boolean('allow_public_submission');
         $data['require_identity_verification'] = $request->boolean('require_identity_verification');
+        $data['evaluation_enabled']      = $request->boolean('evaluation_enabled');
         $data['enabled_profile_types']   = $request->input('enabled_profile_types', []);
 
         return $data;

@@ -193,6 +193,7 @@
                     @include('components.icon', ['name' => 'users'])
                     <span>Étudiants (StudentCenter)</span>
                 </a>
+                @if($activeEvent?->evaluationEnabled())
                 <a href="{{ route('evaluation.rubrics.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.rubrics.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'check-circle'])
                     <span>Grille d'évaluation</span>
@@ -201,6 +202,7 @@
                     @include('components.icon', ['name' => 'star'])
                     <span>Classement & sélection</span>
                 </a>
+                @endif
             @endif
 
             {{-- Porteur de Projet --}}
@@ -248,6 +250,20 @@
                     @include('components.icon', ['name' => 'calendar'])
                     <span>Période de soumission</span>
                 </a>
+                @if($activeEvent?->evaluationEnabled())
+                @can('evaluation.score')
+                <a href="{{ route('deliberation.scoring.index') }}" class="sidebar-link {{ request()->routeIs('deliberation.scoring.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'check-circle'])
+                    <span>Noter les projets</span>
+                </a>
+                @endcan
+                @can('evaluation.viewRanking')
+                <a href="{{ route('evaluation.ranking.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.ranking.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'star'])
+                    <span>Délibération</span>
+                </a>
+                @endcan
+                @endif
             @endif
 
             {{-- Secrétaire --}}

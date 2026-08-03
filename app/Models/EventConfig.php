@@ -14,6 +14,7 @@ class EventConfig extends Model
         'is_active', 'show_questionnaire', 'max_projects_per_structure', 'max_projects_per_porteur',
         'selection_quota', 'evaluation_open_at', 'evaluation_close_at',
         'allow_public_submission', 'require_identity_verification', 'enabled_profile_types',
+        'evaluation_enabled',
         'logo_path', 'logo_white_path', 'hero_image_path', 'primary_color',
     ];
 
@@ -33,6 +34,7 @@ class EventConfig extends Model
             'allow_public_submission' => 'boolean',
             'require_identity_verification' => 'boolean',
             'enabled_profile_types' => 'array',
+            'evaluation_enabled' => 'boolean',
         ];
     }
 
@@ -125,6 +127,17 @@ class EventConfig extends Model
     public function allowsPublicSubmission(): bool
     {
         return $this->allow_public_submission && $this->isSubmissionOpen();
+    }
+
+    /**
+     * Certains événements n'ont pas de phase d'évaluation/sélection (ex : simple inscription
+     * ou dépôt sans jury) — quand désactivé, la notation, le classement et la délibération
+     * sont entièrement masqués/inaccessibles pour cet événement, comme allow_public_submission
+     * pour le dépôt public.
+     */
+    public function evaluationEnabled(): bool
+    {
+        return (bool) $this->evaluation_enabled;
     }
 
     /**

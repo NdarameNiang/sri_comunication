@@ -12,8 +12,20 @@ use Illuminate\Support\Facades\DB;
 
 class ScoringController extends Controller
 {
+    /**
+     * Un événement peut ne pas avoir de phase d'évaluation/sélection (ex : simple inscription
+     * sans jury) — la notation est alors entièrement inaccessible, 404 comme les autres
+     * fonctionnalités optionnelles par événement (allow_public_submission, etc.).
+     */
+    private function ensureEvaluationEnabled(): void
+    {
+        abort_unless(EventConfig::active()?->evaluationEnabled(), 404);
+    }
+
     public function index()
     {
+        $this->ensureEvaluationEnabled();
+
         $projects = Project::where('status', 'submitted')
             ->forEvent(EventConfig::active())
             ->with(['porteur', 'structure', 'assignment'])
@@ -29,6 +41,8 @@ class ScoringController extends Controller
 
     public function show(Project $project)
     {
+        $this->ensureEvaluationEnabled();
+
         if (!$project->isSubmitted()) {
             abort(404);
         }
@@ -53,6 +67,8 @@ class ScoringController extends Controller
 
     public function store(Request $request, Project $project)
     {
+        $this->ensureEvaluationEnabled();
+
         if (!$project->isSubmitted()) {
             abort(404);
         }

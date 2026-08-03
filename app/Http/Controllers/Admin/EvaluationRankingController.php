@@ -11,8 +11,20 @@ use Illuminate\Support\Facades\Auth;
 
 class EvaluationRankingController extends Controller
 {
+    /**
+     * Un événement peut ne pas avoir de phase d'évaluation/sélection — le classement/
+     * délibération est alors entièrement inaccessible, 404 comme les autres fonctionnalités
+     * optionnelles par événement.
+     */
+    private function ensureEvaluationEnabled(): void
+    {
+        abort_unless(EventConfig::active()?->evaluationEnabled(), 404);
+    }
+
     public function index()
     {
+        $this->ensureEvaluationEnabled();
+
         $event = EventConfig::active();
 
         $projects = Project::where('status', 'submitted')
@@ -34,6 +46,7 @@ class EvaluationRankingController extends Controller
 
     public function updateQuota(Request $request)
     {
+        $this->ensureEvaluationEnabled();
         $event = EventConfig::active();
         abort_if(!$event, 404, 'Aucun événement actif.');
 
@@ -48,6 +61,7 @@ class EvaluationRankingController extends Controller
 
     public function recalculate(EvaluationService $service)
     {
+        $this->ensureEvaluationEnabled();
         $event = EventConfig::active();
         abort_if(!$event, 404, 'Aucun événement actif.');
 
@@ -61,6 +75,8 @@ class EvaluationRankingController extends Controller
 
     public function resolveTie(Request $request, Project $project)
     {
+        $this->ensureEvaluationEnabled();
+
         if (!$project->isEvaluationTiedPending()) {
             return back()->with('error', 'Ce projet n\'est pas en attente de décision.');
         }
@@ -86,6 +102,8 @@ class EvaluationRankingController extends Controller
      */
     public function applyToSelection()
     {
+        $this->ensureEvaluationEnabled();
+
         $projects = Project::where('status', 'submitted')
             ->forEvent(EventConfig::active())
             ->whereIn('evaluation_status', ['included', 'excluded'])

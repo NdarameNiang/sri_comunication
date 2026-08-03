@@ -73,6 +73,7 @@ class RolePermissionSeeder extends Seeder
                     'porteurs.manage', 'porteurs.credentials',
                     'projects.viewAll', 'projects.select',
                     'submission-period.manage',
+                    'evaluation.score', 'evaluation.viewRanking',
                 ],
             ],
             [

@@ -74,6 +74,26 @@
     </div>
 </div>
 
+{{-- Évaluation --}}
+<div>
+    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Évaluation & délibération</p>
+    <label class="flex items-center gap-3 p-4 rounded-xl border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors">
+        <div class="relative inline-flex items-center">
+            <input type="hidden" name="evaluation_enabled" value="0">
+            <input type="checkbox" name="evaluation_enabled" value="1"
+                   id="evaluation_enabled"
+                   {{ old('evaluation_enabled', $eventConfig->evaluation_enabled ?? true) ? 'checked' : '' }}
+                   class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-checked:bg-blue-600 rounded-full transition-colors"></div>
+            <div class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform peer-checked:translate-x-5"></div>
+        </div>
+        <div>
+            <p class="text-sm font-semibold text-gray-800">Activer l'évaluation des projets</p>
+            <p class="text-xs text-gray-400 mt-0.5">Désactivez pour un événement sans jury/notation (ex : simple inscription ou dépôt sans sélection) — masque la grille, la notation et le classement pour tous les rôles concernés.</p>
+        </div>
+    </label>
+</div>
+
 {{-- Options publiques --}}
 <div>
     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Options de la page publique</p>
