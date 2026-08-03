@@ -53,9 +53,12 @@
                         <p class="text-sm font-medium text-gray-800">{{ $criterion->label }}</p>
                         <p class="text-xs text-gray-400">Barème : {{ $criterion->max_points }} pts</p>
                     </div>
-                    <input type="number" name="points[{{ $criterion->id }}]" min="0" max="{{ $criterion->max_points }}" step="0.5"
-                           value="{{ old("points.{$criterion->id}", $existingPoints->get($criterion->id, '')) }}"
-                           class="form-input w-24 text-sm text-center points-input" data-max="{{ $criterion->max_points }}" required>
+                    <div class="shrink-0">
+                        <input type="number" name="points[{{ $criterion->id }}]" min="0" max="{{ $criterion->max_points }}" step="0.5"
+                               value="{{ old("points.{$criterion->id}", $existingPoints->get($criterion->id, '')) }}"
+                               class="form-input w-24 text-sm text-center points-input" data-max="{{ $criterion->max_points }}" required>
+                        @error("points.{$criterion->id}") <p class="form-error text-right">{{ $message }}</p> @enderror
+                    </div>
                 </div>
                 @endforeach
             </div>
@@ -76,7 +79,18 @@ function recomputeTotal() {
     document.querySelectorAll('.points-input').forEach(el => total += parseFloat(el.value) || 0);
     document.getElementById('total-points').textContent = total;
 }
-document.querySelectorAll('.points-input').forEach(el => el.addEventListener('input', recomputeTotal));
+function clampToMax(el) {
+    const max = parseFloat(el.dataset.max);
+    const val = parseFloat(el.value);
+    const overMax = !isNaN(val) && val > max;
+    el.classList.toggle('border-red-400', overMax);
+    el.classList.toggle('bg-red-50', overMax);
+    if (overMax) el.value = max;
+}
+document.querySelectorAll('.points-input').forEach(el => {
+    el.addEventListener('input', function () { clampToMax(this); recomputeTotal(); });
+    clampToMax(el);
+});
 recomputeTotal();
 </script>
 @endpush
