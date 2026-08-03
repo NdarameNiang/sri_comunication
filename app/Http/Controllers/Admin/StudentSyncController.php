@@ -42,17 +42,29 @@ class StudentSyncController extends Controller
 
     /**
      * Lance une commande artisan en processus détaché plutôt que via la file d'attente
-     * database : ce serveur Laragon n'a pas de worker (php artisan queue:work) actif en
-     * permanence, donc les jobs mis en file n'étaient jamais traités. `start /B` (Windows)
-     * détache le processus de la requête HTTP courante, qui peut répondre immédiatement
-     * pendant que la synchronisation tourne en arrière-plan.
+     * database : sans worker (php artisan queue:work) actif en permanence, les jobs mis en
+     * file ne sont jamais traités. La syntaxe de détachement diffère entre Windows (local,
+     * `start /B`) et Linux (production, `nohup … &`) — les deux répondent immédiatement à la
+     * requête HTTP pendant que la synchronisation tourne en arrière-plan.
      */
     private function runDetached(string $artisanCommand): void
     {
         $php = PHP_BINARY;
         $artisan = base_path('artisan');
-        $command = "start /B \"\" \"{$php}\" \"{$artisan}\" {$artisanCommand}";
-        pclose(popen($command, 'r'));
+
+        if (PHP_OS_FAMILY === 'Windows') {
+            $command = "start /B \"\" \"{$php}\" \"{$artisan}\" {$artisanCommand}";
+            pclose(popen($command, 'r'));
+            return;
+        }
+
+        $command = sprintf(
+            'nohup %s %s %s > /dev/null 2>&1 &',
+            escapeshellarg($php),
+            escapeshellarg($artisan),
+            $artisanCommand
+        );
+        exec($command);
     }
 
     public function status(string $type)
