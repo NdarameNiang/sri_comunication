@@ -120,24 +120,26 @@
                     @include('components.icon', ['name' => 'check-circle'])
                     <span>Grille d'évaluation</span>
                 </a>
-                <a href="{{ route('deliberation.scoring.index') }}" class="sidebar-link {{ request()->routeIs('deliberation.scoring.*') ? 'active' : '' }}">
-                    @include('components.icon', ['name' => 'check-circle'])
-                    <span>Noter les projets</span>
-                </a>
-                <a href="{{ route('evaluation.ranking.index') }}" class="sidebar-link {{ request()->routeIs('evaluation.ranking.*') ? 'active' : '' }}">
-                    @include('components.icon', ['name' => 'star'])
-                    <span>Classement & délibération</span>
-                </a>
                 <div class="border-t border-white/10 my-3"></div>
                 <p class="text-white/30 text-xs uppercase tracking-widest px-3 mb-2">Gestion</p>
                 <a href="{{ route('direction.dashboard') }}" class="sidebar-link {{ request()->routeIs('direction.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'office'])
                     <span>Espace {{ \App\Models\User::roleLabel('direction_recherche') }}</span>
                 </a>
-                <a href="{{ route('comite.dashboard') }}" class="sidebar-link {{ request()->routeIs('comite.*') ? 'active' : '' }}">
+                <a href="{{ route('comite.dashboard') }}" class="sidebar-link {{ request()->routeIs('comite.dashboard') || request()->routeIs('comite.porteurs.*') || request()->routeIs('comite.submission-period.*') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'star'])
                     <span>Espace {{ \App\Models\User::roleLabel('comite_scientifique') }}</span>
                 </a>
+                @if($activeEvent?->evaluationEnabled())
+                <a href="{{ route('deliberation.scoring.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('deliberation.scoring.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'check-circle'])
+                    <span>Noter les projets</span>
+                </a>
+                <a href="{{ route('evaluation.ranking.index') }}" class="sidebar-link pl-8 {{ request()->routeIs('evaluation.ranking.*') ? 'active' : '' }}">
+                    @include('components.icon', ['name' => 'star'])
+                    <span>Délibération</span>
+                </a>
+                @endif
                 <a href="{{ route('secretaire.dashboard') }}" class="sidebar-link {{ request()->routeIs('secretaire.dashboard') ? 'active' : '' }}">
                     @include('components.icon', ['name' => 'document'])
                     <span>Espace {{ \App\Models\User::roleLabel('secretaire') }}</span>
