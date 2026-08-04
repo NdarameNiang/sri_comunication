@@ -90,7 +90,7 @@ class RegistrationController extends Controller
             'email'              => 'nullable|email|max:255|same:email_confirmation',
             'email_confirmation' => 'nullable|email|max:255',
             'telephone'        => ['nullable', 'regex:/^(70|71|75|76|77|78)\d{7}$/'],
-            'institution'      => 'nullable|string|max:255',
+            'institution'      => 'required|string|max:255',
             'fonction'         => 'nullable|string|max:255',
             'type_participant' => 'nullable|string|max:100',
             'population_category' => ['nullable', Rule::in($allowedCategories)],

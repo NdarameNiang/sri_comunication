@@ -66,10 +66,16 @@
             </div>
             @if($requireVerification)
             <div class="mt-4">
-                <label class="form-label">Mot de passe (ENT / StudentCenter) <span class="text-red-500">*</span></label>
+                <label class="form-label">Mot de passe <span class="text-red-500">*</span></label>
                 <input type="password" name="mot_de_passe" required autocomplete="current-password"
                        class="form-input @error('mot_de_passe') border-red-400 bg-red-50 @enderror"
                        placeholder="Votre mot de passe">
+                <p class="text-xs text-gray-400 mt-1">
+                    Étudiant : le mot de passe de
+                    <a href="https://studentcenter.ucad.sn" target="_blank" rel="noopener" class="text-blue-600 hover:underline">studentcenter.ucad.sn</a>
+                    · Personnel : celui de
+                    <a href="https://ent.ucad.sn" target="_blank" rel="noopener" class="text-blue-600 hover:underline">ent.ucad.sn</a>
+                </p>
                 @error('mot_de_passe') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             @endif
@@ -133,9 +139,10 @@
             <p class="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Affiliation professionnelle</p>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="form-label">Institution / Établissement</label>
-                    <input type="text" name="institution" id="institution" value="{{ old('institution') }}"
-                           class="form-input" placeholder="UCAD, ISED, autre…">
+                    <label class="form-label">Institution / Établissement <span class="text-red-500">*</span></label>
+                    <input type="text" name="institution" id="institution" value="{{ old('institution') }}" required
+                           class="form-input @error('institution') border-red-400 bg-red-50 @enderror" placeholder="UCAD, ISED, autre…">
+                    @error('institution') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
                     <label class="form-label">Fonction / Titre</label>

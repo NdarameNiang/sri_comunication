@@ -14,11 +14,12 @@
             </svg>
         </div>
         <div>
-            <h2 class="font-bold text-gray-900 text-base leading-tight">Identité confirmée</h2>
+            <h2 class="font-bold text-gray-900 text-base leading-tight">
+                {{ $identity['type'] === 'autre' ? 'Vos informations' : 'Identité confirmée' }}
+            </h2>
             <p class="text-xs text-gray-400 mt-0.5">
                 @if($identity['type'] === 'etudiant') Étudiant confirmé via StudentCenter
                 @elseif($identity['type'] === 'personnel') Personnel confirmé via matricule
-                @else Identité saisie librement
                 @endif
             </p>
         </div>

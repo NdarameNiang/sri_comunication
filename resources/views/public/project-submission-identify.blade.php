@@ -113,10 +113,14 @@
                 @error('email_professionnel_etudiant') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">Mot de passe (ENT) <span class="text-red-500">*</span></label>
+                <label class="form-label">Mot de passe (StudentCenter) <span class="text-red-500">*</span></label>
                 <input type="password" name="mot_de_passe_etudiant" autocomplete="current-password"
                        class="form-input @error('mot_de_passe_etudiant') border-red-400 bg-red-50 @enderror"
                        placeholder="Votre mot de passe">
+                <p class="text-xs text-gray-400 mt-1">
+                    Le même mot de passe que sur
+                    <a href="https://studentcenter.ucad.sn" target="_blank" rel="noopener" class="text-blue-600 hover:underline">studentcenter.ucad.sn</a>
+                </p>
                 @error('mot_de_passe_etudiant') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             @unless($requireVerification)
@@ -163,10 +167,14 @@
                 @error('email_institutionnel') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">Mot de passe (ENT) <span class="text-red-500">*</span></label>
+                <label class="form-label">Mot de passe (ENT Personnel) <span class="text-red-500">*</span></label>
                 <input type="password" name="mot_de_passe_personnel" autocomplete="current-password"
                        class="form-input @error('mot_de_passe_personnel') border-red-400 bg-red-50 @enderror"
                        placeholder="Votre mot de passe">
+                <p class="text-xs text-gray-400 mt-1">
+                    Le même mot de passe que sur
+                    <a href="https://ent.ucad.sn" target="_blank" rel="noopener" class="text-blue-600 hover:underline">ent.ucad.sn</a>
+                </p>
                 @error('mot_de_passe_personnel') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             @unless($requireVerification)
