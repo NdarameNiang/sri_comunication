@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\EventConfig;
 use App\Models\Project;
 use App\Models\ProjectScore;
+use App\Models\Structure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -37,27 +38,52 @@ class ScoringController extends Controller
         return $key;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $this->ensureEvaluationEnabled();
 
         $event = EventConfig::active();
 
-        $projects = Project::where('status', 'submitted')
+        $query = Project::where('status', 'submitted')
             ->forEvent($event)
             ->with(['porteur', 'structure', 'assignment'])
-            ->latest()
-            ->paginate(20);
+            ->latest();
 
-        // En mode globale, "myScores" représente en réalité la note partagée du projet (il
-        // n'y en a qu'une), pas spécifiquement celle de l'évaluateur courant.
-        $myScores = $event->isGlobalDeliberation()
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('assignment', fn($a) => $a->where('title', 'like', "%{$search}%"))
+                  ->orWhereHas('porteur', fn($u) => $u->where('name', 'like', "%{$search}%"))
+                  ->orWhere('responsable_nom', 'like', "%{$search}%");
+            });
+        }
+
+        if ($structureId = $request->get('structure_id')) {
+            $query->where('structure_id', $structureId);
+        }
+
+        $allScores = $event->isGlobalDeliberation()
             ? ProjectScore::with('evaluator')->get()->keyBy('project_id')
             : ProjectScore::where('evaluator_id', Auth::id())->get()->keyBy('project_id');
 
+        if ($notation = $request->get('notation')) {
+            $scoredIds    = $allScores->filter(fn($s) => $s->isSubmitted())->keys()->toArray();
+            $draftIds     = $allScores->filter(fn($s) => !$s->isSubmitted())->keys()->toArray();
+            $allScoredIds = $allScores->keys()->toArray();
+            if ($notation === 'done')    $query->whereIn('id', $scoredIds);
+            if ($notation === 'draft')   $query->whereIn('id', $draftIds);
+            if ($notation === 'pending') $query->whereNotIn('id', $allScoredIds);
+        }
+
+        $projects = $query->paginate(20)->withQueryString();
+
+        $myScores = $allScores;
         $isGlobal = $event->isGlobalDeliberation();
 
-        return view('deliberation.scoring.index', compact('projects', 'myScores', 'isGlobal'));
+        $structures = Structure::whereIn('id',
+            Project::where('status', 'submitted')->forEvent($event)->distinct()->pluck('structure_id')
+        )->orderBy('name')->get();
+
+        return view('deliberation.scoring.index', compact('projects', 'myScores', 'isGlobal', 'structures'));
     }
 
     public function show(Project $project)

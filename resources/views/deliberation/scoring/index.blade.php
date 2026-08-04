@@ -11,7 +11,52 @@
         <span>Délibération en mode <strong>note unique partagée</strong> : la note enregistrée par un membre du comité vaut pour tout le monde et reste modifiable par n'importe qui.</span>
     </div>
     @endif
+
+    {{-- Filtres --}}
+    <form method="GET" action="{{ route('deliberation.scoring.index') }}" class="bg-white rounded-xl border border-gray-200 p-4">
+        <div class="flex flex-wrap gap-3 items-end">
+            <div class="flex-1 min-w-48">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Recherche</label>
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Titre du projet ou auteur…"
+                    class="form-input w-full text-sm">
+            </div>
+            <div class="w-56">
+                <label class="block text-xs font-medium text-gray-500 mb-1">Établissement</label>
+                <select name="structure_id" class="form-input w-full text-sm">
+                    <option value="">Tous les établissements</option>
+                    @foreach($structures as $structure)
+                        <option value="{{ $structure->id }}" {{ request('structure_id') == $structure->id ? 'selected' : '' }}>
+                            {{ $structure->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="w-44">
+                <label class="block text-xs font-medium text-gray-500 mb-1">État notation</label>
+                <select name="notation" class="form-input w-full text-sm">
+                    <option value="">Tous</option>
+                    <option value="pending" {{ request('notation') === 'pending' ? 'selected' : '' }}>Non commencée</option>
+                    <option value="draft"   {{ request('notation') === 'draft'   ? 'selected' : '' }}>Brouillon</option>
+                    <option value="done"    {{ request('notation') === 'done'    ? 'selected' : '' }}>Soumise</option>
+                </select>
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="btn-primary text-sm py-2 px-4">Filtrer</button>
+                @if(request()->hasAny(['search','structure_id','notation']))
+                <a href="{{ route('deliberation.scoring.index') }}" class="btn-secondary text-sm py-2 px-3">Réinitialiser</a>
+                @endif
+            </div>
+        </div>
+    </form>
+
     <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+        <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+            <p class="text-sm text-gray-500">
+                <span class="font-semibold text-gray-800">{{ $projects->total() }}</span> projet{{ $projects->total() > 1 ? 's' : '' }}
+                @if(request()->hasAny(['search','structure_id','notation']))<span class="text-xs text-gray-400 ml-1">(filtrés)</span>@endif
+            </p>
+        </div>
         <table class="min-w-full divide-y divide-gray-100 text-sm">
             <thead class="bg-gray-50/50">
                 <tr class="text-left text-xs text-gray-500 uppercase tracking-wide">

@@ -192,10 +192,10 @@ Route::middleware(['auth', 'active'])->group(function () {
         ->middleware('role:comite_scientifique,superadmin')
         ->group(function () {
             Route::get('/dashboard', [ComiteDashboard::class, 'index'])->name('dashboard');
+            Route::get('/projects/export', [ComiteProjectController::class, 'export'])->name('projects.export');
             Route::get('/projects/{project}', [ComiteDashboard::class, 'show'])->name('projects.show');
             Route::post('/projects/{project}/toggle', [SelectionController::class, 'toggle'])->name('projects.toggle');
             Route::post('/send-emails', [SelectionController::class, 'sendEmails'])->name('send-emails');
-            Route::get('/projects/export', [ComiteProjectController::class, 'export'])->name('projects.export');
 
             // Gestion porteurs par le comité
             Route::resource('porteurs', ComitePorteurController::class)->except(['show']);
