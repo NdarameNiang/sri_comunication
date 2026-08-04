@@ -28,9 +28,16 @@
       </p>
 
       {{-- Titre du projet --}}
+      @php
+        $isApprofondi = $project->isApprofondi();
+        $mainTitle = $isApprofondi ? ($project->approfondiDetails?->titre_complet ?? $project->assignment?->title) : $project->assignment?->title;
+      @endphp
       <div style="background:#f8fafc;border-left:4px solid #334155;border-radius:0 8px 8px 0;padding:16px 20px;margin:0 0 24px;">
-        <p style="color:#94a3b8;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin:0 0 6px;">Communication soumise</p>
-        <p style="color:#1e293b;font-size:17px;font-weight:700;margin:0;">{{ $project->assignment?->title }}</p>
+        <p style="color:#94a3b8;font-size:11px;letter-spacing:1px;text-transform:uppercase;margin:0 0 6px;">
+          Communication soumise
+          <span style="color:#4338ca;font-weight:700;">· Format {{ $isApprofondi ? 'Approfondi' : 'Standard' }}</span>
+        </p>
+        <p style="color:#1e293b;font-size:17px;font-weight:700;margin:0;">{{ $mainTitle }}</p>
       </div>
 
       {{-- Infos porteur --}}
@@ -58,10 +65,16 @@
           <td style="padding:10px 16px;font-size:13px;color:#1e293b;font-weight:500;">{{ $project->scientific_domain }}</td>
         </tr>
         @endif
-        @if($project->maturity_level)
+        @if(!$isApprofondi && $project->maturity_level)
         <tr style="border-top:1px solid #f1f5f9;">
           <td style="padding:10px 16px;font-size:13px;color:#6b7280;">Niveau de maturité</td>
-          <td style="padding:10px 16px;font-size:13px;color:#1e293b;font-weight:500;">{{ $project->maturity_level }}</td>
+          <td style="padding:10px 16px;font-size:13px;color:#1e293b;font-weight:500;">{{ \App\Models\Project::maturityLabels()[$project->maturity_level] ?? $project->maturity_level }}</td>
+        </tr>
+        @endif
+        @if($isApprofondi && $project->approfondiDetails?->trl_level)
+        <tr style="border-top:1px solid #f1f5f9;">
+          <td style="padding:10px 16px;font-size:13px;color:#6b7280;">Maturité technologique (TRL)</td>
+          <td style="padding:10px 16px;font-size:13px;color:#1e293b;font-weight:500;">{{ \App\Models\Project::trlLabels()[$project->approfondiDetails->trl_level] ?? $project->approfondiDetails->trl_level }}</td>
         </tr>
         @endif
         @if($project->project_types && count($project->project_types) > 0)
@@ -75,6 +88,25 @@
           <td style="padding:10px 16px;font-size:13px;color:#1e293b;font-weight:500;">{{ now()->format('d/m/Y à H:i') }}</td>
         </tr>
       </table>
+
+      {{-- Co-porteurs (approfondi uniquement) --}}
+      @if($isApprofondi && $project->coPorteurs && $project->coPorteurs->count() > 0)
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 24px;border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;">
+        <tr style="background:#f8fafc;">
+          <td style="padding:12px 16px;font-size:12px;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;font-weight:600;">
+            Co-porteurs ({{ $project->coPorteurs->count() }})
+          </td>
+        </tr>
+        @foreach($project->coPorteurs as $coPorteur)
+        <tr style="border-top:1px solid #f1f5f9;">
+          <td style="padding:10px 16px;font-size:13px;color:#1e293b;">
+            <strong>{{ $coPorteur->fullName() }}</strong>
+            @if($coPorteur->institution) <br><span style="color:#94a3b8;font-size:12px;">{{ $coPorteur->institution }}</span>@endif
+          </td>
+        </tr>
+        @endforeach
+      </table>
+      @endif
 
       {{-- Collaborateurs --}}
       @if($project->collaborators && $project->collaborators->count() > 0)

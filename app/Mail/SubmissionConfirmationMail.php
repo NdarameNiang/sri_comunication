@@ -24,12 +24,17 @@ class SubmissionConfirmationMail extends Mailable
         public Project $project,
     ) {
         $this->event = EventConfig::active();
+        $this->project->loadMissing(['approfondiDetails', 'coPorteurs', 'collaborators']);
     }
 
     public function envelope(): Envelope
     {
+        $title = $this->project->isApprofondi()
+            ? ($this->project->approfondiDetails?->titre_complet ?? $this->project->assignment?->title)
+            : $this->project->assignment?->title;
+
         return new Envelope(
-            subject: 'Confirmation de soumission – ' . ($this->project->assignment?->title ?? 'Communication'),
+            subject: 'Confirmation de soumission – ' . ($title ?? 'Communication'),
         );
     }
 
