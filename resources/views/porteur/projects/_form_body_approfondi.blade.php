@@ -117,14 +117,16 @@
                         @error('contact_email') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Email personnel</label>
+                        <label class="form-label">Email personnel <span class="text-red-500">*</span></label>
                         <input type="email" name="email_professionnel" value="{{ old('email_professionnel', $project?->email_professionnel) }}"
-                               class="form-input" {{ $readonly ? 'disabled' : '' }}>
+                               class="form-input" {{ $readonly ? 'disabled' : '' }} required>
+                        @error('email_professionnel') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Téléphone de contact</label>
+                        <label class="form-label">Téléphone de contact <span class="text-red-500">*</span></label>
                         <input type="text" name="contact_phone" value="{{ old('contact_phone', $project?->contact_phone ?? auth()->user()?->phone ?? $assignment->porteur?->phone ?? '') }}"
-                               class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="7X XXX XX XX">
+                               class="form-input" {{ $readonly ? 'disabled' : '' }} required placeholder="7X XXX XX XX">
+                        @error('contact_phone') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -184,30 +186,36 @@
                         <input type="url" name="laboratoire_site_web" value="{{ old('laboratoire_site_web', $d?->laboratoire_site_web) }}" class="form-input" {{ $readonly ? 'disabled' : '' }}>
                     </div>
                     <div>
-                        <label class="form-label">Titre du responsable</label>
-                        <input type="text" name="responsable_titre" value="{{ old('responsable_titre', $d?->responsable_titre) }}" class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="Professeur, Maître de conférences…">
+                        <label class="form-label">Titre du responsable <span class="text-red-500">*</span></label>
+                        <input type="text" name="responsable_titre" value="{{ old('responsable_titre', $d?->responsable_titre) }}" class="form-input" {{ $readonly ? 'disabled' : '' }} required placeholder="Professeur, Maître de conférences…">
+                        @error('responsable_titre') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Fonction du responsable</label>
-                        <input type="text" name="responsable_fonction" value="{{ old('responsable_fonction', $d?->responsable_fonction) }}" class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="Directeur de laboratoire, Chef d'équipe…">
+                        <label class="form-label">Fonction du responsable <span class="text-red-500">*</span></label>
+                        <input type="text" name="responsable_fonction" value="{{ old('responsable_fonction', $d?->responsable_fonction) }}" class="form-input" {{ $readonly ? 'disabled' : '' }} required placeholder="Directeur de laboratoire, Chef d'équipe…">
+                        @error('responsable_fonction') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Date de démarrage</label>
-                        <input type="date" name="date_demarrage" value="{{ old('date_demarrage', $d?->date_demarrage?->format('Y-m-d')) }}" class="form-input" {{ $readonly ? 'disabled' : '' }}>
+                        <label class="form-label">Date de démarrage <span class="text-red-500">*</span></label>
+                        <input type="date" name="date_demarrage" value="{{ old('date_demarrage', $d?->date_demarrage?->format('Y-m-d')) }}" class="form-input" {{ $readonly ? 'disabled' : '' }} required>
+                        @error('date_demarrage') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Durée totale prévue</label>
-                        <input type="text" name="duree_prevue" value="{{ old('duree_prevue', $d?->duree_prevue) }}" class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="Ex : 18 mois">
+                        <label class="form-label">Durée totale prévue <span class="text-red-500">*</span></label>
+                        <input type="text" name="duree_prevue" value="{{ old('duree_prevue', $d?->duree_prevue) }}" class="form-input" {{ $readonly ? 'disabled' : '' }} required placeholder="Ex : 18 mois">
+                        @error('duree_prevue') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
 
                 <div>
-                    <label class="form-label">Mots-clés (3 à 5, séparés par des virgules)</label>
-                    <input type="text" name="mots_cles_text" value="{{ old('mots_cles_text', $d && $d->mots_cles ? implode(', ', $d->mots_cles) : '') }}" class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="Ex : intelligence artificielle, santé, diagnostic">
+                    <label class="form-label">Mots-clés (3 à 5, séparés par des virgules) <span class="text-red-500">*</span></label>
+                    <input type="text" name="mots_cles_text" value="{{ old('mots_cles_text', $d && $d->mots_cles ? implode(', ', $d->mots_cles) : '') }}" class="form-input" {{ $readonly ? 'disabled' : '' }} required placeholder="Ex : intelligence artificielle, santé, diagnostic">
+                    @error('mots_cles_text') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">Sous-domaines / disciplines connexes (séparés par des virgules)</label>
-                    <input type="text" name="sous_domaines_text" value="{{ old('sous_domaines_text', $d && $d->sous_domaines ? implode(', ', $d->sous_domaines) : '') }}" class="form-input" {{ $readonly ? 'disabled' : '' }}>
+                    <label class="form-label">Sous-domaines / disciplines connexes (séparés par des virgules) <span class="text-red-500">*</span></label>
+                    <input type="text" name="sous_domaines_text" value="{{ old('sous_domaines_text', $d && $d->sous_domaines ? implode(', ', $d->sous_domaines) : '') }}" class="form-input" {{ $readonly ? 'disabled' : '' }} required>
+                    @error('sous_domaines_text') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
@@ -258,19 +266,22 @@
                     @error('solution') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">B1 — Contexte et état de l'art</label>
-                    <textarea name="contexte_etat_art" rows="4" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">B1 — Contexte et état de l'art <span class="text-red-500">*</span></label>
+                    <textarea name="contexte_etat_art" rows="4" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Situer le projet par rapport aux travaux existants au niveau africain et international.">{{ old('contexte_etat_art', $d?->contexte_etat_art) }}</textarea>
+                    @error('contexte_etat_art') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">B3 — Approche méthodologique</label>
-                    <textarea name="approche_methodologique" rows="4" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">B3 — Approche méthodologique <span class="text-red-500">*</span></label>
+                    <textarea name="approche_methodologique" rows="4" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Méthodes, outils, terrains, populations ou échantillons mobilisés.">{{ old('approche_methodologique', $d?->approche_methodologique) }}</textarea>
+                    @error('approche_methodologique') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">B4 — Caractère innovant et différenciation</label>
-                    <textarea name="caractere_innovant" rows="4" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">B4 — Caractère innovant et différenciation <span class="text-red-500">*</span></label>
+                    <textarea name="caractere_innovant" rows="4" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Rupture, avantage compétitif, pertinence pour le contexte sénégalais et africain.">{{ old('caractere_innovant', $d?->caractere_innovant) }}</textarea>
+                    @error('caractere_innovant') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
@@ -287,35 +298,39 @@
             </div>
             <div class="card-body space-y-4">
                 <div>
-                    <label class="form-label">C1 — Résultats scientifiques</label>
-                    <textarea name="resultats_scientifiques" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">C1 — Résultats scientifiques <span class="text-red-500">*</span></label>
+                    <textarea name="resultats_scientifiques" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Publications majeures, communications, distinctions.">{{ old('resultats_scientifiques', $d?->resultats_scientifiques) }}</textarea>
+                    @error('resultats_scientifiques') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">C2 — Résultats techniques</label>
-                    <textarea name="resultats_techniques" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">C2 — Résultats techniques <span class="text-red-500">*</span></label>
+                    <textarea name="resultats_techniques" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Prototypes, démonstrateurs, jeux de données, logiciels.">{{ old('resultats_techniques', $d?->resultats_techniques) }}</textarea>
+                    @error('resultats_techniques') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">C3 — Indicateurs chiffrés</label>
-                    <textarea name="indicateurs_chiffres" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }}>{{ old('indicateurs_chiffres', $d?->indicateurs_chiffres) }}</textarea>
+                    <label class="form-label">C3 — Indicateurs chiffrés <span class="text-red-500">*</span></label>
+                    <textarea name="indicateurs_chiffres" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required>{{ old('indicateurs_chiffres', $d?->indicateurs_chiffres) }}</textarea>
+                    @error('indicateurs_chiffres') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="form-label">Niveau de maturité technologique (TRL)</label>
+                    <label class="form-label">Niveau de maturité technologique (TRL) <span class="text-red-500">*</span></label>
                     @php $selectedTrl = old('trl_level', $d?->trl_level); @endphp
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
                         @foreach(($formOptions['trl_level'] ?? collect()) as $opt)
                         <label class="flex items-center gap-2 p-3 rounded-xl border {{ $selectedTrl === $opt->value ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
-                            <input type="radio" name="trl_level" value="{{ $opt->value }}" {{ $selectedTrl === $opt->value ? 'checked' : '' }} {{ $readonly ? 'disabled' : '' }} class="w-4 h-4 text-indigo-600">
+                            <input type="radio" name="trl_level" value="{{ $opt->value }}" {{ $selectedTrl === $opt->value ? 'checked' : '' }} {{ $readonly ? 'disabled' : '' }} required class="w-4 h-4 text-indigo-600">
                             <span class="text-sm text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
                     </div>
+                    @error('trl_level') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="form-label">Voies de valorisation envisagées</label>
+                    <label class="form-label">Voies de valorisation envisagées <span class="text-red-500">*</span></label>
                     @php $selectedVoies = old('voies_valorisation', $d?->voies_valorisation ?? []); @endphp
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
                         @foreach(($formOptions['voie_valorisation'] ?? collect()) as $opt)
@@ -325,21 +340,25 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('voies_valorisation') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="form-label">D1 — Propriété intellectuelle</label>
-                    <textarea name="propriete_intellectuelle" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">D1 — Propriété intellectuelle <span class="text-red-500">*</span></label>
+                    <textarea name="propriete_intellectuelle" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Brevets déposés, demandes en cours, marques, licences.">{{ old('propriete_intellectuelle', $d?->propriete_intellectuelle) }}</textarea>
+                    @error('propriete_intellectuelle') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">D2 — Modèle économique envisagé</label>
-                    <textarea name="modele_economique" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">D2 — Modèle économique envisagé <span class="text-red-500">*</span></label>
+                    <textarea name="modele_economique" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Marché cible, clients/usagers, proposition de valeur, modèle de revenus.">{{ old('modele_economique', $d?->modele_economique) }}</textarea>
+                    @error('modele_economique') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">D3 — Partenariats et financement</label>
-                    <textarea name="partenariats_financement" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}>{{ old('partenariats_financement', $d?->partenariats_financement) }}</textarea>
+                    <label class="form-label">D3 — Partenariats et financement <span class="text-red-500">*</span></label>
+                    <textarea name="partenariats_financement" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required>{{ old('partenariats_financement', $d?->partenariats_financement) }}</textarea>
+                    @error('partenariats_financement') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
@@ -360,7 +379,7 @@
                     $selValorisation = old('valorisation_types', $project?->valorisation_types ?? []);
                 @endphp
                 <div>
-                    <label class="form-label">Protection obtenue / souhaitée</label>
+                    <label class="form-label">Protection obtenue / souhaitée <span class="text-red-500">*</span></label>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
                         @foreach(($formOptions['protection_type'] ?? collect()) as $opt)
                         <label class="flex items-center gap-2 p-2.5 rounded-lg border {{ in_array($opt->value, $selProtections) ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
@@ -369,12 +388,13 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('protection_types') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="protection_autres_wrap" class="{{ in_array('autres', $selProtections) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="protection_autres" value="{{ old('protection_autres', $project?->protection_autres) }}" class="form-input text-sm" placeholder="Précisez…">
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">Valorisation (format Standard)</label>
+                    <label class="form-label">Valorisation (format Standard) <span class="text-red-500">*</span></label>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
                         @foreach(($formOptions['valorisation_type'] ?? collect()) as $opt)
                         <label class="flex items-center gap-2 p-2.5 rounded-lg border {{ in_array($opt->value, $selValorisation) ? 'border-indigo-400 bg-indigo-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
@@ -383,13 +403,14 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('valorisation_types') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="valorisation_autres_wrap" class="{{ in_array('autres', $selValorisation) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="valorisation_autres" value="{{ old('valorisation_autres', $project?->valorisation_autres) }}" class="form-input text-sm" placeholder="Précisez…">
                     </div>
                 </div>
 
                 <div>
-                    <label class="form-label">Dimensions d'impact</label>
+                    <label class="form-label">Dimensions d'impact <span class="text-red-500">*</span></label>
                     @php $selDimensions = old('dimensions_impact', $d?->dimensions_impact ?? []); @endphp
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-1">
                         @foreach(($formOptions['impact_dimension'] ?? collect()) as $opt)
@@ -399,24 +420,29 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('dimensions_impact') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="form-label">E1 — Bénéficiaires directs et indirects</label>
-                    <textarea name="beneficiaires" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }}>{{ old('beneficiaires', $d?->beneficiaires) }}</textarea>
+                    <label class="form-label">E1 — Bénéficiaires directs et indirects <span class="text-red-500">*</span></label>
+                    <textarea name="beneficiaires" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required>{{ old('beneficiaires', $d?->beneficiaires) }}</textarea>
+                    @error('beneficiaires') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">E2 — Indicateurs d'impact chiffrés</label>
-                    <textarea name="indicateurs_impact" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }}>{{ old('indicateurs_impact', $d?->indicateurs_impact) }}</textarea>
+                    <label class="form-label">E2 — Indicateurs d'impact chiffrés <span class="text-red-500">*</span></label>
+                    <textarea name="indicateurs_impact" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required>{{ old('indicateurs_impact', $d?->indicateurs_impact) }}</textarea>
+                    @error('indicateurs_impact') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">E3 — Contribution aux ODD</label>
-                    <textarea name="contribution_odd" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">E3 — Contribution aux ODD <span class="text-red-500">*</span></label>
+                    <textarea name="contribution_odd" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Objectifs de Développement Durable concernés.">{{ old('contribution_odd', $d?->contribution_odd) }}</textarea>
+                    @error('contribution_odd') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">E4 — Pertinence pour le Sénégal et l'Afrique</label>
-                    <textarea name="pertinence_senegal_afrique" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}>{{ old('pertinence_senegal_afrique', $d?->pertinence_senegal_afrique) }}</textarea>
+                    <label class="form-label">E4 — Pertinence pour le Sénégal et l'Afrique <span class="text-red-500">*</span></label>
+                    <textarea name="pertinence_senegal_afrique" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required>{{ old('pertinence_senegal_afrique', $d?->pertinence_senegal_afrique) }}</textarea>
+                    @error('pertinence_senegal_afrique') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
@@ -434,7 +460,7 @@
             <div class="card-body space-y-4">
                 @php $selFormats = old('presentation_formats', $project?->presentation_formats ?? []); @endphp
                 <div>
-                    <label class="form-label">Format(s) de présentation souhaité(s)</label>
+                    <label class="form-label">Format(s) de présentation souhaité(s) <span class="text-red-500">*</span></label>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-1">
                         @foreach(($formOptions['presentation_format'] ?? collect()) as $opt)
                         <label class="flex items-center gap-2 p-3 rounded-xl border {{ in_array($opt->value, $selFormats) ? 'border-indigo-500 bg-indigo-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
@@ -443,28 +469,32 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('presentation_formats') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="presentation_autres_wrap" class="{{ in_array('autres', $selFormats) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="presentation_autres" value="{{ old('presentation_autres', $project?->presentation_autres) }}" class="form-input text-sm" placeholder="Précisez…">
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">F1 — Public cible visé pendant la SRI</label>
-                    <textarea name="public_cible_vise" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">F1 — Public cible visé pendant la SRI <span class="text-red-500">*</span></label>
+                    <textarea name="public_cible_vise" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Industriels, investisseurs, décideurs publics, communauté scientifique…">{{ old('public_cible_vise', $d?->public_cible_vise) }}</textarea>
+                    @error('public_cible_vise') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">F2 — Besoins logistiques détaillés</label>
-                    <textarea name="logistic_needs" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">F2 — Besoins logistiques détaillés <span class="text-red-500">*</span></label>
+                    <textarea name="logistic_needs" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Surface stand, tables, écrans, internet, électricité…">{{ old('logistic_needs', $project?->logistic_needs) }}</textarea>
+                    @error('logistic_needs') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">F3 — Supports prévus</label>
-                    <textarea name="supports_prevus" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">F3 — Supports prévus <span class="text-red-500">*</span></label>
+                    <textarea name="supports_prevus" rows="2" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Posters, vidéos, brochures, démonstrateur, maquette…">{{ old('supports_prevus', $d?->supports_prevus) }}</textarea>
+                    @error('supports_prevus') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
 
                 <div>
-                    <label class="form-label">G — Annexes que vous prévoyez de fournir</label>
+                    <label class="form-label">G — Annexes que vous prévoyez de fournir <span class="text-red-500">*</span></label>
                     @php $selAnnexes = old('annexes_checklist', $d?->annexes_checklist ?? []); @endphp
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1">
                         @foreach(($formOptions['annexe_type'] ?? collect()) as $opt)
@@ -474,6 +504,7 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('annexes_checklist') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="annexes_autres_wrap" class="{{ in_array('autres', $selAnnexes) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="annexes_autres_texte" value="{{ old('annexes_autres_texte', $d?->annexes_autres_texte) }}" class="form-input text-sm" placeholder="Précisez…">
                     </div>

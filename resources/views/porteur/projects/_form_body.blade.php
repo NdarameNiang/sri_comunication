@@ -116,16 +116,17 @@
                         @error('contact_email') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Email personnel</label>
+                        <label class="form-label">Email personnel <span class="text-red-500">*</span></label>
                         <input type="email" name="email_professionnel" value="{{ old('email_professionnel', $project?->email_professionnel) }}"
-                               placeholder="ex : prenom.nom@gmail.com" class="form-input" {{ $readonly ? 'disabled' : '' }}>
+                               placeholder="ex : prenom.nom@gmail.com" class="form-input" {{ $readonly ? 'disabled' : '' }} required>
                         <p class="text-xs text-gray-400 mt-1">Adresse personnelle si différente de l'email UCAD</p>
                         @error('email_professionnel') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="form-label">Téléphone de contact</label>
+                        <label class="form-label">Téléphone de contact <span class="text-red-500">*</span></label>
                         <input type="text" name="contact_phone" value="{{ old('contact_phone', $project?->contact_phone ?? auth()->user()?->phone ?? $assignment->porteur?->phone ?? '') }}"
-                               class="form-input" {{ $readonly ? 'disabled' : '' }} placeholder="7X XXX XX XX">
+                               class="form-input" {{ $readonly ? 'disabled' : '' }} required placeholder="7X XXX XX XX">
+                        @error('contact_phone') <p class="form-error">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -185,7 +186,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">Niveau de maturité</label>
+                    <label class="form-label">Niveau de maturité <span class="text-red-500">*</span></label>
                     @php
                         $selectedMaturity = old('maturity_level', $project?->maturity_level);
                         $maturityOptions  = $formOptions['maturity_level'] ?? collect();
@@ -194,12 +195,13 @@
                         @foreach($maturityOptions as $opt)
                         <label class="flex items-center gap-2 px-4 py-2.5 rounded-xl border {{ $selectedMaturity === $opt->value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300' }} cursor-pointer transition-all">
                             <input type="radio" name="maturity_level" value="{{ $opt->value }}"
-                                   {{ $selectedMaturity === $opt->value ? 'checked' : '' }} {{ $readonly ? 'disabled' : '' }}
+                                   {{ $selectedMaturity === $opt->value ? 'checked' : '' }} {{ $readonly ? 'disabled' : '' }} required
                                    class="w-4 h-4 text-blue-600">
                             <span class="text-sm font-medium text-gray-700">{{ $opt->label }}</span>
                         </label>
                         @endforeach
                     </div>
+                    @error('maturity_level') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="maturity_level_autre_wrap" class="{{ $selectedMaturity === 'autres' ? '' : 'hidden' }} mt-2">
                         <input type="text" name="maturity_level_autre" value="{{ old('maturity_level_autre', $project?->maturity_level_autre) }}"
                                class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez le niveau de maturité…">
@@ -238,9 +240,10 @@
                     @error('solution') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="form-label">Résultats obtenus</label>
-                    <textarea name="results" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">Résultats obtenus <span class="text-red-500">*</span></label>
+                    <textarea name="results" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Décrivez les résultats concrets obtenus à ce jour...">{{ old('results', $project?->results) }}</textarea>
+                    @error('results') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
@@ -257,7 +260,7 @@
             </div>
             <div class="card-body space-y-5">
                 <div>
-                    <label class="form-label">Protection obtenue / souhaitée</label>
+                    <label class="form-label">Protection obtenue / souhaitée <span class="text-red-500">*</span></label>
                     @php
                         $selectedProtections = old('protection_types', $project?->protection_types ?? []);
                         $protectionOptions   = $formOptions['protection_type'] ?? collect();
@@ -272,13 +275,14 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('protection_types') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="protection_autres_wrap" class="{{ in_array('autres', $selectedProtections) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="protection_autres" value="{{ old('protection_autres', $project?->protection_autres) }}"
                                class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez la protection…">
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">Valorisation</label>
+                    <label class="form-label">Valorisation <span class="text-red-500">*</span></label>
                     @php
                         $selectedValorisation = old('valorisation_types', $project?->valorisation_types ?? []);
                         $valorisationOptions  = $formOptions['valorisation_type'] ?? collect();
@@ -293,13 +297,14 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('valorisation_types') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="valorisation_autres_wrap" class="{{ in_array('autres', $selectedValorisation) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="valorisation_autres" value="{{ old('valorisation_autres', $project?->valorisation_autres) }}"
                                class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez la valorisation…">
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">Impact attendu</label>
+                    <label class="form-label">Impact attendu <span class="text-red-500">*</span></label>
                     @php
                         $selectedImpacts = old('impact_types', $project?->impact_types ?? []);
                         $impactOptions   = $formOptions['impact_type'] ?? collect();
@@ -314,6 +319,7 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('impact_types') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="impact_types_autres_wrap" class="{{ in_array('autres', $selectedImpacts) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="impact_types_autres" value="{{ old('impact_types_autres', $project?->impact_types_autres) }}"
                                class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez l'impact…">
@@ -334,7 +340,7 @@
             </div>
             <div class="card-body space-y-4">
                 <div>
-                    <label class="form-label">Format de présentation souhaité</label>
+                    <label class="form-label">Format de présentation souhaité <span class="text-red-500">*</span></label>
                     @php
                         $selectedFormats = old('presentation_formats', $project?->presentation_formats ?? []);
                         $formatOptions   = $formOptions['presentation_format'] ?? collect();
@@ -349,15 +355,17 @@
                         </label>
                         @endforeach
                     </div>
+                    @error('presentation_formats') <p class="form-error">{{ $message }}</p> @enderror
                     <div id="presentation_autres_wrap" class="{{ in_array('autres', $selectedFormats) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="presentation_autres" value="{{ old('presentation_autres', $project?->presentation_autres) }}"
                                class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="Précisez le format de présentation…">
                     </div>
                 </div>
                 <div>
-                    <label class="form-label">Besoins logistiques spécifiques</label>
-                    <textarea name="logistic_needs" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }}
+                    <label class="form-label">Besoins logistiques spécifiques <span class="text-red-500">*</span></label>
+                    <textarea name="logistic_needs" rows="3" class="form-textarea" {{ $readonly ? 'disabled' : '' }} required
                               placeholder="Ex : Connexion électrique, écran, espace spécifique, équipements...">{{ old('logistic_needs', $project?->logistic_needs) }}</textarea>
+                    @error('logistic_needs') <p class="form-error">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
