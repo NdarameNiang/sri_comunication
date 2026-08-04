@@ -19,7 +19,7 @@ class ProjectApprofondiDetail extends Model
         'dimensions_impact', 'beneficiaires', 'indicateurs_impact',
         'contribution_odd', 'pertinence_senegal_afrique',
         'public_cible_vise', 'supports_prevus',
-        'annexes_checklist', 'annexes_autres_texte',
+        'annexes_checklist', 'annexes_autres_texte', 'media_link',
     ];
 
     protected function casts(): array

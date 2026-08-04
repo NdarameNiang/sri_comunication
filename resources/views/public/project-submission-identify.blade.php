@@ -106,7 +106,7 @@
                 @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">Email professionnel <span class="text-red-500">*</span></label>
+                <label class="form-label">Email institutionnel <span class="text-red-500">*</span></label>
                 <input type="email" name="email_professionnel_etudiant" value="{{ old('email_professionnel_etudiant') }}"
                        class="form-input @error('email_professionnel_etudiant') border-red-400 bg-red-50 @enderror"
                        placeholder="prenom.nom@ucad.edu.sn">
@@ -114,9 +114,18 @@
             </div>
             <div>
                 <label class="form-label">Mot de passe (StudentCenter) <span class="text-red-500">*</span></label>
-                <input type="password" name="mot_de_passe_etudiant" autocomplete="current-password"
-                       class="form-input @error('mot_de_passe_etudiant') border-red-400 bg-red-50 @enderror"
-                       placeholder="Votre mot de passe">
+                <div class="relative">
+                    <input type="password" name="mot_de_passe_etudiant" autocomplete="current-password" id="pwd-etudiant"
+                           class="form-input pr-10 @error('mot_de_passe_etudiant') border-red-400 bg-red-50 @enderror"
+                           placeholder="Votre mot de passe">
+                    <button type="button" onclick="togglePassword('pwd-etudiant', this)"
+                            class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
+                </div>
                 <p class="text-xs text-gray-400 mt-1">
                     Le même mot de passe que sur
                     <a href="https://studentcenter.ucad.sn" target="_blank" rel="noopener" class="text-blue-600 hover:underline">studentcenter.ucad.sn</a>
@@ -160,7 +169,7 @@
                 @error('matricule') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             <div>
-                <label class="form-label">Email professionnel <span class="text-red-500">*</span></label>
+                <label class="form-label">Email institutionnel <span class="text-red-500">*</span></label>
                 <input type="email" name="email_institutionnel" value="{{ old('email_institutionnel') }}"
                        class="form-input @error('email_institutionnel') border-red-400 bg-red-50 @enderror"
                        placeholder="prenom.nom@ucad.edu.sn">
@@ -168,12 +177,21 @@
             </div>
             <div>
                 <label class="form-label">Mot de passe (ENT Personnel) <span class="text-red-500">*</span></label>
-                <input type="password" name="mot_de_passe_personnel" autocomplete="current-password"
-                       class="form-input @error('mot_de_passe_personnel') border-red-400 bg-red-50 @enderror"
-                       placeholder="Votre mot de passe">
+                <div class="relative">
+                    <input type="password" name="mot_de_passe_personnel" autocomplete="current-password" id="pwd-personnel"
+                           class="form-input pr-10 @error('mot_de_passe_personnel') border-red-400 bg-red-50 @enderror"
+                           placeholder="Votre mot de passe">
+                    <button type="button" onclick="togglePassword('pwd-personnel', this)"
+                            class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-400 hover:text-gray-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </button>
+                </div>
                 <p class="text-xs text-gray-400 mt-1">
                     Le même mot de passe que sur
-                    <a href="https://ent.ucad.sn" target="_blank" rel="noopener" class="text-blue-600 hover:underline">ent.ucad.sn</a>
+                    <a href="https://entpersonnel.ucad.sn" target="_blank" rel="noopener" class="text-blue-600 hover:underline">entpersonnel.ucad.sn</a>
                 </p>
                 @error('mot_de_passe_personnel') <p class="form-error">{{ $message }}</p> @enderror
             </div>
@@ -239,6 +257,13 @@
         document.getElementById('bloc-autre')?.classList.toggle('hidden', type !== 'autre');
     }
     toggleProfile();
+
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        btn.classList.toggle('text-blue-600', isHidden);
+    }
 </script>
 @endpush
 @endif

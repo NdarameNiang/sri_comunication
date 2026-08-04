@@ -477,6 +477,11 @@
                     <div id="annexes_autres_wrap" class="{{ in_array('autres', $selAnnexes) ? '' : 'hidden' }} mt-2">
                         <input type="text" name="annexes_autres_texte" value="{{ old('annexes_autres_texte', $d?->annexes_autres_texte) }}" class="form-input text-sm" placeholder="Précisez…">
                     </div>
+                    <div id="media_link_wrap" class="{{ in_array('photos_videos', $selAnnexes) ? '' : 'hidden' }} mt-2">
+                        <label class="form-label text-xs">Lien vers vos photos/vidéos (YouTube, Drive…)</label>
+                        <input type="url" name="media_link" value="{{ old('media_link', $d?->media_link) }}" class="form-input text-sm" {{ $readonly ? 'disabled' : '' }} placeholder="https://…">
+                        @error('media_link') <p class="form-error">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
         </div>
@@ -724,22 +729,26 @@
     };
 
     // Bascule générique des champs "Autre"
-    function initAutreToggle(inputsSelector, wrapId) {
+    function initValueToggle(inputsSelector, wrapId, targetValue) {
         const wrap = document.getElementById(wrapId);
         if (!wrap) return;
         const inputs = document.querySelectorAll(inputsSelector);
         function sync() {
-            const anyOther = [...inputs].some(el => (el.type === 'checkbox' || el.type === 'radio') ? (el.checked && el.value === 'autres') : (el.value === 'autres'));
-            wrap.classList.toggle('hidden', !anyOther);
+            const anyMatch = [...inputs].some(el => (el.type === 'checkbox' || el.type === 'radio') ? (el.checked && el.value === targetValue) : (el.value === targetValue));
+            wrap.classList.toggle('hidden', !anyMatch);
         }
         inputs.forEach(el => el.addEventListener('change', sync));
         sync();
+    }
+    function initAutreToggle(inputsSelector, wrapId) {
+        initValueToggle(inputsSelector, wrapId, 'autres');
     }
     initAutreToggle('select[name="scientific_domain"]', 'scientific_domain_autre_wrap');
     initAutreToggle('input[name="protection_types[]"]', 'protection_autres_wrap');
     initAutreToggle('input[name="valorisation_types[]"]', 'valorisation_autres_wrap');
     initAutreToggle('input[name="presentation_formats[]"]', 'presentation_autres_wrap');
     initAutreToggle('input[name="annexes_checklist[]"]', 'annexes_autres_wrap');
+    initValueToggle('input[name="annexes_checklist[]"]', 'media_link_wrap', 'photos_videos');
 })();
 </script>
 @endpush
