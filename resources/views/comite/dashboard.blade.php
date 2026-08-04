@@ -6,6 +6,40 @@
 @section('content')
 <div class="space-y-6">
 
+    {{-- ── Notation & Délibération ────────────────────────────────── --}}
+    @if($evaluationEnabled)
+    <div class="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-white p-5">
+        <h3 class="text-sm font-semibold text-indigo-900 uppercase tracking-wide mb-3">Notation &amp; délibération</h3>
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+            <div class="flex items-center gap-3 flex-1">
+                <div class="stat-icon bg-indigo-100 shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <p class="text-2xl font-extrabold text-gray-900">{{ $evaluationStats['scored'] }} / {{ $evaluationStats['total'] }}</p>
+                    <p class="text-xs text-gray-500 mt-0.5">
+                        Projets notés{{ $evaluationStats['isGlobal'] ? '' : ' par vous' }}
+                    </p>
+                </div>
+            </div>
+            <div class="flex gap-3 shrink-0">
+                @can('evaluation.score')
+                <a href="{{ route('deliberation.scoring.index') }}" class="btn-primary text-sm flex items-center gap-1.5">
+                    @include('components.icon', ['name' => 'check-circle'])
+                    Noter les projets
+                </a>
+                @endcan
+                @can('evaluation.viewRanking')
+                <a href="{{ route('evaluation.ranking.index') }}" class="btn-secondary text-sm flex items-center gap-1.5">
+                    @include('components.icon', ['name' => 'star'])
+                    Délibération
+                </a>
+                @endcan
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- ── Stat cards ─────────────────────────────────────────────── --}}
     <div class="grid grid-cols-3 gap-4">
         @foreach([
