@@ -64,6 +64,15 @@
                 <p id="lookup-status" class="text-xs mt-1"></p>
                 @error('numero_carte') <p class="form-error">{{ $message }}</p> @enderror
             </div>
+            @if($requireVerification)
+            <div class="mt-4">
+                <label class="form-label">Mot de passe (ENT / StudentCenter) <span class="text-red-500">*</span></label>
+                <input type="password" name="mot_de_passe" required autocomplete="current-password"
+                       class="form-input @error('mot_de_passe') border-red-400 bg-red-50 @enderror"
+                       placeholder="Votre mot de passe">
+                @error('mot_de_passe') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
+            @endif
         </div>
         @endif
 

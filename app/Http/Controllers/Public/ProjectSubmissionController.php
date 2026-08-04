@@ -112,9 +112,11 @@ class ProjectSubmissionController extends Controller
             'cycle'          => 'required_if:profile_type,etudiant|nullable|in:etudiant_licence,etudiant_master,etudiant_doctorat',
             'numero_carte'   => 'required_if:profile_type,etudiant|nullable|string|max:50',
             'email_professionnel_etudiant' => 'required_if:profile_type,etudiant|nullable|email|max:255',
+            'mot_de_passe_etudiant' => 'required_if:profile_type,etudiant|nullable|string',
             'categorie'      => 'required_if:profile_type,personnel|nullable|in:per,pats',
             'matricule'      => 'required_if:profile_type,personnel|nullable|string|max:50',
             'email_institutionnel' => 'required_if:profile_type,personnel|nullable|email|max:255',
+            'mot_de_passe_personnel' => 'required_if:profile_type,personnel|nullable|string',
             'nom'            => 'required_if:profile_type,autre|nullable|string|max:255',
             'prenom'         => 'required_if:profile_type,autre|nullable|string|max:255',
             'institution'    => 'nullable|string|max:255',
@@ -122,9 +124,11 @@ class ProjectSubmissionController extends Controller
             'cycle.required_if'        => 'Veuillez indiquer votre cycle.',
             'numero_carte.required_if' => 'Le numéro de carte étudiant est requis.',
             'email_professionnel_etudiant.required_if' => "L'email professionnel est requis.",
+            'mot_de_passe_etudiant.required_if' => 'Le mot de passe est requis.',
             'categorie.required_if'    => 'Veuillez indiquer si vous êtes PER ou PATS.',
             'matricule.required_if'    => 'Le matricule est requis.',
             'email_institutionnel.required_if' => "L'email professionnel est requis.",
+            'mot_de_passe_personnel.required_if' => 'Le mot de passe est requis.',
             'nom.required_if'          => 'Le nom est requis.',
             'prenom.required_if'       => 'Le prénom est requis.',
         ]);
@@ -135,6 +139,12 @@ class ProjectSubmissionController extends Controller
             if (!$student && $requireVerification) {
                 return back()->withInput()->withErrors([
                     'numero_carte' => "Ce numéro de carte n'a pas été trouvé dans la base StudentCenter. Vérifiez votre saisie ou contactez l'organisation.",
+                ]);
+            }
+
+            if ($student && !$student->checkPassword($data['mot_de_passe_etudiant'])) {
+                return back()->withInput()->withErrors([
+                    'mot_de_passe_etudiant' => 'Mot de passe incorrect.',
                 ]);
             }
 
@@ -151,13 +161,18 @@ class ProjectSubmissionController extends Controller
 
             return $this->afterIdentification($event, $eventSlug, $data['numero_carte'], null);
         } elseif ($data['profile_type'] === 'personnel') {
-            // Le matricule est la clé de recherche obligatoire ; pas encore branché à une
-            // vraie API Personnel — table de test en attendant, comme pour Student/StudentCenter.
+            // Le matricule est la clé de recherche obligatoire.
             $personnel = Personnel::where('matricule', $data['matricule'])->first();
 
             if (!$personnel && $requireVerification) {
                 return back()->withInput()->withErrors([
                     'matricule' => "Ce matricule n'a pas été trouvé. Vérifiez votre saisie ou contactez l'organisation.",
+                ]);
+            }
+
+            if ($personnel && !$personnel->checkPassword($data['mot_de_passe_personnel'])) {
+                return back()->withInput()->withErrors([
+                    'mot_de_passe_personnel' => 'Mot de passe incorrect.',
                 ]);
             }
 

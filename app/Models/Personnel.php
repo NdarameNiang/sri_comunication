@@ -15,7 +15,7 @@ class Personnel extends Model
 {
     protected $fillable = [
         'matricule', 'nom', 'prenom', 'categorie', 'structure', 'synced_at',
-        'email_ucad', 'email_personnel', 'telephone',
+        'email_ucad', 'email_personnel', 'telephone', 'password_hash',
     ];
 
     protected function casts(): array
@@ -36,5 +36,16 @@ class Personnel extends Model
     public function preferredEmail(): ?string
     {
         return trim($this->email_ucad ?? $this->email_personnel ?? '') ?: null;
+    }
+
+    /**
+     * Vérifie le mot de passe ENT saisi contre le hash bcrypt renvoyé par l'API — jamais
+     * généré localement, uniquement stocké tel quel lors de la synchronisation.
+     * password_verify() natif plutôt que Hash::check() : l'API renvoie du bcrypt au format
+     * $2a$ (Hash::check() de Laravel exige $2y$ et rejette $2a$ avec une exception).
+     */
+    public function checkPassword(string $plainPassword): bool
+    {
+        return $this->password_hash && password_verify($plainPassword, $this->password_hash);
     }
 }

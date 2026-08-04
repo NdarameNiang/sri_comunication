@@ -54,6 +54,10 @@ class StudentSyncService
 
             foreach ($students as $s) {
                 $current = $s['inscription_courante'] ?? null;
+                // Temporaire : StudentCenter n'expose pas encore de mot de passe — SHA1(numero_
+                // carte) en attendant. Si l'API ajoute un jour un vrai champ "password", il est
+                // prioritaire automatiquement, sans changement de code à faire ailleurs.
+                $passwordHash = $s['password'] ?? sha1($s['numero_carte']);
                 Student::updateOrCreate(
                     ['numero_carte' => $s['numero_carte']],
                     [
@@ -69,6 +73,7 @@ class StudentSyncService
                         'cycle'           => $current['cycle'] ?? null,
                         'formation'       => $current['formation'] ?? null,
                         'structure'       => $current['structure'] ?? null,
+                        'password_hash'   => $passwordHash,
                         'synced_at'       => now(),
                     ]
                 );

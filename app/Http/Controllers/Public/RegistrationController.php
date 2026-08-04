@@ -95,6 +95,7 @@ class RegistrationController extends Controller
             'type_participant' => 'nullable|string|max:100',
             'population_category' => ['nullable', Rule::in($allowedCategories)],
             'numero_carte'     => ['nullable', 'string', 'max:50', 'required_if:population_category,etudiant_licence,etudiant_master,etudiant_doctorat'],
+            'mot_de_passe'     => ['nullable', 'string'],
         ], [
             'email.same' => 'Les deux adresses email ne correspondent pas.',
             'population_category.in' => "Cette catégorie n'est pas ouverte à l'inscription pour cet événement.",
@@ -102,21 +103,31 @@ class RegistrationController extends Controller
         ]);
 
         unset($data['email_confirmation']);
+        $motDePasse = $data['mot_de_passe'] ?? null;
+        unset($data['mot_de_passe']);
 
         // Vérification du numéro de carte contre la base StudentCenter/Personnel : si
-        // l'événement l'exige, le numéro doit correspondre à une fiche connue, sinon
-        // l'inscription est refusée. Sinon (événement en mode libre), la correspondance est
-        // seulement utilisée pour réaligner la catégorie quand elle existe, sans jamais bloquer.
-        // Si l'admin n'a activé aucun profil, le champ n'est même pas affiché côté formulaire.
+        // l'événement l'exige, le numéro doit correspondre à une fiche connue, et le mot de
+        // passe ENT/StudentCenter doit être correct, sinon l'inscription est refusée. Sinon
+        // (événement en mode libre), la correspondance est seulement utilisée pour réaligner
+        // la catégorie quand elle existe, sans jamais bloquer. Si l'admin n'a activé aucun
+        // profil, le champ n'est même pas affiché côté formulaire.
         if (!empty($event->enabledProfileTypes()) && !empty($data['numero_carte'])) {
             $student = Student::where('numero_carte', $data['numero_carte'])->first();
             $personnel = $student ? null : Personnel::where('matricule', $data['numero_carte'])->first();
             $match = $student ?? $personnel;
 
-            if ($event->requiresIdentityVerification() && !$match) {
-                return back()->withInput()->withErrors([
-                    'numero_carte' => "Ce numéro n'a pas été trouvé dans la base StudentCenter/Personnel. Vérifiez votre saisie ou contactez l'organisation.",
-                ]);
+            if ($event->requiresIdentityVerification()) {
+                if (!$match) {
+                    return back()->withInput()->withErrors([
+                        'numero_carte' => "Ce numéro n'a pas été trouvé dans la base StudentCenter/Personnel. Vérifiez votre saisie ou contactez l'organisation.",
+                    ]);
+                }
+                if (!$match->checkPassword((string) $motDePasse)) {
+                    return back()->withInput()->withErrors([
+                        'mot_de_passe' => 'Mot de passe incorrect.',
+                    ]);
+                }
             }
 
             if ($match && $match->populationCategoryValue()) {

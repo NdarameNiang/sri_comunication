@@ -112,6 +112,13 @@
                        placeholder="prenom.nom@ucad.edu.sn">
                 @error('email_professionnel_etudiant') <p class="form-error">{{ $message }}</p> @enderror
             </div>
+            <div>
+                <label class="form-label">Mot de passe (ENT) <span class="text-red-500">*</span></label>
+                <input type="password" name="mot_de_passe_etudiant" autocomplete="current-password"
+                       class="form-input @error('mot_de_passe_etudiant') border-red-400 bg-red-50 @enderror"
+                       placeholder="Votre mot de passe">
+                @error('mot_de_passe_etudiant') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
             @unless($requireVerification)
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -154,6 +161,13 @@
                        class="form-input @error('email_institutionnel') border-red-400 bg-red-50 @enderror"
                        placeholder="prenom.nom@ucad.edu.sn">
                 @error('email_institutionnel') <p class="form-error">{{ $message }}</p> @enderror
+            </div>
+            <div>
+                <label class="form-label">Mot de passe (ENT) <span class="text-red-500">*</span></label>
+                <input type="password" name="mot_de_passe_personnel" autocomplete="current-password"
+                       class="form-input @error('mot_de_passe_personnel') border-red-400 bg-red-50 @enderror"
+                       placeholder="Votre mot de passe">
+                @error('mot_de_passe_personnel') <p class="form-error">{{ $message }}</p> @enderror
             </div>
             @unless($requireVerification)
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

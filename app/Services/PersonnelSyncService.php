@@ -72,6 +72,7 @@ class PersonnelSyncService
                         'email_ucad'      => trim($p['emailUcad'] ?? '') ?: null,
                         'email_personnel' => trim($p['emailPersonnel'] ?? '') ?: null,
                         'telephone'       => $p['telephone'] ?? null,
+                        'password_hash'   => $p['password'] ?? null,
                         'synced_at'       => now(),
                     ]
                 );
