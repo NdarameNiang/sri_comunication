@@ -110,34 +110,121 @@
     </div>
     @endif
 
-    {{-- Tableau --}}
-    <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+    {{-- Onglets Notés / Non notés --}}
+    @php
+        $tab = request('tab', 'scored');
+        $scored   = $projects->filter(fn($p) => !is_null($p->average_score));
+        $unscored = $projects->filter(fn($p) => is_null($p->average_score));
+        $tabProjects = $tab === 'unscored' ? $unscored : $scored;
+    @endphp
+
+    <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        {{-- Tab bar --}}
+        <div class="flex border-b border-gray-100">
+            <a href="{{ request()->fullUrlWithQuery(['tab' => 'scored']) }}"
+               class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium border-b-2 transition-colors
+                   {{ $tab === 'scored' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+                Projets notés
+                <span class="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold {{ $tab === 'scored' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500' }}">
+                    {{ $scored->count() }}
+                </span>
+            </a>
+            <a href="{{ request()->fullUrlWithQuery(['tab' => 'unscored']) }}"
+               class="flex items-center gap-2 px-5 py-3.5 text-sm font-medium border-b-2 transition-colors
+                   {{ $tab === 'unscored' ? 'border-amber-500 text-amber-600' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                En attente de notation
+                <span class="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold {{ $tab === 'unscored' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-500' }}">
+                    {{ $unscored->count() }}
+                </span>
+            </a>
+        </div>
+
+        {{-- Contenu onglet --}}
+        @if($tab === 'unscored')
+        {{-- Onglet : projets non notés --}}
+        <table class="min-w-full divide-y divide-gray-100 text-sm">
+            <thead class="bg-amber-50/50">
+                <tr class="text-left text-xs text-gray-500 uppercase tracking-wide">
+                    <th class="px-5 py-3 font-medium">Projet</th>
+                    <th class="px-5 py-3 font-medium">Structure</th>
+                    <th class="px-5 py-3 font-medium">Porteur</th>
+                    <th class="px-5 py-3 font-medium">Format</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                @forelse($tabProjects as $project)
+                <tr class="hover:bg-gray-50/60 transition-colors">
+                    <td class="px-5 py-4">
+                        <p class="font-semibold text-gray-900">{{ $project->assignment?->title ?? 'Projet sans titre' }}</p>
+                    </td>
+                    <td class="px-5 py-4">
+                        <span class="badge-blue">{{ $project->structure?->acronym ?? '–' }}</span>
+                    </td>
+                    <td class="px-5 py-4 text-gray-600 text-xs">{{ $project->porteur?->name ?? $project->responsable_nom }}</td>
+                    <td class="px-5 py-4">
+                        <span class="text-xs px-2.5 py-1 rounded-full font-medium {{ $project->isApprofondi() ? 'bg-indigo-50 text-indigo-700 border border-indigo-100' : 'bg-blue-50 text-blue-700 border border-blue-100' }}">
+                            {{ $project->isApprofondi() ? 'Approfondi' : 'Standard' }}
+                        </span>
+                    </td>
+                </tr>
+                @empty
+                <tr>
+                    <td colspan="4" class="px-5 py-12 text-center">
+                        <div class="w-12 h-12 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <p class="text-gray-500 font-medium text-sm">Tous les projets ont été notés</p>
+                    </td>
+                </tr>
+                @endforelse
+            </tbody>
+        </table>
+
+        @else
+        {{-- Onglet : projets notés avec classement --}}
         <table class="min-w-full divide-y divide-gray-100 text-sm">
             <thead class="bg-gray-50/50">
                 <tr class="text-left text-xs text-gray-500 uppercase tracking-wide">
-                    <th class="px-5 py-3">Rang</th>
-                    <th class="px-5 py-3">Projet</th>
-                    <th class="px-5 py-3">Structure</th>
-                    <th class="px-5 py-3">Score moyen</th>
-                    <th class="px-5 py-3">Statut</th>
+                    <th class="px-5 py-3 font-medium">Rang</th>
+                    <th class="px-5 py-3 font-medium">Projet</th>
+                    <th class="px-5 py-3 font-medium">Structure</th>
+                    <th class="px-5 py-3 font-medium">Score moyen</th>
+                    <th class="px-5 py-3 font-medium">Statut</th>
                     <th class="px-5 py-3"></th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-50">
-                @forelse($projects as $project)
+                @forelse($tabProjects as $project)
                 @php [$label, $cls] = $statusMeta[$project->evaluation_status] ?? $statusMeta['pending']; @endphp
-                <tr class="{{ $project->isEvaluationTiedPending() ? 'bg-indigo-50/40' : '' }}">
-                    <td class="px-5 py-3 font-mono text-gray-500">{{ $project->rank_position ?? '–' }}</td>
-                    <td class="px-5 py-3">
-                        <p class="font-medium text-gray-900">{{ $project->assignment?->title ?? 'Projet sans titre' }}</p>
-                        <p class="text-xs text-gray-400">{{ $project->responsable_nom }}</p>
+                <tr class="hover:bg-gray-50/60 transition-colors {{ $project->isEvaluationTiedPending() ? 'bg-indigo-50/40' : '' }}">
+                    <td class="px-5 py-4">
+                        @if($project->rank_position)
+                        <span class="inline-flex items-center justify-center w-8 h-8 rounded-full
+                            {{ $project->rank_position <= 3 ? 'bg-amber-100 text-amber-700 font-bold' : 'bg-gray-100 text-gray-500 font-mono' }}
+                            text-sm">
+                            {{ $project->rank_position }}
+                        </span>
+                        @else
+                        <span class="text-gray-300 font-mono">–</span>
+                        @endif
                     </td>
-                    <td class="px-5 py-3 text-gray-600">{{ $project->structure?->name ?? '–' }}</td>
-                    <td class="px-5 py-3 font-semibold text-gray-700">{{ $project->average_score ?? '–' }}</td>
-                    <td class="px-5 py-3">
+                    <td class="px-5 py-4">
+                        <p class="font-semibold text-gray-900">{{ $project->assignment?->title ?? 'Projet sans titre' }}</p>
+                        <p class="text-xs text-gray-400 mt-0.5">{{ $project->porteur?->name ?? $project->responsable_nom }}</p>
+                    </td>
+                    <td class="px-5 py-4">
+                        <span class="badge-blue">{{ $project->structure?->acronym ?? '–' }}</span>
+                    </td>
+                    <td class="px-5 py-4">
+                        <span class="text-lg font-bold text-gray-800">{{ number_format($project->average_score, 2) }}</span>
+                        <span class="text-xs text-gray-400 ml-1">/ 20</span>
+                    </td>
+                    <td class="px-5 py-4">
                         <span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full {{ $cls }} border">{{ $label }}</span>
                     </td>
-                    <td class="px-5 py-3 text-right">
+                    <td class="px-5 py-4 text-right">
                         @if($project->isEvaluationTiedPending() && $can('evaluation.resolveTies'))
                         <div class="flex items-center justify-end gap-1.5">
                             <form method="POST" action="{{ route('evaluation.ranking.resolve-tie', $project) }}">
@@ -155,10 +242,19 @@
                     </td>
                 </tr>
                 @empty
-                <tr><td colspan="6" class="px-5 py-8 text-center text-gray-400 text-sm">Aucun projet soumis.</td></tr>
+                <tr>
+                    <td colspan="6" class="px-5 py-12 text-center">
+                        <div class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                            <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+                        </div>
+                        <p class="text-gray-500 font-medium text-sm">Aucun projet noté pour le moment</p>
+                        <p class="text-gray-400 text-xs mt-1">Les notes apparaîtront ici après notation et recalcul du classement.</p>
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
+        @endif
     </div>
 
     <div class="text-xs text-gray-400 leading-relaxed max-w-2xl">

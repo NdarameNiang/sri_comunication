@@ -136,6 +136,14 @@
       </div>
       @endif
 
+      <table width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+        <tr>
+          <td align="center">
+            <a href="{{ route('porteur.dashboard') }}" style="display:inline-block;background:#2563eb;color:#ffffff;text-decoration:none;padding:13px 36px;border-radius:8px;font-size:14px;font-weight:700;letter-spacing:.02em;">Voir mon tableau de bord</a>
+          </td>
+        </tr>
+      </table>
+
       <p style="color:#6b7280;font-size:13px;line-height:1.6;margin:0 0 8px;">
         Ce message est une confirmation automatique. Conservez-le comme preuve de votre soumission.
       </p>

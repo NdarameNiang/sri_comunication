@@ -31,8 +31,8 @@
 
         /* CTA */
         .cta-wrap { text-align: center; margin: 28px 0 16px; }
-        .cta { display: inline-block; background: #334155; color: #f8fafc !important; text-decoration: none;
-               padding: 12px 32px; border-radius: 8px; font-size: 14px; font-weight: 600; letter-spacing: .02em; }
+        .cta { display: inline-block; background: #2563eb; color: #ffffff !important; text-decoration: none;
+               padding: 13px 36px; border-radius: 8px; font-size: 14px; font-weight: 700; letter-spacing: .02em; }
 
         /* Notice */
         .notice { background: #eef2ff; border-left: 3px solid #4f46e5; border-radius: 4px; padding: 12px 16px; margin-top: 20px; }

@@ -15,14 +15,17 @@
         .info-box { background: #f8fafc; border-left: 4px solid #64748b; padding: 16px 20px; border-radius: 4px; margin: 20px 0; }
         .info-box p { margin: 4px 0; }
         .info-box strong { color: #1e293b; }
+        .cta-wrap { text-align: center; margin: 28px 0 16px; }
+        .cta { display: inline-block; background: #2563eb; color: #ffffff !important; text-decoration: none;
+               padding: 13px 36px; border-radius: 8px; font-size: 14px; font-weight: 700; letter-spacing: .02em; }
         .footer { background: #1e293b; color: rgba(255,255,255,.6); padding: 20px 40px; text-align: center; font-size: 12px; }
-        .badge { display: inline-block; background: #475569; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .badge { display: inline-block; background: #16a34a; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: bold; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
-        <h1>🎉 Félicitations !</h1>
+        <h1>Félicitations !</h1>
         <p>{{ $event?->event_name ?? 'SRI 2026' }} – Université Cheikh Anta Diop</p>
     </div>
 
@@ -70,6 +73,10 @@
             <strong>Le Comité Scientifique</strong><br>
             <span style="color:#666">{{ $event?->event_name ?? 'SRI 2026' }}</span>
         </p>
+
+        <div class="cta-wrap">
+            <a href="{{ route('login') }}" class="cta">Accéder à mon espace</a>
+        </div>
     </div>
 
     <div class="footer">
